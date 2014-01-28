@@ -159,7 +159,12 @@ class Locality  {
 
 class Holiday  {
         Partial date;
-    }
+}
+
+class resource.ResourceResponsibility  {
+        YearMonthDay begin;
+        YearMonthDay end;
+}
 
 
 relation RootDomainObjectHoliday {
@@ -399,6 +404,20 @@ relation HolidayLocality {
 relation RootDomainObjectLocality {
     .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
     Locality playsRole localities {
+        multiplicity *;
+    }
+}
+
+relation ResourceResourceResponsibility {
+    resource.ResourceResponsibility playsRole resourceResponsibility {
+        multiplicity *;
+    }
+    resource.Resource playsRole resource;
+}
+
+relation RootDomainObjectResourceResponsibility {
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+    resource.ResourceResponsibility playsRole resourceResponsibility {
         multiplicity *;
     }
 }

@@ -331,6 +331,7 @@ public abstract class Space extends Space_Base {
 //        }
 //        return spaceResponsibility;
 //    }
+
 //
 //    public SortedSet<UnitSpaceOccupation> getActiveUnitSpaceOccupations() {
 //        return getUnitSpaceOccupationsByState(true);
@@ -397,31 +398,6 @@ public abstract class Space extends Space_Base {
 //            }
 //        }
 //        return materialOccupations;
-//    }
-
-//    public static Set<DomainObjectActionLog> getListOfChangesInSpacesOrderedByInstant() {
-//        Set<Class<? extends DomainObject>> classs = new HashSet<Class<? extends DomainObject>>();
-//        User loggedPerson = Authenticate.getUser();
-//        if (personIsSpacesAdministrator(loggedPerson)) {
-//            classs.add(Room.class);
-//            classs.add(Floor.class);
-//            classs.add(Campus.class);
-//            classs.add(Building.class);
-//            classs.add(Blueprint.class);
-//            classs.add(RoomSubdivision.class);
-//            classs.add(RoomInformation.class);
-//            classs.add(FloorInformation.class);
-//            classs.add(CampusInformation.class);
-//            classs.add(RoomClassification.class);
-//            classs.add(BuildingInformation.class);
-//            classs.add(UnitSpaceOccupation.class);
-//            classs.add(SpaceResponsibility.class);
-//            classs.add(PersonSpaceOccupation.class);
-//            classs.add(ExtensionSpaceOccupation.class);
-//            classs.add(RoomSubdivisionInformation.class);
-//            return DomainObjectActionLog.readDomainObjectActionLogsOrderedByInstant(classs);
-//        }
-//        return new HashSet<DomainObjectActionLog>();
 //    }
 
     public Space readSubSpaceByBlueprintNumber(String blueprintNumber) {
