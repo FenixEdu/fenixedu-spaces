@@ -489,7 +489,7 @@ public abstract class Space extends Space_Base {
         return result;
     }
 
-    protected boolean verifyNameEquality(String[] nameWords) {
+    public boolean verifyNameEquality(String[] nameWords) {
         if (nameWords != null) {
             String spacePresentationName = getSpaceInformation().getPresentationName();
             if (spacePresentationName != null) {
@@ -565,13 +565,11 @@ public abstract class Space extends Space_Base {
         return result;
     }
 
-    public static boolean personIsSpacesAdministrator(User person) {
-//        return (person.hasRole(RoleType.MANAGER) || person.hasRole(RoleType.SPACE_MANAGER_SUPER_USER))
-//                && person.hasRole(RoleType.SPACE_MANAGER);
-
-        //TODO: groups
-        return false;
-
+    public static boolean personIsSpacesAdministrator(User user) {
+        final Group managers = Group.parse("role(MANAGER)");
+        final Group rootSpaceManagers = Group.parse("role(SPACE_MANAGER_SUPER_USER)");
+        final Group spaceManagers = Group.parse("role(SPACE_MANAGER)");
+        return managers.isMember(user) || rootSpaceManagers.isMember(user) || spaceManagers.isMember(user);
     }
 
     public void checkIfLoggedPersonHasPermissionsToManageSpace(User person) {
@@ -1063,26 +1061,6 @@ public abstract class Space extends Space_Base {
         return builder.toString();
     }
 
-//    @Deprecated
-//    public java.util.Set<net.sourceforge.fenixedu.domain.space.SpaceAttendances> getCurrentAttendance() {
-//        return getCurrentAttendanceSet();
-//    }
-//
-//    @Deprecated
-//    public boolean hasAnyCurrentAttendance() {
-//        return !getCurrentAttendanceSet().isEmpty();
-//    }
-//
-//    @Deprecated
-//    public java.util.Set<net.sourceforge.fenixedu.domain.space.SpaceAttendances> getPastAttendances() {
-//        return getPastAttendancesSet();
-//    }
-//
-//    @Deprecated
-//    public boolean hasAnyPastAttendances() {
-//        return !getPastAttendancesSet().isEmpty();
-//    }
-
     @Deprecated
     public java.util.Set<net.sourceforge.fenixedu.domain.space.SpaceInformation> getSpaceInformations() {
         return getSpaceInformationsSet();
@@ -1142,11 +1120,6 @@ public abstract class Space extends Space_Base {
     public boolean hasExtensionOccupationsAccessGroup() {
         return getExtensionOccupationsAccessGroup() != null;
     }
-
-//    @Deprecated
-//    public boolean hasBennuForLibrary() {
-//        return getRootDomainObjectForLibrary() != null;
-//    }
 
     @Deprecated
     public boolean hasUnitOccupationsAccessGroup() {

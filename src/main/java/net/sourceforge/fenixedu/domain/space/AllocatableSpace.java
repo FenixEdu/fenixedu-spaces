@@ -450,36 +450,6 @@ public abstract class AllocatableSpace extends AllocatableSpace_Base {
         return true;
     }
 
-//   TODO: move to fenix
-//    @Deprecated
-//    public List<Lesson> getAssociatedLessons(final ExecutionSemester executionSemester) {
-//        final List<Lesson> lessons = new ArrayList<Lesson>();
-//        for (ResourceAllocation spaceOccupation : getResourceAllocations()) {
-//            if (spaceOccupation.isLessonSpaceOccupation()) {
-//                LessonSpaceOccupation roomOccupation = (LessonSpaceOccupation) spaceOccupation;
-//                final Lesson lesson = roomOccupation.getLesson();
-//                if (lesson.getExecutionPeriod() == executionSemester) {
-//                    lessons.add(lesson);
-//                }
-//            }
-//        }
-//        return lessons;
-//    }
-//
-//    public List<Lesson> getAssociatedLessons(AcademicInterval academicInterval) {
-//        final List<Lesson> lessons = new ArrayList<Lesson>();
-//        for (ResourceAllocation spaceOccupation : getResourceAllocations()) {
-//            if (spaceOccupation.isLessonSpaceOccupation()) {
-//                LessonSpaceOccupation roomOccupation = (LessonSpaceOccupation) spaceOccupation;
-//                final Lesson lesson = roomOccupation.getLesson();
-//                if (lesson.getAcademicInterval().equals(academicInterval)) {
-//                    lessons.add(lesson);
-//                }
-//            }
-//        }
-//        return lessons;
-//    }
-
     public ResourceAllocation getFirstOccurrenceOfResourceAllocationByClass(Class<? extends ResourceAllocation> clazz) {
         if (clazz != null) {
             Collection<ResourceAllocation> resourceAllocations = getResourceAllocations();
