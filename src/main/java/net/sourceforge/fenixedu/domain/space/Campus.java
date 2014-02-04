@@ -9,8 +9,6 @@ import net.sourceforge.fenixedu.domain.space.Building.SpaceFactoryExecutor;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.joda.time.YearMonthDay;
 
-import com.google.common.collect.Ordering;
-
 public class Campus extends Campus_Base {
 
     private static final String ALAMEDA_UNIVERSITY_CODE = "1518";
@@ -20,13 +18,6 @@ public class Campus extends Campus_Base {
     public Campus(String name, YearMonthDay begin, YearMonthDay end, String blueprintNumber) {
         super();
         new CampusInformation(this, name, begin, end, blueprintNumber);
-    }
-
-    public static Campus getDefaultCampus() {
-        if (Bennu.getInstance().getDefaultCampus() == null) {
-            return Ordering.from(Space.COMPARATOR_BY_PRESENTATION_NAME).min(Space.getAllActiveCampus());
-        }
-        return Bennu.getInstance().getDefaultCampus();
     }
 
     @Override

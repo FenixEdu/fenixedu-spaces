@@ -1,8 +1,14 @@
 package net.sourceforge.fenixedu.domain.resource;
 
+import java.util.Set;
+
 import net.sourceforge.fenixedu.domain.exception.SpaceDomainException;
 
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.joda.time.YearMonthDay;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 
 public abstract class Resource extends Resource_Base {
 
@@ -82,6 +88,21 @@ public abstract class Resource extends Resource_Base {
     @Deprecated
     public boolean hasBennu() {
         return getRootDomainObject() != null;
+    }
+
+    public Set<ResourceResponsibility> getActiveResourceResponsibility() {
+        return FluentIterable.from(getResourceResponsibilitySet()).filter(new Predicate<ResourceResponsibility>() {
+            private final YearMonthDay now;
+
+            {
+                now = new YearMonthDay();
+            }
+
+            @Override
+            public boolean apply(ResourceResponsibility input) {
+                return input.isActive(now);
+            }
+        }).toSet();
     }
 
 }

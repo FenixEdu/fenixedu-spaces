@@ -382,11 +382,6 @@ relation PersonBlueprint {
     }
 }
 
-relation RootDomainObjectDefaultCampus {
-	space.Campus playsRole defaultCampus;
-	.org.fenixedu.bennu.core.domain.Bennu playsRole defaultCampusRootDomainObject;
-}
-
 relation CampusInformationLocality {
     space.CampusInformation playsRole campusInformation {
         multiplicity *;

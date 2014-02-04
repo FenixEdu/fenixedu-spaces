@@ -325,6 +325,8 @@ public abstract class EventSpaceOccupation extends EventSpaceOccupation_Base {
                 + ")";
     }
 
+    protected abstract boolean overlaps(Interval interval);
+
     // TODO: move to fenix
 //    public abstract boolean isOccupiedByExecutionCourse(final ExecutionCourse executionCourse, final DateTime start,
 //            final DateTime end);
