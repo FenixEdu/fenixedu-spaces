@@ -1,0 +1,54 @@
+package org.fenixedu.spaces.domain;
+
+class Space {
+	DateTime created (REQUIRED);
+}
+
+class Information {
+	Integer allocatableCapacity;
+	String blueprintNumber;
+	BigDecimal area;
+	String name;
+	String identification;
+	JsonElement metadata;
+	
+	DateTime validFrom;
+	DateTime validUntil;
+	DateTime created;
+	DateTime deleted;
+}
+
+
+class SpaceClassification {
+	String code;
+	LocalizedString name;
+}
+
+
+relation ContainedSpaceClassification {
+	SpaceClassification playsRole parent;
+	SpaceClassification playsRole children {
+		multiplicity *;
+	}
+}
+
+relation InformationClassification {
+	Information playsRole informations {
+		multiplicity *;
+	}
+	SpaceClassification playsRole classification;
+}
+
+relation SpaceContainedSpaces {
+	Space playsRole parent;
+	Space playsRole children {
+		multiplicity *;
+	}
+}
+
+relation SpaceInformation {
+	Space playsRole space;
+	Information playsRole information {
+		multiplicity *;
+	}
+}

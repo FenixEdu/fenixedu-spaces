@@ -90,7 +90,7 @@ public abstract class Resource extends Resource_Base {
         return getRootDomainObject() != null;
     }
 
-    public Set<ResourceResponsibility> getActiveResourceResponsibility() {
+    public Set<ResourceResponsibility> getResourceResponsibility(final boolean isActive) {
         return FluentIterable.from(getResourceResponsibilitySet()).filter(new Predicate<ResourceResponsibility>() {
             private final YearMonthDay now;
 
@@ -100,7 +100,7 @@ public abstract class Resource extends Resource_Base {
 
             @Override
             public boolean apply(ResourceResponsibility input) {
-                return input.isActive(now);
+                return input.isActive(now) == isActive;
             }
         }).toSet();
     }

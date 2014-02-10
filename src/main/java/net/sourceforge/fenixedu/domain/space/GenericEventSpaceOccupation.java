@@ -7,6 +7,8 @@ import net.sourceforge.fenixedu.util.DiaSemana;
 import net.sourceforge.fenixedu.util.HourMinuteSecond;
 
 import org.fenixedu.bennu.core.domain.groups.Group;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.YearMonthDay;
 
 public class GenericEventSpaceOccupation extends GenericEventSpaceOccupation_Base {
@@ -94,12 +96,6 @@ public class GenericEventSpaceOccupation extends GenericEventSpaceOccupation_Bas
         return null;
     }
 
-    // TODO: move to fenix
-//    @Override
-//    public boolean isOccupiedByExecutionCourse(ExecutionCourse executionCourse, DateTime start, DateTime end) {
-//        return false;
-//    }
-
     @Override
     public String getPresentationString() {
         return getGenericEvent().getGanttDiagramEventName().getContent();
@@ -108,6 +104,17 @@ public class GenericEventSpaceOccupation extends GenericEventSpaceOccupation_Bas
     @Deprecated
     public boolean hasGenericEvent() {
         return getGenericEvent() != null;
+    }
+
+    @Override
+    protected boolean overlaps(final Interval interval) {
+        final DateTime start = interval.getStart();
+        final DateTime end = interval.getEnd();
+        if (alreadyWasOccupiedIn(start.toYearMonthDay(), end.toYearMonthDay(), new HourMinuteSecond(start.toDate()),
+                new HourMinuteSecond(end.toDate()), null, null, null, null)) {
+            return true;
+        }
+        return false;
     }
 
 }
