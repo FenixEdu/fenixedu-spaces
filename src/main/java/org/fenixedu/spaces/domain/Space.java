@@ -1,103 +1,16 @@
 package org.fenixedu.spaces.domain;
 
-import java.math.BigDecimal;
-import java.util.SortedSet;
-
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.google.gson.JsonElement;
-
 public class Space extends Space_Base {
 
-    public static class Builder {
-        private Integer allocatableCapacity;
-        private String blueprintNumber;
-        private BigDecimal area;
-        private String name;
-        private String identification;
-        private JsonElement metadata;
-        private DateTime validFrom;
-        private DateTime validUntil;
-        private SpaceClassification classification;
-
-        Builder(Information information) {
-            this.allocatableCapacity = information.getAllocatableCapacity();
-            this.blueprintNumber = information.getBlueprintNumber();
-            this.area = information.getArea();
-            this.name = information.getName();
-            this.identification = information.getIdentification();
-            this.metadata = information.getMetadata();
-            this.validFrom = information.getValidFrom();
-            this.validUntil = information.getValidUntil();
-        }
-
-        Builder() {
-            this.allocatableCapacity = null;
-            this.blueprintNumber = null;
-            this.area = null;
-            this.name = null;
-            this.identification = null;
-            this.metadata = null;
-            this.validFrom = null;
-            this.validUntil = null;
-        }
-
-        public Builder allocatableCapacity(Integer allocatableCapacity) {
-            this.allocatableCapacity = allocatableCapacity;
-            return this;
-        }
-
-        public Builder blueprintNumber(String blueprintNumber) {
-            this.blueprintNumber = blueprintNumber;
-            return this;
-        }
-
-        public Builder area(BigDecimal area) {
-            this.area = area;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder identification(String identification) {
-            this.identification = identification;
-            return this;
-        }
-
-        public Builder metadata(JsonElement metadata) {
-            this.metadata = metadata;
-            return this;
-        }
-
-        public Builder validFrom(DateTime validFrom) {
-            this.validFrom = validFrom;
-            return this;
-        }
-
-        public Builder validUntil(DateTime validUntil) {
-            this.validUntil = validUntil;
-            return this;
-        }
-
-        public Builder classification(SpaceClassification classification) {
-            this.classification = classification;
-            return this;
-        }
-
-        @Atomic(mode = TxMode.WRITE)
-        public Information build() {
-            return new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
-                    metadata, classification);
-        }
-
+    public Space(Information information) {
+        setCreated(new DateTime());
+        add(information);
     }
 
     /**
@@ -105,7 +18,7 @@ public class Space extends Space_Base {
      * 
      * @return
      */
-    public Information getInformation() {
+    Information getInformation() {
         return getInformation(new DateTime());
     }
 
@@ -116,7 +29,7 @@ public class Space extends Space_Base {
      * @return
      */
 
-    public Information getInformation(DateTime when) {
+    Information getInformation(DateTime when) {
         return getInformation(when, new DateTime());
     }
 
@@ -128,20 +41,96 @@ public class Space extends Space_Base {
      * @return
      */
 
-    public Information getInformation(final DateTime when, final DateTime creationDate) {
-        final SortedSet<Information> information = getInternalInformation(when, creationDate);
-        return information.isEmpty() ? null : information.last();
-    }
-
-    private SortedSet<Information> getInternalInformation(final DateTime when, final DateTime creationDate) {
-
-        return FluentIterable.from(getInformationSet()).filter(new Predicate<Information>() {
-
-            @Override
-            public boolean apply(Information info) {
-                return info.exists(when, creationDate);
+    Information getInformation(final DateTime when, final DateTime creationDate) {
+        Information current = getCurrent();
+        while (current != null) {
+            if (current.contains(when)) {
+                return current;
             }
-        }).toSortedSet(Information.CREATION_DATE_COMPARATOR);
+            current = current.getPrevious();
+        }
+        return null;
     }
 
+    public Integer getCapacity() {
+        return getCapacity(new DateTime());
+    }
+
+    public Integer getCapacity(DateTime when) {
+        final Information information = getInformation(when);
+        return information == null ? null : information.getAllocatableCapacity();
+    }
+
+    @Atomic(mode = TxMode.WRITE)
+    protected void add(Information information) {
+        if (getCurrent() == null) {
+            setCurrent(information);
+            return;
+        }
+        final DateTime newStart = information.getValidFrom();
+        final DateTime newEnd = information.getValidUntil();
+
+        final Interval newValidity = information.getValidity();
+
+        Information newCurrent = null;
+        Information last = null;
+        Information newHead = null;
+
+        Information current = getCurrent();
+        Information head = current;
+        Interval currentValidity = current.getValidity();
+
+        boolean foundEnd = false;
+        boolean foundStart = false;
+
+        // insert at head
+        if (newValidity.isAfter(currentValidity)) {
+            newHead = information;
+            newHead.setPrevious(head);
+        }
+        if (newHead == null) {
+            while (current != null) {
+
+                if (!foundEnd && current.contains(newEnd)) {
+                    Information right = current.keepRight(newEnd);
+                    if (last != null) {
+                        last.setPrevious(right);
+                    }
+                    last = right;
+                    newCurrent = information;
+                    foundEnd = true;
+                }
+
+                if (foundEnd && current.contains(newStart)) {
+                    newCurrent = current.keepLeft(newStart);
+                    foundStart = true;
+                } else {
+                    if (!foundEnd || foundStart) {
+                        newCurrent = current.copy();
+                    }
+                }
+
+                //bookkeeping code
+                if (last != null) {
+                    last.setPrevious(newCurrent);
+                }
+
+                last = newCurrent;
+
+                if (newHead == null) {
+                    newHead = newCurrent;
+                }
+
+                current = current.getPrevious();
+            }
+
+            //insert at end
+            if (!foundEnd) {
+                last.setPrevious(information);
+            }
+        }
+
+        addHistory(head);
+        setCurrent(newHead);
+    }
 }

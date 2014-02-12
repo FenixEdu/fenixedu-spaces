@@ -15,7 +15,6 @@ class Information {
 	DateTime validFrom;
 	DateTime validUntil;
 	DateTime created;
-	DateTime deleted;
 }
 
 
@@ -39,6 +38,13 @@ relation InformationClassification {
 	SpaceClassification playsRole classification;
 }
 
+relation InformationInformation {
+	Information playsRole information {
+		multiplicity *;
+	}
+	Information playsRole previous;
+}
+
 relation SpaceContainedSpaces {
 	Space playsRole parent;
 	Space playsRole children {
@@ -47,8 +53,23 @@ relation SpaceContainedSpaces {
 }
 
 relation SpaceInformation {
-	Space playsRole space;
-	Information playsRole information {
+	Space playsRole space {
+		multiplicity *;
+	}
+	Information playsRole current;
+}
+
+relation SpaceInformationHistory {
+	Space playsRole spaceHistory;
+	Information playsRole history {
 		multiplicity *;
 	}
 }
+
+relation BennuSpaces {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
+	Space playsRole rootSpace {
+		multiplicity *;
+	}
+}
+
