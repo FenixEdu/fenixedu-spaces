@@ -185,6 +185,10 @@ public class Information extends Information_Base {
         return getValidity().contains(checkpoint);
     }
 
+    protected boolean contains(Interval checkpoint) {
+        return getValidity().contains(checkpoint);
+    }
+
     public Interval getValidity() {
         return new Interval(getValidFrom(), getValidUntil());
     }

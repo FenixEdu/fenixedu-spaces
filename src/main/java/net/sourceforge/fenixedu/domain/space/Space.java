@@ -17,8 +17,6 @@ import net.sourceforge.fenixedu.domain.exception.SpaceDomainException;
 import net.sourceforge.fenixedu.domain.resource.Resource;
 import net.sourceforge.fenixedu.domain.resource.ResourceAllocation;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
@@ -29,6 +27,8 @@ import org.fenixedu.commons.StringNormalizer;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.YearMonthDay;
+
+import com.google.common.io.BaseEncoding;
 
 public abstract class Space extends Space_Base {
 
@@ -540,11 +540,7 @@ public abstract class Space extends Space_Base {
 
         if (!toAdd) {
             byte[] encodeHex;
-            try {
-                encodeHex = Hex.decodeHex(expression.toCharArray());
-            } catch (DecoderException e) {
-                throw new SpaceDomainException("error.space.access.groups.invalid.expression");
-            }
+            encodeHex = BaseEncoding.base32Hex().decode(expression);
             expression = new String(encodeHex);
         }
 

@@ -17,8 +17,9 @@ public class Space extends Space_Base {
      * get the most recent space information
      * 
      * @return
+     * @throws UnavailableException
      */
-    Information getInformation() {
+    Information getInformation() throws UnavailableException {
         return getInformation(new DateTime());
     }
 
@@ -27,9 +28,10 @@ public class Space extends Space_Base {
      * 
      * @param when
      * @return
+     * @throws UnavailableException
      */
 
-    Information getInformation(DateTime when) {
+    Information getInformation(DateTime when) throws UnavailableException {
         return getInformation(when, new DateTime());
     }
 
@@ -41,7 +43,7 @@ public class Space extends Space_Base {
      * @return
      */
 
-    Information getInformation(final DateTime when, final DateTime creationDate) {
+    Information getInformation(final DateTime when, final DateTime creationDate) throws UnavailableException {
         Information current = getCurrent();
         while (current != null) {
             if (current.contains(when)) {
@@ -49,16 +51,15 @@ public class Space extends Space_Base {
             }
             current = current.getPrevious();
         }
-        return null;
+        throw new UnavailableException();
     }
 
-    public Integer getCapacity() {
+    public Integer getCapacity() throws UnavailableException {
         return getCapacity(new DateTime());
     }
 
-    public Integer getCapacity(DateTime when) {
-        final Information information = getInformation(when);
-        return information == null ? null : information.getAllocatableCapacity();
+    public Integer getCapacity(DateTime when) throws UnavailableException {
+        return getInformation(when).getAllocatableCapacity();
     }
 
     @Atomic(mode = TxMode.WRITE)
@@ -90,23 +91,33 @@ public class Space extends Space_Base {
         }
         if (newHead == null) {
             while (current != null) {
-
-                if (!foundEnd && current.contains(newEnd)) {
+                if (!foundEnd && !foundStart && current.contains(newValidity)) {
                     Information right = current.keepRight(newEnd);
                     if (last != null) {
                         last.setPrevious(right);
                     }
-                    last = right;
-                    newCurrent = information;
-                    foundEnd = true;
-                }
-
-                if (foundEnd && current.contains(newStart)) {
+                    right.setPrevious(information);
+                    last = information;
                     newCurrent = current.keepLeft(newStart);
+                    foundEnd = true;
                     foundStart = true;
                 } else {
-                    if (!foundEnd || foundStart) {
-                        newCurrent = current.copy();
+                    if (!foundEnd && current.contains(newEnd)) {
+                        Information right = current.keepRight(newEnd);
+                        if (last != null) {
+                            last.setPrevious(right);
+                        }
+                        last = right;
+                        newCurrent = information;
+                        foundEnd = true;
+                    }
+                    if (foundEnd && current.contains(newStart)) {
+                        newCurrent = current.keepLeft(newStart);
+                        foundStart = true;
+                    } else {
+                        if (!foundEnd || foundStart) {
+                            newCurrent = current.copy();
+                        }
                     }
                 }
 
