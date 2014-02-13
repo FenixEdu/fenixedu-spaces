@@ -189,8 +189,29 @@ public class Information extends Information_Base {
         return getValidity().contains(checkpoint);
     }
 
-    public Interval getValidity() {
-        return new Interval(getValidFrom(), getValidUntil());
+    /**
+     * Does requested checkpoint is after current validity period
+     * 
+     * @param checkpoint
+     * @return
+     */
+    protected boolean isAfter(DateTime checkpoint) {
+        if (checkpoint == null) {
+            return true;
+        }
+        return checkpoint.isEqual(getValidUntil()) || checkpoint.isAfter(getValidUntil());
+    }
+
+    protected Interval getValidity() {
+        return new Interval(getValidFrom(), getValidUntil() == null ? new DateTime(Long.MAX_VALUE) : getValidUntil());
+    }
+
+    @Override
+    public void setPrevious(Information previous) {
+        if (previous == this) {
+            throw new UnsupportedOperationException();
+        }
+        super.setPrevious(previous);
     }
 
 }

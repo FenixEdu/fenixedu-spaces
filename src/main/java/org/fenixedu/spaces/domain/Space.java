@@ -3,9 +3,6 @@ package org.fenixedu.spaces.domain;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
-import pt.ist.fenixframework.Atomic;
-import pt.ist.fenixframework.Atomic.TxMode;
-
 public class Space extends Space_Base {
 
     public Space(Information information) {
@@ -62,7 +59,6 @@ public class Space extends Space_Base {
         return getInformation(when).getAllocatableCapacity();
     }
 
-    @Atomic(mode = TxMode.WRITE)
     protected void add(Information information) {
         if (getCurrent() == null) {
             setCurrent(information);
@@ -89,40 +85,59 @@ public class Space extends Space_Base {
             newHead = information;
             newHead.setPrevious(head);
         }
+
         if (newHead == null) {
+
+            //last is the previous element of the new list
+            //newCurrent is the current element of the new list
+
             while (current != null) {
-                if (!foundEnd && !foundStart && current.contains(newValidity)) {
-                    Information right = current.keepRight(newEnd);
-                    if (last != null) {
-                        last.setPrevious(right);
-                    }
-                    right.setPrevious(information);
-                    last = information;
-                    newCurrent = current.keepLeft(newStart);
-                    foundEnd = true;
-                    foundStart = true;
-                } else {
-                    if (!foundEnd && current.contains(newEnd)) {
+                if (!foundEnd && !foundStart && current.contains(newValidity)) { //if start and end is in the current element
+                    if (current.getValidity().equals(newValidity)) { // if it is the same period just replace current
+                        newCurrent = information;
+                    } else {
                         Information right = current.keepRight(newEnd);
                         if (last != null) {
                             last.setPrevious(right);
+                        } else {
+                            newHead = right; // no previous in new list, make right head
                         }
-                        last = right;
-                        newCurrent = information;
-                        foundEnd = true;
+                        right.setPrevious(information);
+                        last = information;
+                        newCurrent = current.keepLeft(newStart);
                     }
-                    if (foundEnd && current.contains(newStart)) {
+                    foundEnd = true;
+                    foundStart = true;
+                } else {
+                    if (!foundEnd) {
+                        final boolean isAfter = current.isAfter(newEnd); //if newEnd is after current end date, then it is a gap
+                        if (current.contains(newEnd) || isAfter) {
+                            if (!isAfter) {
+                                Information right = current.keepRight(newEnd);
+                                if (last != null) {
+                                    last.setPrevious(right);
+                                } else {
+                                    newHead = right; // no previous in new list, make right head
+                                }
+                                last = right;
+                            }
+                            newCurrent = information; // no need to cut current because it will be replaced by information
+                            foundEnd = true;
+                        }
+                    }
+                    final boolean isAfter = current.isAfter(newStart); //if newEnd is after current end date, then it is a gap
+                    if (foundEnd && (current.contains(newStart) || isAfter)) { // looking for the start
                         newCurrent = current.keepLeft(newStart);
                         foundStart = true;
                     } else {
-                        if (!foundEnd || foundStart) {
+                        if (!foundEnd || foundStart) { // if not in the process of searching for information just keep copying current
                             newCurrent = current.copy();
                         }
                     }
                 }
 
                 //bookkeeping code
-                if (last != null) {
+                if (last != null && !last.equals(newCurrent)) {
                     last.setPrevious(newCurrent);
                 }
 
