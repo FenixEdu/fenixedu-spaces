@@ -1,13 +1,66 @@
 package org.fenixedu.spaces.domain;
 
+import java.math.BigDecimal;
+
+import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+
+import com.google.gson.JsonObject;
 
 public class Space extends Space_Base {
 
     public Space(Information information) {
+        this(null, information);
+    }
+
+    public Space(Space parent, Information information) {
         setCreated(new DateTime());
         add(information);
+        setParent(parent);
+        if (parent == null) {
+            setBennu(Bennu.getInstance());
+        }
+    }
+
+    public InformationBean bean() throws UnavailableException {
+        return Information.builder(getInformation()).bean();
+    }
+
+    public void bean(InformationBean informationBean) {
+        add(Information.builder(informationBean).build());
+    }
+
+    public String getName() throws UnavailableException {
+        return getInformation().getName();
+    }
+
+    public SpaceClassification getClassification() throws UnavailableException {
+        return getInformation().getClassification();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Object> T getMetadata(String field) throws UnavailableException {
+        Information information = getInformation();
+        final MetadataSpec metadataSpec = information.getClassification().getMetadataSpec(field);
+        final Class<?> type = metadataSpec.getType();
+        final JsonObject metadata = information.getMetadata().getAsJsonObject();
+
+        if (Boolean.class.isAssignableFrom(type)) {
+            return (T) new Boolean(metadata.get(field).getAsBoolean());
+        }
+        if (Integer.class.isAssignableFrom(type)) {
+            return (T) new Integer(metadata.get(field).getAsInt());
+        }
+        if (String.class.isAssignableFrom(type)) {
+            return (T) new String(metadata.get(field).getAsString());
+        }
+        if (BigDecimal.class.isAssignableFrom(type)) {
+            return (T) metadata.get(field).getAsBigDecimal();
+        }
+
+        throw new UnavailableException();
     }
 
     /**
@@ -16,7 +69,7 @@ public class Space extends Space_Base {
      * @return
      * @throws UnavailableException
      */
-    Information getInformation() throws UnavailableException {
+    protected Information getInformation() throws UnavailableException {
         return getInformation(new DateTime());
     }
 
@@ -28,7 +81,7 @@ public class Space extends Space_Base {
      * @throws UnavailableException
      */
 
-    Information getInformation(DateTime when) throws UnavailableException {
+    protected Information getInformation(DateTime when) throws UnavailableException {
         return getInformation(when, new DateTime());
     }
 
@@ -40,7 +93,7 @@ public class Space extends Space_Base {
      * @return
      */
 
-    Information getInformation(final DateTime when, final DateTime creationDate) throws UnavailableException {
+    protected Information getInformation(final DateTime when, final DateTime creationDate) throws UnavailableException {
         Information current = getCurrent();
         while (current != null) {
             if (current.contains(when)) {
@@ -49,14 +102,6 @@ public class Space extends Space_Base {
             current = current.getPrevious();
         }
         throw new UnavailableException();
-    }
-
-    public Integer getCapacity() throws UnavailableException {
-        return getCapacity(new DateTime());
-    }
-
-    public Integer getCapacity(DateTime when) throws UnavailableException {
-        return getInformation(when).getAllocatableCapacity();
     }
 
     protected void add(Information information) {
@@ -159,4 +204,5 @@ public class Space extends Space_Base {
         addHistory(head);
         setCurrent(newHead);
     }
+
 }

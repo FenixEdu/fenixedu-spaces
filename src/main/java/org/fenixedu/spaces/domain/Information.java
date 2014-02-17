@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
+import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
@@ -35,6 +36,18 @@ public class Information extends Information_Base {
         private DateTime validUntil;
         private SpaceClassification classification;
 
+        public Builder(InformationBean informationBean) {
+            this.allocatableCapacity = informationBean.getAllocatableCapacity();
+            this.blueprintNumber = informationBean.getBlueprintNumber();
+            this.area = informationBean.getArea();
+            this.name = informationBean.getName();
+            this.identification = informationBean.getIdentification();
+            this.metadata = informationBean.getRawMetadata();
+            this.validFrom = informationBean.getRawValidFrom();
+            this.validUntil = informationBean.getRawValidUntil();
+            this.classification = informationBean.getRawClassification();
+        }
+
         Builder(Information information) {
             this.allocatableCapacity = information.getAllocatableCapacity();
             this.blueprintNumber = information.getBlueprintNumber();
@@ -46,7 +59,7 @@ public class Information extends Information_Base {
             this.validUntil = information.getValidUntil();
         }
 
-        Builder() {
+        public Builder() {
             this.allocatableCapacity = null;
             this.blueprintNumber = null;
             this.area = null;
@@ -108,6 +121,10 @@ public class Information extends Information_Base {
                     metadata, classification);
         }
 
+        public InformationBean bean() {
+            return new InformationBean(allocatableCapacity, blueprintNumber, area, name, identification, validFrom, validUntil,
+                    metadata, classification);
+        }
     }
 
     public static Builder builder() {
@@ -116,6 +133,10 @@ public class Information extends Information_Base {
 
     public static Builder builder(Information information) {
         return new Builder(information);
+    }
+
+    public static Builder builder(InformationBean bean) {
+        return new Builder(bean);
     }
 
     protected Information() {

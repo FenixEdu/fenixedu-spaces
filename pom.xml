@@ -15,16 +15,30 @@
 
 	<name>FenixEduSpaces</name>
 
+	<properties>
+		<version.bennu>2.2.0-SNAPSHOT</version.bennu>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.fenixedu</groupId>
+			<artifactId>bennu-spring</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
 			<artifactId>bennu-core</artifactId>
-			<version>2.1.2</version>
+			<version>${version.bennu}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
+			<artifactId>bennu-scheduler</artifactId>
+			<version>${version.bennu}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fenixedu</groupId>
 			<artifactId>bennu-io</artifactId>
-			<version>2.1.2</version>
+			<version>${version.bennu}</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -32,9 +46,9 @@
 			<version>2.3</version>
 		</dependency>
 		<dependency>
-		    <groupId>pt.ist</groupId>
-		    <artifactId>fenix-legacy-tools</artifactId>
-		    <version>1.0.0</version>
+			<groupId>pt.ist</groupId>
+			<artifactId>fenix-legacy-tools</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -45,6 +59,11 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
 		</dependency>
 	</dependencies>
 

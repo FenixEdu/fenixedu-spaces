@@ -21,8 +21,15 @@ class Information {
 class SpaceClassification {
 	String code;
 	LocalizedString name;
+	JsonElement metadataSpec;
 }
 
+relation BennuSpaceClassification {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
+	SpaceClassification playsRole rootClassification {
+		multiplicity *;
+	}
+}
 
 relation ContainedSpaceClassification {
 	SpaceClassification playsRole parent;
