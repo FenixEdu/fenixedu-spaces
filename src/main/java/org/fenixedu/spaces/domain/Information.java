@@ -35,6 +35,7 @@ public class Information extends Information_Base {
         private DateTime validFrom;
         private DateTime validUntil;
         private SpaceClassification classification;
+        private String externalId;
 
         public Builder(InformationBean informationBean) {
             this.allocatableCapacity = informationBean.getAllocatableCapacity();
@@ -57,6 +58,8 @@ public class Information extends Information_Base {
             this.metadata = information.getMetadata();
             this.validFrom = information.getValidFrom();
             this.validUntil = information.getValidUntil();
+            this.classification = information.getClassification();
+            this.externalId = information.getExternalId();
         }
 
         public Builder() {
@@ -68,6 +71,7 @@ public class Information extends Information_Base {
             this.metadata = null;
             this.validFrom = null;
             this.validUntil = null;
+            this.classification = null;
         }
 
         public Builder allocatableCapacity(Integer allocatableCapacity) {
@@ -122,8 +126,8 @@ public class Information extends Information_Base {
         }
 
         public InformationBean bean() {
-            return new InformationBean(allocatableCapacity, blueprintNumber, area, name, identification, validFrom, validUntil,
-                    metadata, classification);
+            return new InformationBean(externalId, allocatableCapacity, blueprintNumber, area, name, identification, validFrom,
+                    validUntil, metadata, classification);
         }
     }
 
@@ -182,6 +186,7 @@ public class Information extends Information_Base {
         clone.setValidFrom(getValidFrom());
         clone.setValidUntil(getValidUntil());
         clone.setMetadata(getMetadata());
+        clone.setClassification(getClassification());
         clone.setPrevious(null);
         return clone;
     }

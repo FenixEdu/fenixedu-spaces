@@ -27,6 +27,7 @@ public class InformationBean {
     private DateTime validUntil;
     private SpaceClassification classification;
     private Map<String, String> metadata;
+    private String externalId;
 
     private static String FORMAT = "yyyy-MM-dd";
 
@@ -38,10 +39,11 @@ public class InformationBean {
         this.metadata = new HashMap<>();
     }
 
-    public InformationBean(Integer allocatableCapacity, String blueprintNumber, BigDecimal area, String name,
+    public InformationBean(String externalId, Integer allocatableCapacity, String blueprintNumber, BigDecimal area, String name,
             String identification, DateTime validFrom, DateTime validUntil, JsonElement metadata,
             SpaceClassification classification) {
         super();
+        this.externalId = externalId;
         this.allocatableCapacity = allocatableCapacity;
         this.blueprintNumber = blueprintNumber;
         this.area = area;
@@ -51,6 +53,14 @@ public class InformationBean {
         this.validUntil = validUntil;
         this.classification = classification;
         setMetadata(metadata);
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public Integer getAllocatableCapacity() {

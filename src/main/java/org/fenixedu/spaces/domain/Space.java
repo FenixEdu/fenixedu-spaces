@@ -1,12 +1,18 @@
 package org.fenixedu.spaces.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
+import pt.ist.fenixframework.Atomic;
+import pt.ist.fenixframework.Atomic.TxMode;
+
+import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 
 public class Space extends Space_Base {
@@ -30,6 +36,16 @@ public class Space extends Space_Base {
 
     public void bean(InformationBean informationBean) {
         add(Information.builder(informationBean).build());
+    }
+
+    public List<InformationBean> timeline() {
+        List<InformationBean> timeline = new ArrayList<>();
+        Information current = getCurrent();
+        while (current != null) {
+            timeline.add(Information.builder(current).bean());
+            current = current.getPrevious();
+        }
+        return Lists.reverse(timeline);
     }
 
     public String getName() throws UnavailableException {
@@ -205,4 +221,9 @@ public class Space extends Space_Base {
         setCurrent(newHead);
     }
 
+    @Atomic(mode = TxMode.WRITE)
+    public void delete() {
+        setBennu(null);
+        setDeletedBennu(Bennu.getInstance());
+    }
 }

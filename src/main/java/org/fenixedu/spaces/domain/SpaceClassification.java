@@ -67,6 +67,9 @@ public class SpaceClassification extends SpaceClassification_Base {
         if (metadataSpec == null && getParent() != null) {
             metadataSpec = getParent().getMetadataSpec();
         }
+        if (metadataSpec == null) {
+            return new JsonArray();
+        }
         return metadataSpec;
     }
 

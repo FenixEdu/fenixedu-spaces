@@ -75,8 +75,14 @@ relation SpaceInformationHistory {
 
 relation BennuSpaces {
 	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
-	Space playsRole rootSpace {
+	Space playsRole space {
 		multiplicity *;
 	}
 }
 
+relation BennuDeletedSpaces {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole deletedBennu;
+	Space playsRole deletedSpace {
+		multiplicity *;
+	}
+}
