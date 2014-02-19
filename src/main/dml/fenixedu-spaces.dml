@@ -17,6 +17,9 @@ class Information {
 	DateTime created;
 }
 
+class BlueprintFile extends .org.fenixedu.bennu.io.domain.GenericFile {
+
+}
 
 class SpaceClassification {
 	String code;
@@ -36,6 +39,11 @@ relation ContainedSpaceClassification {
 	SpaceClassification playsRole children {
 		multiplicity *;
 	}
+}
+
+relation InformationBlueprint {
+	BlueprintFile playsRole blueprint;
+	Information playsRole information;
 }
 
 relation InformationClassification {

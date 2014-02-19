@@ -1,16 +1,20 @@
 package org.fenixedu.spaces.ui;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.fenixedu.spaces.domain.BlueprintFile;
 import org.fenixedu.spaces.domain.MetadataSpec;
 import org.fenixedu.spaces.domain.SpaceClassification;
 import org.joda.time.DateTime;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import pt.ist.fenixframework.FenixFramework;
 
-import com.google.common.base.Strings;
+import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,13 +27,15 @@ public class InformationBean {
     private BigDecimal area;
     private String name;
     private String identification;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private DateTime validFrom;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private DateTime validUntil;
     private SpaceClassification classification;
     private Map<String, String> metadata;
     private String externalId;
-
-    private static String FORMAT = "yyyy-MM-dd";
+    private BlueprintFile blueprint;
+    private MultipartFile blueprintMultipartFile;
 
     private static Gson gson = new Gson();
 
@@ -41,7 +47,7 @@ public class InformationBean {
 
     public InformationBean(String externalId, Integer allocatableCapacity, String blueprintNumber, BigDecimal area, String name,
             String identification, DateTime validFrom, DateTime validUntil, JsonElement metadata,
-            SpaceClassification classification) {
+            SpaceClassification classification, BlueprintFile blueprint) {
         super();
         this.externalId = externalId;
         this.allocatableCapacity = allocatableCapacity;
@@ -52,6 +58,7 @@ public class InformationBean {
         this.validFrom = validFrom;
         this.validUntil = validUntil;
         this.classification = classification;
+        this.blueprint = blueprint;
         setMetadata(metadata);
     }
 
@@ -103,28 +110,20 @@ public class InformationBean {
         this.identification = identification;
     }
 
-    public String getValidFrom() {
-        return validFrom == null ? null : validFrom.toString(FORMAT);
-    }
-
-    public DateTime getRawValidFrom() {
+    public DateTime getValidFrom() {
         return validFrom;
     }
 
-    public void setValidFrom(String validFrom) {
-        this.validFrom = Strings.isNullOrEmpty(validFrom) ? null : new DateTime(validFrom);
+    public void setValidFrom(DateTime validFrom) {
+        this.validFrom = validFrom;
     }
 
-    public String getValidUntil() {
-        return validUntil == null ? null : validUntil.toString(FORMAT);
-    }
-
-    public DateTime getRawValidUntil() {
+    public DateTime getValidUntil() {
         return validUntil;
     }
 
-    public void setValidUntil(String validUntil) {
-        this.validUntil = Strings.isNullOrEmpty(validUntil) ? null : new DateTime(validUntil);
+    public void setValidUntil(DateTime validUntil) {
+        this.validUntil = validUntil;
     }
 
     public String getClassification() {
@@ -186,6 +185,30 @@ public class InformationBean {
             }
         }
         return json;
+    }
+
+    public MultipartFile getBlueprintMultipartFile() {
+        return blueprintMultipartFile;
+    }
+
+    public void setBlueprintMultipartFile(MultipartFile blueprintMultipartFile) {
+        this.blueprintMultipartFile = blueprintMultipartFile;
+    }
+
+    public byte[] getBlueprintContent() {
+        try {
+            return getBlueprintMultipartFile().getBytes();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public String getBlueprintBase64() {
+        return BaseEncoding.base64Url().encode(getRawBlueprintContent());
+    }
+
+    private byte[] getRawBlueprintContent() {
+        return blueprint == null ? new byte[0] : blueprint.getContent();
     }
 
 }

@@ -36,7 +36,10 @@ public class Information extends Information_Base {
         private DateTime validUntil;
         private SpaceClassification classification;
         private String externalId;
+        private BlueprintFile blueprint;
+        private byte[] blueprintContent;
 
+        //create information from the info in the bean
         public Builder(InformationBean informationBean) {
             this.allocatableCapacity = informationBean.getAllocatableCapacity();
             this.blueprintNumber = informationBean.getBlueprintNumber();
@@ -44,11 +47,13 @@ public class Information extends Information_Base {
             this.name = informationBean.getName();
             this.identification = informationBean.getIdentification();
             this.metadata = informationBean.getRawMetadata();
-            this.validFrom = informationBean.getRawValidFrom();
-            this.validUntil = informationBean.getRawValidUntil();
+            this.validFrom = informationBean.getValidFrom();
+            this.validUntil = informationBean.getValidUntil();
             this.classification = informationBean.getRawClassification();
+            this.blueprintContent = informationBean.getBlueprintContent();
         }
 
+        //create information based on existing information
         Builder(Information information) {
             this.allocatableCapacity = information.getAllocatableCapacity();
             this.blueprintNumber = information.getBlueprintNumber();
@@ -60,6 +65,7 @@ public class Information extends Information_Base {
             this.validUntil = information.getValidUntil();
             this.classification = information.getClassification();
             this.externalId = information.getExternalId();
+            this.blueprint = information.getBlueprint();
         }
 
         public Builder() {
@@ -122,12 +128,12 @@ public class Information extends Information_Base {
         @Atomic(mode = TxMode.WRITE)
         public Information build() {
             return new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
-                    metadata, classification);
+                    metadata, classification, blueprintContent);
         }
 
         public InformationBean bean() {
             return new InformationBean(externalId, allocatableCapacity, blueprintNumber, area, name, identification, validFrom,
-                    validUntil, metadata, classification);
+                    validUntil, metadata, classification, blueprint);
         }
     }
 
@@ -154,18 +160,10 @@ public class Information extends Information_Base {
     }
 
     protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
-            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification) {
-        init(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification);
-    }
-
-    public void init(DateTime validFrom, DateTime validUntil) {
+            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
+            byte[] blueprint) {
         setValidFrom(validFrom);
         setValidUntil(validUntil);
-    }
-
-    private Information init(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
-            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification) {
-        init(validFrom, validUntil);
         setAllocatableCapacity(allocatableCapacity);
         setBlueprintNumber(blueprintNumber);
         setArea(area);
@@ -173,7 +171,7 @@ public class Information extends Information_Base {
         setIdentification(identification);
         setClassification(classification);
         setMetadata(metadata);
-        return this;
+        setBlueprint(new BlueprintFile(name, blueprint));
     }
 
     protected Information copy() {
@@ -188,6 +186,7 @@ public class Information extends Information_Base {
         clone.setMetadata(getMetadata());
         clone.setClassification(getClassification());
         clone.setPrevious(null);
+        clone.setBlueprint(getBlueprint());
         return clone;
     }
 

@@ -55,7 +55,7 @@
 </div>
 
 <spring:url var="formActionUrl" value="${action}"/>
-<form:form modelAttribute="information" role="form" method="post" action="${formActionUrl}">
+<form:form modelAttribute="information" role="form" method="post" action="${formActionUrl}" enctype="multipart/form-data">
   <div class="form-group">
     <form:label for="validFromInput" path="validFrom" >Valid From</form:label>
     <form:input type="date" class="form-control" id="validFromInput" path="validFrom" placeholder="Valid From" required="required"/>
@@ -92,6 +92,10 @@
   <div class="form-group">
     <form:label for="allocatableCapacityInput" path="allocatableCapacity">Allocatable Capacity</form:label>
     <form:input type="number" class="form-control" id="allocatableCapacityInput" path="allocatableCapacity" min="0" placeholder="Allocatable Capacity"/>
+  </div>
+  <div class="form-group">
+    <form:label for="blueprintFileInput" path="blueprintMultipartFile">Blueprint Number</form:label>
+    <form:input type="file" class="form-control" id="blueprintFileInput" path="blueprintMultipartFile"/>
   </div>
   <div class="form-group">
     <form:label for="blueprintNumberInput" path="blueprintNumber">Blueprint Number</form:label>

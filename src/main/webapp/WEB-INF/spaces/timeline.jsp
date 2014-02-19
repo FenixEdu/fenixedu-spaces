@@ -20,7 +20,7 @@
 <!-- Nav tabs -->
 <ul class="nav nav-tabs">
   <c:forEach var="information" items="${timeline}">
-  	<li><a href="#${information.externalId}" data-toggle="tab">${information.validFrom} - ${information.validUntil}</a></li>
+  	<li><a href="#${information.externalId}" data-toggle="tab"><spring:eval expression="information.validFrom"/> - <spring:eval expression="information.validUntil"/></a></li>
   </c:forEach>
 </ul>
 
@@ -30,11 +30,11 @@
 			<table class="table">
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.validFrom" text="Valid From"/></th>
-					<td>${information.validFrom}</td>
+					<td><spring:eval expression="information.validFrom"/></td>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.validUntil" text="Valid Until"/></th>
-					<td>${information.validUntil}</td>
+					<td><spring:eval expression="information.validUntil"/></td>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.name" text="Name"/></th>
@@ -55,6 +55,11 @@
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.blueprintNumber" text="Blueprint Number"/></th>
 					<td>${information.blueprintNumber}</td>
+				</tr>
+				<tr>
+					<th scope="row"><spring:message code="label.spaces.blueprint" text="Blueprint"/></th>
+					<c:url value="/spaces/blueprint/${spaceId}?when=${information.validFrom.toString('yyyy-MM-dd')}" var="blueprintUrl"/>
+					<td><img src="${blueprintUrl}"/>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.area" text="Area"/></th>

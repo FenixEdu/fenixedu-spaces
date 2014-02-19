@@ -12,6 +12,8 @@ import org.joda.time.Interval;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 
@@ -60,6 +62,9 @@ public class Space extends Space_Base {
     public <T extends Object> T getMetadata(String field) throws UnavailableException {
         Information information = getInformation();
         final MetadataSpec metadataSpec = information.getClassification().getMetadataSpec(field);
+        if (metadataSpec == null) {
+            throw new UnavailableException();
+        }
         final Class<?> type = metadataSpec.getType();
         final JsonObject metadata = information.getMetadata().getAsJsonObject();
 
@@ -225,5 +230,27 @@ public class Space extends Space_Base {
     public void delete() {
         setBennu(null);
         setDeletedBennu(Bennu.getInstance());
+    }
+
+    public Space readChildByBlueprintNumber(final String blueprintNumber, final DateTime when) {
+        return FluentIterable.from(getChildrenSet()).firstMatch(new Predicate<Space>() {
+
+            @Override
+            public boolean apply(Space input) {
+                try {
+                    return input.getInformation(when).getBlueprintNumber().equals(blueprintNumber);
+                } catch (UnavailableException e) {
+                    return false;
+                }
+            }
+        }).orNull();
+    }
+
+    public String getBlueprintNumber() throws UnavailableException {
+        return getInformation().getBlueprintNumber();
+    }
+
+    public BlueprintFile getBlueprintFile() throws UnavailableException {
+        return getInformation().getBlueprint();
     }
 }

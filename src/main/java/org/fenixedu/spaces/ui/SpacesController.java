@@ -1,10 +1,19 @@
 package org.fenixedu.spaces.ui;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
 import org.fenixedu.spaces.domain.UnavailableException;
+import org.fenixedu.spaces.services.SpaceBlueprintsDWGProcessor;
+import org.joda.time.DateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -91,5 +101,26 @@ public class SpacesController {
         final Space space = FenixFramework.getDomainObject(spaceId);
         space.delete();
         return "ok";
+    }
+
+    @RequestMapping(value = "/blueprint/{spaceId}", method = RequestMethod.GET)
+    public void blueprint(@PathVariable("spaceId") String spaceId, @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(
+            value = "when", required = false) DateTime when,
+            @RequestParam(value = "scale", defaultValue = "50") BigDecimal scale, HttpServletResponse response)
+            throws IOException, UnavailableException {
+        if (when == null) {
+            when = new DateTime();
+        }
+        final Space space = FenixFramework.getDomainObject(spaceId);
+        Boolean isSuroundingSpaceBlueprint = false;
+        Boolean isToViewOriginalSpaceBlueprint = false;
+        Boolean viewBlueprintNumbers = true;
+        Boolean isToViewIdentifications = true;
+        Boolean isToViewDoorNumbers = false;
+        BigDecimal scalePercentage = scale;
+        try (OutputStream outputStream = response.getOutputStream()) {
+            SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isSuroundingSpaceBlueprint, isToViewOriginalSpaceBlueprint,
+                    viewBlueprintNumbers, isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
+        }
     }
 }

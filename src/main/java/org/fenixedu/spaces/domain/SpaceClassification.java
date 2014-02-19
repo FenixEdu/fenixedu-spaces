@@ -26,7 +26,7 @@ public class SpaceClassification extends SpaceClassification_Base {
     }
 
     public SpaceClassification(String code, LocalizedString name) {
-        this(code, name, null, null);
+        this(code, name, null, new JsonArray());
     }
 
     private void validateChildCode(String code) {
@@ -64,7 +64,7 @@ public class SpaceClassification extends SpaceClassification_Base {
     @Override
     public JsonElement getMetadataSpec() {
         JsonElement metadataSpec = super.getMetadataSpec();
-        if (metadataSpec == null && getParent() != null) {
+        if ((metadataSpec == null || metadataSpec.equals(new JsonArray())) && getParent() != null) {
             metadataSpec = getParent().getMetadataSpec();
         }
         if (metadataSpec == null) {
