@@ -280,7 +280,7 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
             Boolean isToViewDoorNumbers, BigDecimal scalePercentage, final OutputStream writer) throws IOException,
             UnavailableException {
 
-        final BlueprintFile blueprintFile = space.getBlueprintFile();
+        final BlueprintFile blueprintFile = space.getBlueprintFile(when);
         final byte[] blueprintBytes = blueprintFile.getContent();
         final InputStream inputStream = new ByteArrayInputStream(blueprintBytes);
 

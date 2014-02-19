@@ -246,11 +246,11 @@ public class Space extends Space_Base {
         }).orNull();
     }
 
-    public String getBlueprintNumber() throws UnavailableException {
+    public String getBlueprintNumber(DateTime when) throws UnavailableException {
         return getInformation().getBlueprintNumber();
     }
 
-    public BlueprintFile getBlueprintFile() throws UnavailableException {
-        return getInformation().getBlueprint();
+    public BlueprintFile getBlueprintFile(DateTime when) throws UnavailableException {
+        return getInformation(when).getBlueprint();
     }
 }
