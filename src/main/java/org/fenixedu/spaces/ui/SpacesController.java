@@ -104,8 +104,8 @@ public class SpacesController {
     }
 
     @RequestMapping(value = "/blueprint/{spaceId}", method = RequestMethod.GET)
-    public void blueprint(@PathVariable("spaceId") String spaceId, @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(
-            value = "when", required = false) DateTime when,
+    public void blueprint(@PathVariable("spaceId") String spaceId,
+            @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(value = "when", required = false) DateTime when,
             @RequestParam(value = "scale", defaultValue = "50") BigDecimal scale, HttpServletResponse response)
             throws IOException, UnavailableException {
         if (when == null) {

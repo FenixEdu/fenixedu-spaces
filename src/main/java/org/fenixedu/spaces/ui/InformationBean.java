@@ -22,14 +22,16 @@ import com.google.gson.JsonPrimitive;
 
 public class InformationBean {
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+
     private Integer allocatableCapacity;
     private String blueprintNumber;
     private BigDecimal area;
     private String name;
     private String identification;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = DATE_FORMAT)
     private DateTime validFrom;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = DATE_FORMAT)
     private DateTime validUntil;
     private SpaceClassification classification;
     private Map<String, String> metadata;
