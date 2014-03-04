@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.spaces.domain.BlueprintFile;
 import org.fenixedu.spaces.domain.MetadataSpec;
 import org.fenixedu.spaces.domain.SpaceClassification;
@@ -12,9 +14,6 @@ import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import pt.ist.fenixframework.FenixFramework;
-
-import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,6 +37,7 @@ public class InformationBean {
     private String externalId;
     private BlueprintFile blueprint;
     private MultipartFile blueprintMultipartFile;
+    private User user;
 
     private static Gson gson = new Gson();
 
@@ -45,11 +45,12 @@ public class InformationBean {
         super();
         this.validFrom = new DateTime();
         this.metadata = new HashMap<>();
+        this.user = Authenticate.getUser() != null ? Authenticate.getUser() : null;
     }
 
     public InformationBean(String externalId, Integer allocatableCapacity, String blueprintNumber, BigDecimal area, String name,
             String identification, DateTime validFrom, DateTime validUntil, JsonElement metadata,
-            SpaceClassification classification, BlueprintFile blueprint) {
+            SpaceClassification classification, BlueprintFile blueprint, User user) {
         super();
         this.externalId = externalId;
         this.allocatableCapacity = allocatableCapacity;
@@ -61,6 +62,7 @@ public class InformationBean {
         this.validUntil = validUntil;
         this.classification = classification;
         this.blueprint = blueprint;
+        this.user = user;
         setMetadata(metadata);
     }
 
@@ -128,16 +130,8 @@ public class InformationBean {
         this.validUntil = validUntil;
     }
 
-    public String getClassification() {
-        return classification != null ? classification.getExternalId() : null;
-    }
-
-    public SpaceClassification getRawClassification() {
+    public SpaceClassification getClassification() {
         return classification;
-    }
-
-    public void setClassification(String classification) {
-        this.classification = FenixFramework.getDomainObject(classification);
     }
 
     public void setClassification(SpaceClassification classification) {
@@ -155,6 +149,14 @@ public class InformationBean {
 
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     private static JsonElement convert(Class<?> type, String value) {
@@ -199,18 +201,13 @@ public class InformationBean {
 
     public byte[] getBlueprintContent() {
         try {
+            if (getBlueprintMultipartFile() == null) {
+                return null;
+            }
             return getBlueprintMultipartFile().getBytes();
         } catch (IOException e) {
             return null;
         }
-    }
-
-    public String getBlueprintBase64() {
-        return BaseEncoding.base64Url().encode(getRawBlueprintContent());
-    }
-
-    private byte[] getRawBlueprintContent() {
-        return blueprint == null ? new byte[0] : blueprint.getContent();
     }
 
 }

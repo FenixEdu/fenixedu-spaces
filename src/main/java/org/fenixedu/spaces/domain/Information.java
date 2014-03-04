@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -38,6 +39,7 @@ public class Information extends Information_Base {
         private String externalId;
         private BlueprintFile blueprint;
         private byte[] blueprintContent;
+        private User user;
 
         //create information from the info in the bean
         public Builder(InformationBean informationBean) {
@@ -49,8 +51,9 @@ public class Information extends Information_Base {
             this.metadata = informationBean.getRawMetadata();
             this.validFrom = informationBean.getValidFrom();
             this.validUntil = informationBean.getValidUntil();
-            this.classification = informationBean.getRawClassification();
+            this.classification = informationBean.getClassification();
             this.blueprintContent = informationBean.getBlueprintContent();
+            this.user = informationBean.getUser();
         }
 
         //create information based on existing information
@@ -66,18 +69,10 @@ public class Information extends Information_Base {
             this.classification = information.getClassification();
             this.externalId = information.getExternalId();
             this.blueprint = information.getBlueprint();
+            this.user = information.getUser();
         }
 
         public Builder() {
-            this.allocatableCapacity = null;
-            this.blueprintNumber = null;
-            this.area = null;
-            this.name = null;
-            this.identification = null;
-            this.metadata = null;
-            this.validFrom = null;
-            this.validUntil = null;
-            this.classification = null;
         }
 
         public Builder allocatableCapacity(Integer allocatableCapacity) {
@@ -125,15 +120,20 @@ public class Information extends Information_Base {
             return this;
         }
 
+        public Builder user(User user) {
+            this.user = user;
+            return this;
+        }
+
         @Atomic(mode = TxMode.WRITE)
         public Information build() {
             return new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
-                    metadata, classification, blueprintContent);
+                    metadata, classification, blueprintContent, user);
         }
 
         public InformationBean bean() {
             return new InformationBean(externalId, allocatableCapacity, blueprintNumber, area, name, identification, validFrom,
-                    validUntil, metadata, classification, blueprint);
+                    validUntil, metadata, classification, blueprint, user);
         }
     }
 
@@ -161,7 +161,7 @@ public class Information extends Information_Base {
 
     protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
             BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
-            byte[] blueprint) {
+            byte[] blueprint, User user) {
         setValidFrom(validFrom);
         setValidUntil(validUntil);
         setAllocatableCapacity(allocatableCapacity);
@@ -171,7 +171,10 @@ public class Information extends Information_Base {
         setIdentification(identification);
         setClassification(classification);
         setMetadata(metadata);
-        setBlueprint(new BlueprintFile(name, blueprint));
+        if (blueprint != null) {
+            setBlueprint(new BlueprintFile(name, blueprint));
+        }
+        setUser(user);
     }
 
     protected Information copy() {

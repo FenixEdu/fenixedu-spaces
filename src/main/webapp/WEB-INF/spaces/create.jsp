@@ -54,6 +54,8 @@
   <h1><fmt:message key="title.space.management"/><small><fmt:message key="title.create.space"/></small></h1>
 </div>
 
+<%@include file="fragments/parent.jsp" %>
+
 <spring:url var="formActionUrl" value="${action}"/>
 <form:form modelAttribute="information" role="form" method="post" action="${formActionUrl}" enctype="multipart/form-data">
   <div class="form-group">

@@ -46,7 +46,7 @@
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.classification" text="Classification"/></th>
-					<td>${information.rawClassification.name.content}</td>
+					<td>${information.classification.name.content}</td>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.allocatableCapacity" text="Allocatable Capacity"/></th>
@@ -58,7 +58,7 @@
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.blueprint" text="Blueprint"/></th>
-					<c:url value="/spaces/blueprint/${spaceId}?when=${information.validFrom.toString('yyyy-MM-dd')}" var="blueprintUrl"/>
+					<c:url value="/spaces/blueprint/${space.externalId}?when=${information.validFrom.toString('yyyy-MM-dd')}" var="blueprintUrl"/>
 					<td><img src="${blueprintUrl}"/>
 				</tr>
 				<tr>
@@ -67,7 +67,7 @@
 				</tr>
 				<c:forEach var="metadata" items="${information.metadata}">
 					<c:set var="field" value="${metadata.key}"/>
-					<c:set var="metadataSpec" value="${information.rawClassification.getMetadataSpec(field)}"/>
+					<c:set var="metadataSpec" value="${information.classification.getMetadataSpec(field)}"/>
 					<c:set var="value" value="${metadata.value}"/>
 					<tr>
 						<th scope="row">${metadataSpec.description.content}</th>

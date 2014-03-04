@@ -29,6 +29,15 @@ public class SpaceClassification extends SpaceClassification_Base {
         this(code, name, null, new JsonArray());
     }
 
+    public static SpaceClassification get(String code) {
+        for (SpaceClassification spaceClassification : all()) {
+            if (spaceClassification.getCode().equals(code)) {
+                return spaceClassification;
+            }
+        }
+        return null;
+    }
+
     private void validateChildCode(String code) {
         if (getCode().equals(code)) {
             throw new SpaceException("error.space.classfication.must.be.unique");

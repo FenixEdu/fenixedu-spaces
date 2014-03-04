@@ -3,6 +3,7 @@ package org.fenixedu.spaces.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.spaces.ui.InformationBean;
@@ -36,6 +37,7 @@ public class Space extends Space_Base {
         return Information.builder(getInformation()).bean();
     }
 
+    @Atomic(mode = TxMode.WRITE)
     public void bean(InformationBean informationBean) {
         add(Information.builder(informationBean).build());
     }
@@ -126,10 +128,15 @@ public class Space extends Space_Base {
     }
 
     protected void add(Information information) {
+        if (information == null) {
+            return;
+        }
+
         if (getCurrent() == null) {
             setCurrent(information);
             return;
         }
+
         final DateTime newStart = information.getValidFrom();
         final DateTime newEnd = information.getValidUntil();
 
@@ -253,4 +260,34 @@ public class Space extends Space_Base {
     public BlueprintFile getBlueprintFile(DateTime when) throws UnavailableException {
         return getInformation(when).getBlueprint();
     }
+
+    public List<Space> getPath() {
+        List<Space> path = new ArrayList<>();
+        Space parent = this;
+        while (parent != null) {
+            path.add(0, parent);
+            parent = parent.getParent();
+        }
+        return path;
+    }
+
+    public String getName(DateTime when) throws UnavailableException {
+        return getInformation(when).getName();
+    }
+
+    public Set<Space> getValidChildrenSet() {
+        return FluentIterable.from(getChildrenSet()).filter(new Predicate<Space>() {
+
+            @Override
+            public boolean apply(Space input) {
+                try {
+                    input.getInformation();
+                    return true;
+                } catch (UnavailableException e) {
+                    return false;
+                }
+            }
+        }).toSet();
+    }
+
 }

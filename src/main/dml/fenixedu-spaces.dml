@@ -27,6 +27,11 @@ class SpaceClassification {
 	JsonElement metadataSpec;
 }
 
+relation InformationUser {
+	.org.fenixedu.bennu.core.domain.User playsRole user;
+	Information playsRole information;
+}
+
 relation BennuSpaceClassification {
 	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
 	SpaceClassification playsRole rootClassification {
