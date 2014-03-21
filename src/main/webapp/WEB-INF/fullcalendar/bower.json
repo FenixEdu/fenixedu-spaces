@@ -1,0 +1,26 @@
+{
+  "name": "fenixspaces",
+  "version": "0.0.1",
+  "authors": [
+    "sergiofbsilva <sergiofbsilva@gmail.com>"
+  ],
+  "description": "fenix spaces calendars",
+  "license": "LGPL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.1.1",
+    "datetimepicker": "~2.1.9",
+    "fullcalendar": "~1.6.4",
+    "jquery-ui": "~1.10.4",
+    "jt.timepicker": "git@github.com:jonthornton/jquery-timepicker.git#~1.3.5",
+    "momentjs": "~2.5.1",
+    "sprintf": "*"
+  }
+}
