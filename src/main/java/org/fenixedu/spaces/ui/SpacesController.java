@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.spring.portal.SpringApplication;
+import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
@@ -17,7 +19,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,7 +33,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
-@Controller
+@SpringApplication(group = "anyone", path = "spaces", title = "spaces-manager")
+@SpringFunctionality(app = SpacesController.class, title = "spaces-manager")
 @RequestMapping("/spaces")
 public class SpacesController {
 
@@ -52,7 +54,7 @@ public class SpacesController {
         } else {
             spaces = space.getValidChildrenSet();
         }
-        return new ModelAndView("home", "spaces", spaces);
+        return new ModelAndView("spaces/home", "spaces", spaces);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
