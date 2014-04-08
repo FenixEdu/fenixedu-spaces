@@ -1,21 +1,33 @@
-package org.fenixedu.spaces.domain;
+package org.fenixedu.spaces.domain.occupation.config;
 
 import java.util.List;
 
 import org.joda.time.Interval;
 
-import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
-public class OccupationInterval extends OccupationSpec {
-    final Interval interval;
+public abstract class OccupationConfig {
 
-    public OccupationInterval(Interval interval) {
-        this.interval = interval;
+    private static final Gson gson = new Gson();
+
+    public abstract List<Interval> getIntervals();
+
+    public static OccupationConfig internalize(JsonElement json) {
+        final JsonObject jsonObject = json.getAsJsonObject();
+        final String type = jsonObject.get("type").getAsString();
+        try {
+            return (OccupationConfig) gson.fromJson(json, Class.forName(type));
+        } catch (JsonSyntaxException | ClassNotFoundException e) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    @Override
-    public List<Interval> getIntervals() {
-        return ImmutableList.of(interval);
+    public JsonElement externalize() {
+        final JsonElement jsonTree = gson.toJsonTree(this, this.getClass());
+        jsonTree.getAsJsonObject().addProperty("type", this.getClass().getName());
+        return jsonTree;
     }
-
 }
