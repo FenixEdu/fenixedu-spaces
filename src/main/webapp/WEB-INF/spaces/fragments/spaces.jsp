@@ -28,10 +28,10 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th>Type</th>
-					<th>Name</th>
-					<th>Number of Sub Spaces</th>
-					<th>Operations</th>
+					<th><spring:message code="label.spaces.type" text="Type"/></th>
+					<th><spring:message code="label.spaces.name" text="Name"/></th>
+					<th><spring:message code="label.spaces.number.sub.spaces" text="Number of Sub Spaces"/></th>
+					<th><spring:message code="label.spaces.operations" text="Operations"/></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -68,14 +68,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Delete Parmanently</h4>
+        <h4 class="modal-title"><spring:message code="label.spaces.delete.title" text="Delete Permanently"/></h4>
       </div>
       <div class="modal-body">
-        <p>Are you sure about this ?</p>
+        <p><spring:message code="label.spaces.delete.message" text="Are you sure you want to delete this ?"/></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirm">Delete</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.cancel" text="Cancel"/></button>
+        <button type="button" class="btn btn-danger" id="confirm"><spring:message code="label.delete" text="Delete"/></button>
       </div>
     </div>
   </div>

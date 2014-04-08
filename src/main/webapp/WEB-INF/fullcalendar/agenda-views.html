@@ -26,17 +26,35 @@
 				center: 'title',
 				right: 'agendaWeek,month,year'
 			},
+			monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho',
+ 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+ 			monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul',
+ 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+ 			dayNames: ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado'],
+ 			dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+ 			buttonText: {
+    			today:    'Hoje',
+    			month:    'Mês',
+    			week:     'Semana',
+    			day:      'Ano'
+ 			},
+ 			timeFormat: { month: 'H:mm{ - H:mm}', '' : "H:mm" } ,
+ 			columnFormat : {
+    					month: 'ddd',    // Mon
+    					week: 'ddd d/M', // Mon 9/7
+    					day: 'dddd d/M'  // Monday 9/7
+			},
 			minTime : "08:00",
 			maxTime : "24:00",
+			axisFormat: 'H:mm',
 			allDaySlot : false,
 			editable: true,
 			defaultView: "agendaWeek",
 			firstDay: 1,
 			editable: false,
-			/*hiddenDays: [0],*/
 			eventClick : function(event, jsEvent, view) {
 				editEvent(event)
-			}
+			},
 		};
 
 		var occupationEvents = {}
@@ -57,17 +75,6 @@
 			$("#myModal").data("event", calendarEvent.id);
 			$("#delete").show();
 			$("#myModal").modal("show");
-		}
-
-		function addEvent(interval, occupation) {
-			var occupationEvent = {
-				id : occupation.id,
-				allDay: false,
-				title: occupation.title,
-				start: interval.start.format("X"),
-				end: interval.end.format("X")
-			};
-			$('#calendar').fullCalendar('renderEvent', occupationEvent, true);
 		}
 
 		function toggleCreator(state) {
@@ -316,7 +323,24 @@
 				},
 				html: undefined,
 				label: undefined,
-				summary: "Never"
+				summary: "Never",
+				getOccupation: function() {
+					return {
+						start: getStartMoment(),
+						end: getEndMoment(),
+						isAllDay: isAllDay(),
+						repeatsevery: undefined,
+						title: $("#title").val(),
+					}
+				},
+				processIntervals: function() {
+					var occupation = this.getOccupation();
+					var start = occupation.start
+					var end = occupation.end
+					var intervals = [];
+					intervals.push({ start : occupation.start, end: occupation.end})
+					return intervals;
+				}
 			},
 
 			"y": {
@@ -325,9 +349,60 @@
 				},
 				html: undefined,
 				label: "years",
-				summary: "Yearly"
+				summary: "Yearly",
+				getOccupation: function() {
+					return {
+						start: getStartMoment(),
+						end: getEndMoment(),
+						isAllDay: isAllDay(),
+						repeatsevery: $("#repeatsevery").val(),
+						title: $("#title").val(),
+					}
+				},
+				processIntervals: function() {
+					var occupation = this.getOccupation();
+					var start = occupation.start
+					var end = occupation.end
+					var yearly = occupation.repeatsevery
+					var when = start.clone();
+					var intervals = [];
+					while (when.isBefore(end) || when.isSame(end)) {
+						var iStart = when.clone();
+						var iEnd = when.clone();
+						iEnd.hour(end.hour());
+						iEnd.minute(end.minute());
+						intervals.push({
+							start: iStart,
+							end: iEnd
+						});
+						when.add('years', yearly);
+					}
+					return intervals;
+				}
 			}
 		};
+
+		function addEvent(interval, occupation) {
+			var occupationEvent;
+			if (occupation.isAllDay) {
+				occupationEvent = {
+					id : occupation.id,
+					start:interval.start.format("X"),
+					end: interval.start.format("X"),
+					allDay:false,
+					title:occupation.title
+				};
+			} else {
+				occupationEvent = {
+					id : occupation.id,
+					allDay: false,
+					title: occupation.title,
+					start: interval.start.format("X"),
+					end: interval.end.format("X")
+				};
+			}
+			$('#calendar').fullCalendar('renderEvent', occupationEvent, true);
+		}
 
 		$(document).ready(function() {
 			
@@ -400,7 +475,7 @@
 
 			// init repeatsevery options
 			for (var i = 1; i <= 30; i++) {
-				$("#repeatsevery").append(sprintf("<option value='%1$s'>%1$s</option>", i));	
+				$("#repeatsevery").append(sprintf("<option value='%1$s'>%1$s</option>", i));
 			}
 
 			$("#save").click(function() {

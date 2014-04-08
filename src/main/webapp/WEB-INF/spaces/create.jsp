@@ -59,23 +59,23 @@
 <spring:url var="formActionUrl" value="${action}"/>
 <form:form modelAttribute="information" role="form" method="post" action="${formActionUrl}" enctype="multipart/form-data">
   <div class="form-group">
-    <form:label for="validFromInput" path="validFrom" >Valid From</form:label>
+    <form:label for="validFromInput" path="validFrom"><spring:message code="label.spaces.validFrom" text="Valid From"/></form:label>
     <form:input type="date" class="form-control" id="validFromInput" path="validFrom" placeholder="Valid From" required="required"/>
   </div>
   <div class="form-group">
-    <form:label for="validUntilInput" path="validUntil">Valid Until</form:label>
+    <form:label for="validUntilInput" path="validUntil"><spring:message code="label.spaces.validUntil" text="Valid Until"/></form:label>
     <form:input type="date" class="form-control" id="validUntilInput" path="validUntil" placeholder="Valid Until"/>
   </div>
   <div class="form-group">
-    <form:label for="nameInput" path="name">Name</form:label>
+    <form:label for="nameInput" path="name"><spring:message code="label.spaces.name" text="Name"/></form:label>
     <form:input type="text" class="form-control" id="nameInput" path="name" placeholder="Name" required="required"/>
   </div>
   <div class="form-group">
-    <form:label for="identificationInput" path="identification">Identification</form:label>
+    <form:label for="identificationInput" path="identification"><spring:message code="label.spaces.identification" text="Identification"/></form:label>
     <form:input type="text" class="form-control" id="identificationInput" path="identification" placeholder="identification"/>
   </div>
   <div class="form-group">
-    <form:label for="classificationInput" path="classification">Classification</form:label>
+    <form:label for="classificationInput" path="classification"><spring:message code="label.spaces.classification" text="Classification"/></form:label>
     <form:select class="form-control" id="classificationInput" path="classification">
     	<c:forEach var="classification" items="${classifications}">
     	<c:set var="classificationName" value="${classification.name.content}"/>
@@ -92,20 +92,20 @@
     </form:select>
   </div>
   <div class="form-group">
-    <form:label for="allocatableCapacityInput" path="allocatableCapacity">Allocatable Capacity</form:label>
+    <form:label for="allocatableCapacityInput" path="allocatableCapacity"><spring:message code="label.spaces.allocatableCapacity" text="Allocatable Capacity"/></form:label>
     <form:input type="number" class="form-control" id="allocatableCapacityInput" path="allocatableCapacity" min="0" placeholder="Allocatable Capacity"/>
   </div>
   <div class="form-group">
-    <form:label for="blueprintFileInput" path="blueprintMultipartFile">Blueprint Number</form:label>
+    <form:label for="blueprintFileInput" path="blueprintMultipartFile"><spring:message code="label.spaces.blueprint" text="Blueprint"/></form:label>
     <form:input type="file" class="form-control" id="blueprintFileInput" path="blueprintMultipartFile"/>
   </div>
   <div class="form-group">
-    <form:label for="blueprintNumberInput" path="blueprintNumber">Blueprint Number</form:label>
+    <form:label for="blueprintNumberInput" path="blueprintNumber"><spring:message code="label.spaces.blueprintNumber" text="Blueprint Number"/></form:label>
     <form:input type="number" class="form-control" id="blueprintNumberInput" path="blueprintNumber" min="0" placeholder="Blueprint Number"/>
   </div>
   <div class="form-group">
-    <form:label for="areaInput" path="area">Area</form:label>
+    <form:label for="areaInput" path="area"><spring:message code="label.spaces.area" text="Area"/></form:label>
     <form:input type="number" class="form-control" id="areaInput" path="area" min="0" step="any" placeholder="Physical Area"/>
   </div>
-  <button type="submit" class="btn btn-default">Submit</button>
+  <button type="submit" class="btn btn-default"><spring:message code="label.submit" text="Submit"/></button>
 </form:form>
