@@ -3,6 +3,7 @@ package org.fenixedu.spaces.domain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.i18n.LocalizedString;
@@ -105,6 +106,26 @@ public class SpaceClassification extends SpaceClassification_Base {
             specsJson.add(spec.toJson());
         }
         setMetadataSpec(specsJson);
+    }
+
+    public static SpaceClassification getCampusClassification() {
+        final SpaceClassification byName = getByName("Campus");
+        if (byName == null) {
+            throw new UnsupportedOperationException("Campus type not defined.");
+        }
+        return byName;
+    }
+
+    public static SpaceClassification getByName(String needle) {
+        for (SpaceClassification classification : all()) {
+            final LocalizedString name = classification.getName();
+            for (Locale locale : name.getLocales()) {
+                if (needle.equals(name.getContent(locale))) {
+                    return classification;
+                }
+            }
+        }
+        return null;
     }
 
 }

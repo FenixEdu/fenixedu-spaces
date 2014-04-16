@@ -1,4 +1,4 @@
-package net.sourceforge.fenixedu.domain.exception;
+package org.fenixedu.spaces.domain;
 
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 

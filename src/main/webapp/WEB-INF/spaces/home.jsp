@@ -7,7 +7,7 @@
 <div class="page-header">
   <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.spaces" text="Spaces"/></small></h1>
 </div>
-<%@include file="spaces/fragments/spaces.jsp" %>
+<%@include file="fragments/spaces.jsp" %>
 
 <spring:url var="createUrl" value="/spaces/create"/>
 <a href="${createUrl}" class="btn btn-success"><spring:message code="link.space.create" text="Create Space"></spring:message></a>

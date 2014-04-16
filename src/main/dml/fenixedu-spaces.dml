@@ -45,9 +45,9 @@ class SpaceClassification {
 
 
 class occupation.requests.OccupationComment  {
-    MultiLanguageString description;
+    String description;
     DateTime instant;
-    MultiLanguageString subject;
+    String subject;
 }
 
 class occupation.requests.OccupationRequest  {

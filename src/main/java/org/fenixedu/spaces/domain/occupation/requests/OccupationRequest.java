@@ -6,34 +6,37 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.sourceforge.fenixedu.domain.exception.SpaceDomainException;
-import net.sourceforge.fenixedu.domain.space.Campus;
-import net.sourceforge.fenixedu.util.DomainObjectUtil;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.spaces.domain.Space;
+import org.fenixedu.spaces.domain.SpaceDomainException;
 import org.joda.time.DateTime;
 
-import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+import pt.ist.fenixframework.DomainObject;
 
 public class OccupationRequest extends OccupationRequest_Base {
 
     public static final Comparator<OccupationRequest> COMPARATOR_BY_IDENTIFICATION = new BeanComparator("identification");
     public static final Comparator<OccupationRequest> COMPARATOR_BY_INSTANT = new ComparatorChain();
     public static final Comparator<OccupationRequest> COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT = new ComparatorChain();
+    private static final Comparator<DomainObject> COMPARATOR_BY_ID = new Comparator<DomainObject>() {
+        @Override
+        public int compare(DomainObject o1, DomainObject o2) {
+            return o1.getExternalId().compareTo(o2.getExternalId());
+        }
+    };
     static {
         ((ComparatorChain) COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT).addComparator(
                 new BeanComparator("moreRecentCommentInstant"), true);
-        ((ComparatorChain) COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT).addComparator(DomainObjectUtil.COMPARATOR_BY_ID);
+        ((ComparatorChain) COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT).addComparator(COMPARATOR_BY_ID);
 
         ((ComparatorChain) COMPARATOR_BY_INSTANT).addComparator(new BeanComparator("instant"), true);
-        ((ComparatorChain) COMPARATOR_BY_INSTANT).addComparator(DomainObjectUtil.COMPARATOR_BY_ID);
+        ((ComparatorChain) COMPARATOR_BY_INSTANT).addComparator(COMPARATOR_BY_ID);
     }
 
-    public OccupationRequest(User requestor, MultiLanguageString subject, Space campus, MultiLanguageString description) {
+    public OccupationRequest(User requestor, String subject, Space campus, String description) {
 //        check(this, ResourceAllocationRolePredicates.checkPermissionsToManageOccupationRequests);
         super();
         checkIfRequestAlreadyExists(requestor, subject, description);
@@ -69,7 +72,7 @@ public class OccupationRequest extends OccupationRequest_Base {
         return result.last().getInstant();
     }
 
-    public void createNewTeacherOrEmployeeComment(MultiLanguageString description, User commentOwner, DateTime instant) {
+    public void createNewTeacherOrEmployeeComment(String description, User commentOwner, DateTime instant) {
         new OccupationComment(this, getCommentSubject(), description, commentOwner, instant);
         if (commentOwner.equals(getRequestor())) {
             setTeacherReadComments(getCommentSet().size());
@@ -79,13 +82,13 @@ public class OccupationRequest extends OccupationRequest_Base {
         }
     }
 
-    public void createNewTeacherCommentAndOpenRequest(MultiLanguageString description, User commentOwner, DateTime instant) {
+    public void createNewTeacherCommentAndOpenRequest(String description, User commentOwner, DateTime instant) {
         openRequestWithoutAssociateOwner(instant);
         new OccupationComment(this, getCommentSubject(), description, commentOwner, instant);
         setTeacherReadComments(getCommentSet().size());
     }
 
-    public void createNewEmployeeCommentAndCloseRequest(MultiLanguageString description, User commentOwner, DateTime instant) {
+    public void createNewEmployeeCommentAndCloseRequest(String description, User commentOwner, DateTime instant) {
         new OccupationComment(this, getCommentSubject(), description, commentOwner, instant);
         closeRequestWithoutAssociateOwner(instant);
         setOwner(commentOwner);
@@ -120,14 +123,14 @@ public class OccupationRequest extends OccupationRequest_Base {
         }
     }
 
-    private MultiLanguageString getCommentSubject() {
+    public String getCommentSubject() {
         StringBuilder subject = new StringBuilder();
         subject.append("Re: ");
         OccupationComment firstComment = getFirstComment();
         if (firstComment != null) {
-            subject.append(firstComment.getSubject().getContent());
+            subject.append(firstComment.getSubject());
         }
-        return new MultiLanguageString(subject.toString());
+        return subject.toString();
     }
 
     @Override
@@ -165,7 +168,7 @@ public class OccupationRequest extends OccupationRequest_Base {
         return getInstant().toString("dd/MM/yyyy HH:mm");
     }
 
-    public static Set<OccupationRequest> getRequestsByTypeOrderByDate(OccupationRequestState state, Campus campus) {
+    public static Set<OccupationRequest> getRequestsByTypeOrderByDate(OccupationRequestState state, Space campus) {
         Set<OccupationRequest> result = new TreeSet<OccupationRequest>(OccupationRequest.COMPARATOR_BY_INSTANT);
         for (OccupationRequest request : Bennu.getInstance().getOccupationRequestSet()) {
             if (request.getCurrentState().equals(state) && (request.getCampus() == null || request.getCampus().equals(campus))) {
@@ -184,7 +187,7 @@ public class OccupationRequest extends OccupationRequest_Base {
         return null;
     }
 
-    public static Set<OccupationRequest> getResolvedRequestsOrderByMoreRecentComment(Campus campus) {
+    public static Set<OccupationRequest> getResolvedRequestsOrderByMoreRecentComment(Space campus) {
         Set<OccupationRequest> result =
                 new TreeSet<OccupationRequest>(OccupationRequest.COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT);
         for (OccupationRequest request : Bennu.getInstance().getOccupationRequestSet()) {
@@ -197,7 +200,7 @@ public class OccupationRequest extends OccupationRequest_Base {
     }
 
     public static Set<OccupationRequest> getRequestsByTypeAndDiferentOwnerOrderByDate(OccupationRequestState state, User owner,
-            Campus campus) {
+            Space campus) {
         Set<OccupationRequest> result = new TreeSet<OccupationRequest>(OccupationRequest.COMPARATOR_BY_INSTANT);
         for (OccupationRequest request : Bennu.getInstance().getOccupationRequestSet()) {
             if (request.getCurrentState().equals(state) && (request.getOwner() == null || !request.getOwner().equals(owner))
@@ -229,14 +232,14 @@ public class OccupationRequest extends OccupationRequest_Base {
 
     public String getSubject() {
         final OccupationComment firstComment = getFirstComment();
-        final String content = firstComment != null ? firstComment.getSubject().getContent() : null;
+        final String content = firstComment != null ? firstComment.getSubject() : null;
         return content == null || content.isEmpty() ? getIdentification().toString() : content;
     }
 
     public String getDescription() {
         final OccupationComment firstComment = getFirstComment();
-        final MultiLanguageString description = firstComment == null ? null : firstComment.getDescription();
-        final String content = description == null ? null : description.getContent();
+        final String description = firstComment == null ? null : firstComment.getDescription();
+        final String content = description == null ? null : description;
         return content == null ? getExternalId() : content;
     }
 
@@ -272,7 +275,7 @@ public class OccupationRequest extends OccupationRequest_Base {
         return result.isEmpty() ? 1 : result.last().getIdentification() + 1;
     }
 
-    private void checkIfRequestAlreadyExists(User requestor, MultiLanguageString subject, MultiLanguageString description) {
+    private void checkIfRequestAlreadyExists(User requestor, String subject, String description) {
         Set<OccupationRequest> requests = requestor.getOccupationRequestSet();
         for (OccupationRequest request : requests) {
             OccupationComment firstComment = request.getFirstComment();

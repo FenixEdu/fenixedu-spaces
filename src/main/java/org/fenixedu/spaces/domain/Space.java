@@ -290,4 +290,22 @@ public class Space extends Space_Base {
         }).toSet();
     }
 
+    public static Set<Space> getSpaces(final SpaceClassification classification) {
+        Set<Space> spaces = Bennu.getInstance().getSpaceSet();
+        return FluentIterable.from(spaces).filter(new Predicate<Space>() {
+
+            @Override
+            public boolean apply(Space space) {
+                try {
+                    return classification.equals(space.getClassification());
+                } catch (UnavailableException e) {
+                    return false;
+                }
+            }
+        }).toSet();
+    }
+
+    public static Set<Space> getAllCampus() {
+        return getSpaces(SpaceClassification.getCampusClassification());
+    }
 }

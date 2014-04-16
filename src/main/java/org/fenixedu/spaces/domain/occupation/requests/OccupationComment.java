@@ -3,27 +3,30 @@ package org.fenixedu.spaces.domain.occupation.requests;
 import java.util.Collection;
 import java.util.Comparator;
 
-import net.sourceforge.fenixedu.domain.exception.SpaceDomainException;
-import net.sourceforge.fenixedu.util.DomainObjectUtil;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.spaces.domain.SpaceDomainException;
 import org.joda.time.DateTime;
 
-import pt.utl.ist.fenix.tools.util.i18n.MultiLanguageString;
+import pt.ist.fenixframework.DomainObject;
 
 public class OccupationComment extends OccupationComment_Base {
 
     public static final Comparator<OccupationComment> COMPARATOR_BY_INSTANT = new ComparatorChain();
+    private static final Comparator<DomainObject> COMPARATOR_BY_ID = new Comparator<DomainObject>() {
+        @Override
+        public int compare(DomainObject o1, DomainObject o2) {
+            return o1.getExternalId().compareTo(o2.getExternalId());
+        }
+    };
     static {
         ((ComparatorChain) COMPARATOR_BY_INSTANT).addComparator(new BeanComparator("instant"));
-        ((ComparatorChain) COMPARATOR_BY_INSTANT).addComparator(DomainObjectUtil.COMPARATOR_BY_ID);
+        ((ComparatorChain) COMPARATOR_BY_INSTANT).addComparator(COMPARATOR_BY_ID);
     }
 
-    public OccupationComment(OccupationRequest request, MultiLanguageString subject, MultiLanguageString description, User owner,
-            DateTime instant) {
+    public OccupationComment(OccupationRequest request, String subject, String description, User owner, DateTime instant) {
 //        check(this, ResourceAllocationRolePredicates.checkPermissionsToManageOccupationComments);
 
         super();
@@ -36,7 +39,7 @@ public class OccupationComment extends OccupationComment_Base {
         setInstant(instant);
     }
 
-    public void edit(MultiLanguageString subject, MultiLanguageString description) {
+    public void edit(String subject, String description) {
 //        check(this, ResourceAllocationRolePredicates.checkPermissionsToManageOccupationComments);
         if (!getRequest().getCurrentState().equals(OccupationRequestState.NEW)) {
             throw new SpaceDomainException("error.OccupationRequest.impossible.edit");
@@ -68,7 +71,7 @@ public class OccupationComment extends OccupationComment_Base {
     }
 
     @Override
-    public void setDescription(MultiLanguageString description) {
+    public void setDescription(String description) {
         if (description == null || description.isEmpty()) {
             throw new SpaceDomainException("error.OccupationComment.empty.description");
         }
@@ -76,7 +79,7 @@ public class OccupationComment extends OccupationComment_Base {
     }
 
     @Override
-    public void setSubject(MultiLanguageString subject) {
+    public void setSubject(String subject) {
         if (subject == null || subject.isEmpty()) {
             throw new SpaceDomainException("error.OccupationComment.empty.subject");
         }
@@ -99,43 +102,13 @@ public class OccupationComment extends OccupationComment_Base {
         super.setOwner(owner);
     }
 
-    private void checkIfCommentAlreadyExists(User owner, MultiLanguageString subject, MultiLanguageString description) {
+    private void checkIfCommentAlreadyExists(User owner, String subject, String description) {
         Collection<OccupationComment> comments = owner.getOccupationCommentSet();
         for (OccupationComment comment : comments) {
             if (comment.getDescription().compareTo(description) == 0) {
                 throw new SpaceDomainException("error.OccupationComment.comment.already.exists");
             }
         }
-    }
-
-    @Deprecated
-    public boolean hasOwner() {
-        return getOwner() != null;
-    }
-
-    @Deprecated
-    public boolean hasDescription() {
-        return getDescription() != null;
-    }
-
-    @Deprecated
-    public boolean hasBennu() {
-        return getRootDomainObject() != null;
-    }
-
-    @Deprecated
-    public boolean hasInstant() {
-        return getInstant() != null;
-    }
-
-    @Deprecated
-    public boolean hasSubject() {
-        return getSubject() != null;
-    }
-
-    @Deprecated
-    public boolean hasRequest() {
-        return getRequest() != null;
     }
 
 }

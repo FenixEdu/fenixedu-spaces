@@ -16,8 +16,6 @@ import org.fenixedu.spaces.domain.SpaceClassification;
 import org.fenixedu.spaces.domain.UnavailableException;
 import org.fenixedu.spaces.services.SpaceBlueprintsDWGProcessor;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,13 +31,10 @@ import org.springframework.web.servlet.view.RedirectView;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
-@SpringApplication(group = "anyone", path = "spaces", title = "spaces-manager")
-@SpringFunctionality(app = SpacesController.class, title = "spaces-manager")
+@SpringApplication(group = "anyone", path = "spaces", title = "title.space.management", hint = "spaces-manager")
+@SpringFunctionality(app = SpacesController.class, title = "title.space.management")
 @RequestMapping("/spaces")
 public class SpacesController {
-
-    @Autowired
-    ConversionService conversionService;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView home() {
@@ -49,11 +44,7 @@ public class SpacesController {
     @RequestMapping(value = "{space}", method = RequestMethod.GET)
     public ModelAndView home(@PathVariable Space space) {
         Set<Space> spaces;
-        if (space == null) {
-            spaces = Bennu.getInstance().getSpaceSet();
-        } else {
-            spaces = space.getValidChildrenSet();
-        }
+        spaces = space == null ? Bennu.getInstance().getSpaceSet() : space.getValidChildrenSet();
         return new ModelAndView("spaces/home", "spaces", spaces);
     }
 
