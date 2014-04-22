@@ -15,6 +15,7 @@
 	<div class="form-group">
 	    <form:label for="campusInput" path="campus"><spring:message code="label.occupations.campus" text="Campus"/></form:label>
 	    <form:select class="form-control" id="campusInput" path="campus">
+			<option value="">---</option>	    
 	    	<c:forEach var="campi" items="${campus}">
 		    	<c:set var="campusName" value="${campi.name}"/>
 		    	<c:set var="campusId" value="${campi.externalId}"/>

@@ -12,4 +12,4 @@
 <spring:url var="listRequestsUrl" value="/spaces/occupations/requests"/>
 
 <a href="${createRequestUrl}" class="btn btn-success"><spring:message code="link.occupations.create.request" text="Create Occupation Request"></spring:message></a>
-<a href="${listRequestsUrl}" class="btn btn-success"><spring:message code="link.occupations.create.request" text="List Occupation Request"></spring:message></a>
+<a href="${listRequestsUrl}" class="btn btn-success"><spring:message code="link.occupations.list.request" text="List Occupation Request"></spring:message></a>

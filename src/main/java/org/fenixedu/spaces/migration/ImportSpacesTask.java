@@ -1,6 +1,7 @@
 package org.fenixedu.spaces.migration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -50,6 +51,51 @@ public class ImportSpacesTask extends CustomTask {
 
     private static String dealWithDates(YearMonthDay yearMonthDay) {
         return yearMonthDay == null ? null : yearMonthDay.toString("dd/MM/yyyy");
+    }
+
+    private static class IntervalBean {
+        public String start;
+        public String end;
+
+        public IntervalBean(String start, String end) {
+            super();
+            this.start = start;
+            this.end = end;
+        }
+
+    }
+
+    private static class ImportOccupationBean {
+
+        public String description;
+        public String title;
+        public String frequency;
+        public String beginDate;
+        public String endDate;
+        public String beginTime;
+        public String endTime;
+        public Boolean saturday;
+        public Boolean sunday;
+        public Set<IntervalBean> intervals;
+        public Set<String> spaces;
+
+        public ImportOccupationBean(String description, String title, String frequency, String beginDate, String endDate,
+                String beginTime, String endTime, Boolean saturday, Boolean sunday, Set<String> spaces,
+                Set<IntervalBean> intervals) {
+            super();
+            this.description = description;
+            this.title = title;
+            this.frequency = frequency;
+            this.beginDate = beginDate;
+            this.endDate = endDate;
+            this.beginTime = beginTime;
+            this.endTime = endTime;
+            this.saturday = saturday;
+            this.sunday = sunday;
+            this.spaces = spaces;
+            this.intervals = intervals;
+        }
+
     }
 
     public class SpaceBean {
@@ -150,9 +196,23 @@ public class ImportSpacesTask extends CustomTask {
 
     @Override
     public void runTask() throws Exception {
-        File file = new File("/home/sfbs/Downloads/spaces2.json");
         Gson gson = new Gson();
+        processSpaces(gson);
+    }
 
+    public void processOccupations(Gson gson) throws FileNotFoundException {
+        File file = new File("/home/sfbs/Downloads/occupations.json");
+        final List<ImportOccupationBean> fromJson =
+                gson.fromJson(new JsonReader(new FileReader(file)), new TypeToken<List<ImportOccupationBean>>() {
+                }.getType());
+
+        for (ImportOccupationBean importOccupationBean : fromJson) {
+        }
+
+    }
+
+    public void processSpaces(Gson gson) throws FileNotFoundException {
+        File file = new File("/home/sfbs/Downloads/spaces2.json");
         final List<SpaceBean> fromJson = gson.fromJson(new JsonReader(new FileReader(file)), new TypeToken<List<SpaceBean>>() {
         }.getType());
 
@@ -163,7 +223,6 @@ public class ImportSpacesTask extends CustomTask {
         for (SpaceBean spaceBean : fromJson) {
             process(spaceBean);
         }
-
     }
 
     private Space process(final SpaceBean spaceBean) {

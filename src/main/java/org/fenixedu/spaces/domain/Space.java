@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.groups.Group;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -308,4 +309,29 @@ public class Space extends Space_Base {
     public static Set<Space> getAllCampus() {
         return getSpaces(SpaceClassification.getCampusClassification());
     }
+
+    public Group getManagementAccessGroupWithChainOfResponsability() {
+        final Group accessGroup = getManagementAccessGroup();
+        if (accessGroup != null && !accessGroup.getMembers().isEmpty()) {
+            return accessGroup;
+        }
+        final Space surroundingSpace = getParent();
+        if (surroundingSpace != null) {
+            return surroundingSpace.getManagementAccessGroupWithChainOfResponsability();
+        }
+        return null;
+    }
+
+    public Group getOccupationsAccessGroupWithChainOfResponsability() {
+        final Group accessGroup = getOccupationsAccessGroup();
+        if (accessGroup != null && !accessGroup.getMembers().isEmpty()) {
+            return accessGroup;
+        }
+        final Space surroundingSpace = getParent();
+        if (surroundingSpace != null) {
+            return surroundingSpace.getOccupationsAccessGroupWithChainOfResponsability();
+        }
+        return null;
+    }
+
 }

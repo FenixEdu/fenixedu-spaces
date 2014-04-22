@@ -9,11 +9,9 @@ import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.spaces.domain.Space;
-import org.fenixedu.spaces.domain.occupation.requests.OccupationComment;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState;
-import org.fenixedu.spaces.domain.occupation.requests.OccupationStateInstant;
-import org.fenixedu.spaces.ui.OccupationBean;
+import org.fenixedu.spaces.ui.OccupationRequestBean;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,7 @@ import pt.ist.fenixframework.Atomic;
 public class OccupationService {
 
     @Atomic
-    public OccupationRequest createRequest(OccupationBean bean) {
+    public OccupationRequest createRequest(OccupationRequestBean bean) {
         return new OccupationRequest(bean.getRequestor(), bean.getSubject(), bean.getCampus(), bean.getDescription());
     }
 
@@ -44,6 +42,7 @@ public class OccupationService {
     }
 
     public List<OccupationRequest> getRequestsToProcess(User user, Space campus) {
+
         final List<OccupationRequest> result = new ArrayList<OccupationRequest>();
         for (final OccupationRequest request : user.getOcuppationRequestsToProcessSet()) {
             if (!request.getCurrentState().equals(OccupationRequestState.RESOLVED)
@@ -59,19 +58,35 @@ public class OccupationService {
     }
 
     @Atomic
-    public OccupationComment addComment(OccupationRequest request, String subject, String description,
-            OccupationRequestState state) {
-        final DateTime now = new DateTime();
-        final OccupationComment comment = new OccupationComment(request, subject, description, Authenticate.getUser(), now);
-        if (state != null) {
-            request.addStateInstants(new OccupationStateInstant(request, state, now));
-        }
-
-        return comment;
+    public void addComment(OccupationRequest request, String description, OccupationRequestState newState) {
+        final OccupationRequestState oldState = request.getCurrentState();
+        Boolean reOpenRequest = oldState != OccupationRequestState.OPEN && newState == OccupationRequestState.OPEN;
+        Boolean resolveRequest = oldState != OccupationRequestState.RESOLVED && newState == OccupationRequestState.RESOLVED;
+        addComment(request, description, reOpenRequest, resolveRequest);
     }
 
-    public OccupationComment addComment(OccupationRequest request, String description, OccupationRequestState state) {
-        return addComment(request, request.getCommentSubject(), description, state);
+    private void addComment(OccupationRequest request, String description, Boolean reOpenRequest, Boolean resolveRequest) {
+        final DateTime now = new DateTime();
+
+        final User requestor = Authenticate.getUser();
+
+        if (reOpenRequest) {
+            request.createNewTeacherCommentAndOpenRequest(description, requestor, now);
+        } else if (resolveRequest) {
+            request.createNewEmployeeCommentAndCloseRequest(description, requestor, now);
+        } else {
+            request.createNewTeacherOrEmployeeComment(description, requestor, now);
+        }
+    }
+
+    @Atomic
+    public void openRequest(OccupationRequest request, User owner) {
+        request.openRequestAndAssociateOwnerOnlyForEmployess(new DateTime(), owner);
+    }
+
+    @Atomic
+    public void closeRequest(OccupationRequest request, User owner) {
+        request.closeRequestAndAssociateOwnerOnlyForEmployees(new DateTime(), owner);
     }
 
 }

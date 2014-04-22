@@ -15,9 +15,7 @@ class Space {
 }
 
 class occupation.Occupation {
-	String title;
-	String description;
-	OccupationConfig config;
+	OccupationConfig config (REQUIRED);
 }
 
 class Information {
@@ -61,6 +59,18 @@ class occupation.requests.OccupationStateInstant  {
     DateTime instant;
     OccupationRequestState requestState;
 }
+
+
+relation SpaceOccupationsAccessGroup {
+	Space playsRole occupationSpace;
+	.org.fenixedu.bennu.core.domain.groups.Group playsRole occupationsAccessGroup;
+}
+
+relation SpaceManagementAccessGroup {
+	Space playsRole managementSpace;
+	.org.fenixedu.bennu.core.domain.groups.Group playsRole managementAccessGroup;
+}
+
 
 relation OccupationCommentPerson {
     .org.fenixedu.bennu.core.domain.User playsRole owner;

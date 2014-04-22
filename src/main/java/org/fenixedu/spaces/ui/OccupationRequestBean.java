@@ -4,18 +4,18 @@ import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.spaces.domain.Space;
 
-public class OccupationBean {
+public class OccupationRequestBean {
 
     User requestor;
     Space campus;
     String subject;
     String description;
 
-    public OccupationBean() {
+    public OccupationRequestBean() {
         this.requestor = Authenticate.getUser();
     }
 
-    public OccupationBean(User requestor, Space campus, String subject, String description) {
+    public OccupationRequestBean(User requestor, Space campus, String subject, String description) {
         super();
         this.requestor = requestor;
         this.campus = campus;
