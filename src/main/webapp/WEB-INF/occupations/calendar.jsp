@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<!-- saved from url=(0063)http://arshaw.com/js/fullcalendar-1.6.4/demos/agenda-views.html -->
-<html>
-<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="./libs/fullcalendar/fullcalendar.css" rel="stylesheet">
-<link href="./libs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-<link href="./libs/fullcalendar/fullcalendar.print.css" rel="stylesheet" media="print">
-<link href="./libs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-<link rel="stylesheet" href="./libs/datetimepicker/jquery.datetimepicker.css">
-<script src="./libs/jquery/jquery.min.js"></script>
-<script src="./libs/jquery-ui/ui/minified/jquery-ui.min.js"></script>
-<script src="./libs/fullcalendar/fullcalendar.min.js"></script>
-<script src="./libs/momentjs/min/moment.min.js"></script>
-<!--<script src="./libs/momentjs/lang/pt.js"></script>-->
-<script src="dateutils.js"></script>
-<script src="./libs/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="./libs/datetimepicker/jquery.datetimepicker.js"></script>
-<script src="./libs/sprintf/src/sprintf.min.js"></script>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<link href="./static/fenix-spaces/css/fullcalendar/fullcalendar.css" rel="stylesheet">
+	<link href="./static/fenix-spaces/css/fullcalendar/fullcalendar.print.css" rel="stylesheet" media="print">
+	<link rel="stylesheet" href="./static/fenix-spaces/css/datetimepicker/jquery.datetimepicker.css">
+	
+	<!-- <link href="./libs/bootstrap/dist/css/bootstrap.css" rel="stylesheet"> -->
+	
+	<!--  <script src="./libs/jquery/jquery.min.js"></script>--> 
+	<script src="./static/fenix-spaces/js/jquery-ui.min.js"></script>
+	<script src="./static/fenix-spaces/js/fullcalendar.min.js"></script>
+	<script src="./static/fenix-spaces/js/moment.min.js"></script>
+	<script src="./static/fenix-spaces/js/dateutils.js"></script>
+	<script src="./static/fenix-spaces/js/jquery.datetimepicker.js"></script>
+	<script src="./static/fenix-spaces/js/sprintf.min.js"></script>
+</head>
+
 <script>
 	var date = new Date();
 	var d = date.getDate();

@@ -23,4 +23,9 @@ public class OccupationController {
         return "occupations/home";
     }
 
+    @RequestMapping("create")
+    public String create(Model model) {
+        return "occupations/calendar";
+    }
+
 }

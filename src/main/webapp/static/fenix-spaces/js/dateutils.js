@@ -1,18 +1,3 @@
-// $("#add").click(function() {
-		// 	var date = $("#date").val();
-		// 	var minutes = $("#minutes").val();
-		// 	var title = $("#title").val();
-
-		// 	var occupation = {
-		// 		title : title,
-		// 		allDay:false,
-		// 		start: moment(date).format("X"),
-		// 		end:  moment(date).add('minutes', minutes).format("X")
-		// 	}
-
-		// 	$('#calendar').fullCalendar('renderEvent', occupation);
-		// });
-
 function nthdayOfTheWeek(when) {
 	var checkpoint = when.clone();
 	var whenDayOfWeek = checkpoint.isoWeekday();
@@ -106,5 +91,4 @@ function getEndTime() {
 	}
 	return moment(when, getMomentTimeFormat())
 }
-
 

@@ -160,7 +160,7 @@ public class TestOccupationSpec {
         final List<Interval> intIntervals = internalize.getIntervals();
         assert HashMultiset.create(extIntervals).equals(HashMultiset.create(intIntervals)) == true;
 
-        final ExplicitConfig explicitConfig = new ExplicitConfig(intIntervals);
+        final ExplicitConfig explicitConfig = new ExplicitConfig(null, intIntervals);
         System.out.println("Explicit Config ...");
         System.out.println(explicitConfig.externalize().toString());
 
