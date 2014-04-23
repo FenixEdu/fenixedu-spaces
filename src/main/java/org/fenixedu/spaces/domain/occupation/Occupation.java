@@ -16,4 +16,15 @@ public class Occupation extends Occupation_Base {
         return getConfig().getIntervals();
     }
 
+    public Boolean overlaps(List<Interval> intervals) {
+        for (final Interval interval : intervals) {
+            for (final Interval occupationInterval : getIntervals()) {
+                if (occupationInterval.overlaps(interval)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

@@ -1,20 +1,26 @@
 <!DOCTYPE html>
+
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
+
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<spring:url var="staticUrl" value="/static/fenix-spaces"/>
 	
-	<link href="./static/fenix-spaces/css/fullcalendar/fullcalendar.css" rel="stylesheet">
-	<link href="./static/fenix-spaces/css/fullcalendar/fullcalendar.print.css" rel="stylesheet" media="print">
-	<link rel="stylesheet" href="./static/fenix-spaces/css/datetimepicker/jquery.datetimepicker.css">
+	
+	<link href="${staticUrl}/css/fullcalendar.css" rel="stylesheet">
+	<link href="${staticUrl}/css/fullcalendar.print.css" rel="stylesheet" media="print">
+	<link rel="stylesheet" href="${staticUrl}/css/jquery.datetimepicker.css">
 	
 	<!-- <link href="./libs/bootstrap/dist/css/bootstrap.css" rel="stylesheet"> -->
 	
 	<!--  <script src="./libs/jquery/jquery.min.js"></script>--> 
-	<script src="./static/fenix-spaces/js/jquery-ui.min.js"></script>
-	<script src="./static/fenix-spaces/js/fullcalendar.min.js"></script>
-	<script src="./static/fenix-spaces/js/moment.min.js"></script>
-	<script src="./static/fenix-spaces/js/dateutils.js"></script>
-	<script src="./static/fenix-spaces/js/jquery.datetimepicker.js"></script>
-	<script src="./static/fenix-spaces/js/sprintf.min.js"></script>
+	<script src="${staticUrl}/js/jquery-ui.min.js"></script>
+	<script src="${staticUrl}/js/fullcalendar.min.js"></script>
+	<script src="${staticUrl}/js/moment.min.js"></script>
+	<script src="${staticUrl}/js/dateutils.js"></script>
+	<script src="${staticUrl}/js/jquery.datetimepicker.js"></script>
+	<script src="${staticUrl}/js/sprintf.min.js"></script>
 </head>
 
 <script>
@@ -22,6 +28,7 @@
 	var d = date.getDate();
 	var m = date.getMonth();
 	var y = date.getFullYear();
+	
 	var calendar = {
 		header: {
 			left: 'prev,next today',
@@ -30,8 +37,8 @@
 		},
 		monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
 		monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-		dayNames: ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado'],
-		dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+		dayNames: dayNames,
+		dayNamesShort: dayNamesShort,
 		buttonText: {
    			today:    'Hoje',
    			month:    'Mês',
@@ -72,6 +79,25 @@
 	function weeklyClearAll() {
 		$("#weekdays input").each(unselectCheckbox);
 	}
+	
+	function nthDayOfTheWeekLabel(when) {
+		var nth = nthdayOfTheWeek(when)
+		if (nth > 3) {
+			return "<spring:message code="calendar.dayofweek.last" text="Último"/>";
+		}
+		var first = "<spring:message code="calendar.dayofweek.first" text="primeira"/>";
+		var second = "<spring:message code="calendar.dayofweek.second" text="segunda"/>";
+		var third = "<spring:message code="calendar.dayofweek.third" text="terceira"/>";
+		var fourth = "<spring:message code="calendar.dayofweek.fourth" text="quarta"/>";
+		
+		var labels = [first, second, third, fourth];
+		return labels[nth];
+	}
+	
+	function dayOfWeekLabel(when) {
+		var dayOfWeek = when.isoWeekday();
+		return dayNames[dayOfWeek];
+	};
 
 	var repeatsconfig = {
 		"w": {
@@ -99,8 +125,8 @@
 				$("#weekly-clear").click(selectDays());
 			},
 			html: "#weeklyrepeatson",
-			label: "weeks",
-			summary: "Weekly",
+			label: "<spring:message code="calendar.repeatson.weekly" text="Semanas"/>",
+			summary: "<spring:message code="calendar.repeats.weekly" text="Semanalmente"/>",
 			updateSummary: function() {
 				var selectedDays = []
 				$("#weekdays input").each(function() {
@@ -110,7 +136,7 @@
 				});
 				var label = this['summary'];
 				if (selectedDays.length > 0) {
-					label += " on " + selectedDays.join(", ")
+					label += " <spring:message code="calendar.on" text="às"/> " + selectedDays.join(", ")
 				}
 				$("#summary").html(label)
 			},
@@ -141,8 +167,12 @@
 				while (when.isBefore(end) || when.isSame(end)) {
 					var iStart = when.clone();
 					var iEnd = when.clone();
-					iEnd.hour(end.hour());
-					iEnd.minute(end.minute());
+					if (occupation.isAllDay) {
+						iEnd.add('days', 1)						
+					} else {
+						iEnd.hour(end.hour());
+						iEnd.minute(end.minute());	
+					}
 					intervals.push({
 						start: iStart,
 						end: iEnd
@@ -165,7 +195,6 @@
 					isAllDay: isAllDay(),
 					repeatsevery: $("#repeatsevery").val(),
 					frequency: $("#frequency").val(),
-					title: $("#title").val(),
 					weekdays : function() {
 						var dict = { "mo" : 1, "tu" : 2, "we": 3 , "th" : 4 , "fr" : 5, "sa" : 6, "su": 7};
 						return $("#weekdays input").filter(function() {
@@ -185,8 +214,8 @@
 				$(".repeats").show();
 			},
 			html: undefined,
-			label: "days",
-			summary: "Daily",
+			label: "<spring:message code="calendar.repeatson.days" text="Dias"/>",
+			summary: "<spring:message code="calendar.repeats.daily" text="Diariamente"/>",
 			processIntervals: function() {
 				var occupation = this.getOccupation();
 				var start = occupation.start
@@ -197,8 +226,12 @@
 				while (when.isBefore(end) || when.isSame(end)) {
 					var iStart = when.clone();
 					var iEnd = when.clone();
-					iEnd.hour(end.hour());
-					iEnd.minute(end.minute());
+					if (occupation.isAllDay) {
+						iEnd.add('days', 1)						
+					} else {
+						iEnd.hour(end.hour());
+						iEnd.minute(end.minute());	
+					}
 					intervals.push({
 						start: iStart,
 						end: iEnd
@@ -214,7 +247,6 @@
 					isAllDay: isAllDay(),
 					repeatsevery: $("#repeatsevery").val(),
 					frequency: $("#frequency").val(),
-					title: $("#title").val()
 				}
 			}
 		},
@@ -228,16 +260,16 @@
 				})
 			},
 			html: "#monthlyrepeatson",
-			label: "months",
-			summary: "Monthly",
+			label: "<spring:message code="calendar.repeatson.monthly" text="Meses"/>",
+			summary: "<spring:message code="calendar.repeats.monthly" text="Mensalmente"/>",
 			updateSummary: function() {
 				var startdate = moment($("#startdate").val(), "DD/MM/YYYY")
 				var value = $("input:radio[name=monthly]:checked").val();
 				if (value == "dayofmonth") {
-					$("#summary").html(this["summary"] + " on day " + startdate.date());
+					$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofmonth" text=" ao dia "/>" + startdate.date());
 				}
 				if (value == "dayofweek") {
-					$("#summary").html(this["summary"] + " on the " + nthDayOfTheWeekLabel(startdate) + " " + dayOfWeekLabel(startdate));
+					$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofweek" text=" à "/>" + nthDayOfTheWeekLabel(startdate) + " " + dayOfWeekLabel(startdate));
 				}
 			},
 			getOccupation: function() {
@@ -246,7 +278,6 @@
 					end: getEndMoment(),
 					isAllDay: isAllDay(),
 					repeatsevery: $("#repeatsevery").val(),
-					title: $("#title").val(),
 					monthlyType: $("input:radio[name=monthly]:checked").val()
 				}
 			},
@@ -256,8 +287,12 @@
 				while (when.isBefore(end) || when.isSame(end)) {
 					var iStart = when.clone();
 					var iEnd = when.clone();
-					iEnd.hour(end.hour());
-					iEnd.minute(end.minute());
+					if (occupation.isAllDay) {
+						iEnd.add('days', 1)						
+					} else {
+						iEnd.hour(end.hour());
+						iEnd.minute(end.minute());	
+					}
 					intervals.push({
 						start: iStart,
 						end: iEnd
@@ -274,8 +309,12 @@
 				while (when.isBefore(end) || when.isSame(end)) {
 					var iStart = when.clone();
 					var iEnd = when.clone();
-					iEnd.hour(end.hour());
-					iEnd.minute(end.minute());
+					if (occupation.isAllDay) {
+						iEnd.add('days', 1)						
+					} else {
+						iEnd.hour(end.hour());
+						iEnd.minute(end.minute());	
+					}
 					intervals.push({
 						start: iStart,
 						end: iEnd
@@ -306,14 +345,13 @@
 			},
 			html: undefined,
 			label: undefined,
-			summary: "Never",
+			summary: "<spring:message code="calendar.repeats.never" text="Nunca"/>",
 			getOccupation: function() {
 				return {
 					start: getStartMoment(),
 					end: getEndMoment(),
 					isAllDay: isAllDay(),
-					repeatsevery: undefined,
-					title: $("#title").val(),
+					repeatsevery: undefined
 				}
 			},
 			processIntervals: function() {
@@ -321,7 +359,9 @@
 				var start = occupation.start
 				var end = occupation.end
 				var intervals = [];
-				intervals.push({ start : occupation.start, end: occupation.end})
+				var start = occupation.start
+				var end = occupation.end
+				intervals.push({ start : start, end: end})
 				return intervals;
 			}
 		},
@@ -331,15 +371,14 @@
 				$(".repeats").show();
 			},
 			html: undefined,
-			label: "years",
-			summary: "Yearly",
+			label: "<spring:message code="calendar.repeatson.yearly" text="Anos"/>",
+			summary: "<spring:message code="calendar.repeats.yearly" text="Anualmente"/>",
 			getOccupation: function() {
 				return {
 					start: getStartMoment(),
 					end: getEndMoment(),
 					isAllDay: isAllDay(),
-					repeatsevery: $("#repeatsevery").val(),
-					title: $("#title").val(),
+					repeatsevery: $("#repeatsevery").val()
 				}
 			},
 			processIntervals: function() {
@@ -352,8 +391,12 @@
 				while (when.isBefore(end) || when.isSame(end)) {
 					var iStart = when.clone();
 					var iEnd = when.clone();
-					iEnd.hour(end.hour());
-					iEnd.minute(end.minute());
+					if (occupation.isAllDay) {
+						iEnd.add('days', 1)						
+					} else {
+						iEnd.hour(end.hour());
+						iEnd.minute(end.minute());	
+					}
 					intervals.push({
 						start: iStart,
 						end: iEnd
@@ -366,24 +409,12 @@
 	};
 
 	function addEvent(interval, occupation) {
-		var occupationEvent;
-		if (occupation.isAllDay) {
-			occupationEvent = {
-				id : occupation.id,
-				start:interval.start.format("X"),
-				end: interval.start.format("X"),
-				allDay:false,
-				title:occupation.title
-			};
-		} else {
-			occupationEvent = {
+		var occupationEvent = {
 				id : occupation.id,
 				allDay: false,
-				title: occupation.title,
 				start: interval.start.format("X"),
 				end: interval.end.format("X")
-			};
-		}
+		};
 		$('#calendar').fullCalendar('renderEvent', occupationEvent, true);
 	}
 	
@@ -391,18 +422,30 @@
 		var event = occupationEvents[calendarEvent.id];
 		$("#startdate").val(event.start.format("DD/MM/YYYY"));
 		$("#enddate").val(event.end.format("DD/MM/YYYY"));
-		$("#starttime").val(event.start.format("HH:mm"));
-		$("#endtime").val(event.end.format("HH:mm"));
 		if (event.isAllDay) {
-			$("#allday").click();
+			if (!$("#allday").prop("checked")) {
+				$("#allday").click();
+			}
+		} else {
+			$("#starttime").val(event.start.format("HH:mm"));
+			$("#endtime").val(event.end.format("HH:mm"));
 		}
 		$("#repeatsevery").val(event.repeatsevery)
 		$("#frequency").val(event.frequency);
-		$("#title").val(event.title);
 		$("#myModal").data("event", calendarEvent.id);
 		$("#delete").show();
 		$("#myModal").modal("show");
 	}
+	
+	/*function gotoFirstEvent() {
+		var events = $("#calendar").fullCalendar('clientEvents');
+		var event = events[0]
+		
+		var year = moment(event.start).year();
+		var month = moment(event.start).month();
+		var day = moment(event.start).date();
+		$("#calendar").fullCalendar('gotoDate', year, month, day);
+	}*/
 
 	$(document).ready(function() {
 		
@@ -490,7 +533,8 @@
 			});
 
 			$("#myModal").removeData("event")
-			$("#myModal").modal("hide");
+			$("#myModal").modal("hide")
+			$("#add-event").attr("disabled",true)
 		});
 
 		$("#delete").click(function() {
@@ -498,6 +542,7 @@
 			delete occupationEvents[event_id];
 			$("#calendar").fullCalendar('removeEvents', event_id);
 			$("#myModal").modal('hide');
+			$("#add-event").attr("disabled",false)
 		});
 
 		/** init code **/
@@ -510,29 +555,29 @@
 </script>
 	
 <script type="text/html" id="weeklyrepeatson">
-<th class="col-lg-3">Repeat on</th>
+<th class="col-lg-3"><spring:message code="calendar.repeatson" text="Repete em"/></th>
 <td class="col-lg-9">
 	<span id="weekdays">
-		<input id="mo" type="checkbox" title="Monday">
-		<span title="Monday">M</span>
-		<input id="tu" type="checkbox" title="Tuesday">
-		<span title="Tuesday">T</span>
-		<input id="we" type="checkbox" title="Wednesday">
-		<span title="Wednesday">W</span>
-		<input id="th" type="checkbox" title="Thursday">
-		<span title="Thursday">T</span>
-		<input id="fr" type="checkbox" title="Friday">
-		<span title="Friday">F</span>
-		<input id="sa" type="checkbox" title="Saturday">
-		<span title="Saturday">S</span>
-		<input id="su" type="checkbox" title="Sunday">
-		<span title="Sunday">S</span>
+		<input id="mo" type="checkbox" title="<spring:message code="calendar.daysofweek.mo" text="Segunda-Feira"/>">
+		<span title="<spring:message code="calendar.daysofweek.mo" text="Segunda-Feira"/>"><spring:message code="calendar.daysofweek.short.mo" text="S"/></span>
+		<input id="tu" type="checkbox" title="<spring:message code="calendar.daysofweek.tu" text="Terça-Feira"/>">
+		<span title="<spring:message code="calendar.daysofweek.tu" text="Terça-Feira"/>"><spring:message code="calendar.daysofweek.short.tu" text="T"/></span>
+		<input id="we" type="checkbox" title="<spring:message code="calendar.daysofweek.we" text="Quarta-Feira"/>">
+		<span title="<spring:message code="calendar.daysofweek.we" text="Quarta-Feira"/>"><spring:message code="calendar.daysofweek.short.we" text="Q"/></span>
+		<input id="th" type="checkbox" title="<spring:message code="calendar.daysofweek.th" text="Quinta-Feira"/>">
+		<span title="<spring:message code="calendar.daysofweek.th" text="Quinta-Feira"/>"><spring:message code="calendar.daysofweek.short.th" text="Q"/></span>
+		<input id="fr" type="checkbox" title="<spring:message code="calendar.daysofweek.fr" text="Sexta-Feira"/>">
+		<span title="<spring:message code="calendar.daysofweek.fr" text="Sexta-Feira"/>"><spring:message code="calendar.daysofweek.short.fr" text="S"/></span>
+		<input id="sa" type="checkbox" title="<spring:message code="calendar.daysofweek.sa" text="Sábado"/>">
+		<span title="<spring:message code="calendar.daysofweek.sa" text="Sábado"/>"><spring:message code="calendar.daysofweek.short.sa" text="S"/></span>
+		<input id="su" type="checkbox" title="<spring:message code="calendar.daysofweek.su" text="Domingo"/>">
+		<span title="<spring:message code="calendar.daysofweek.su" text="Domingo"/>"><spring:message code="calendar.daysofweek.short.su" text="D"/></span>
 	</span>
 	<span style="display: block;">
-		<button class="btn btn-xs btn-success" id="weekly-all">all</button>
+		<button class="btn btn-xs btn-success" id="weekly-all"><spring:message code="calendar.all" text="Todos"/></button>
 		<button class="btn btn-xs btn-success" id="weekly-tue-thu">3 e 5</button>
 		<button class="btn btn-xs btn-success" id="weekly-mon-wed-fri">2,4 e 6</button>
-		<button class="btn btn-xs btn-success" id="weekly-clear">clear</button>
+		<button class="btn btn-xs btn-success" id="weekly-clear"><spring:message code="calendar.clear" text="Limpar"/></button>
 	</span>
 </td>			
 </script>
@@ -542,35 +587,28 @@
 <td class="col-lg-9">
 	<span id="options">
 		<input type="radio" name="monthly" value="dayofmonth" checked/>
-		<span>day of the month</span>
+		<span><spring:message code="calendar.repeatson.montly.dayofmonth" text="Dia do Mês"/></span>
 		<input type="radio" name="monthly" value="dayofweek"/>
-		<span>day of the week</span>
+		<span><spring:message code="calendar.repeatson.montly.dayofweek" text="Dia da Semana"/></span>
 	</span>
 </td>			
 </script>
 
 <style>
-body {
-	margin-top: 40px;
+#myModal {
 	text-align: center;
-	font-size: 14px;
-	font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-}
-
-#calendar {
-	width: 900px;
-	margin: 0 auto;
 }
 </style>
 
 
 <body>
 	<div id="calendar"></div>
-	
-	<!-- Button trigger modal -->
-	<button class="btn btn-primary btn-lg" id="add-event">
-		Add Event
-	</button>
+	<span>
+		<!-- Button trigger modal -->
+		<button class="btn btn-primary" id="add-event">
+			<spring:message code="calendar.add.event" text="Seleccionar Período"/>
+		</button>
+	</span>
 
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -578,78 +616,72 @@ body {
 			<div class="modal-content">
 				<div class="modal-header">
 		        	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        	<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+		        	<h4 class="modal-title" id="myModalLabel"><spring:message code="calendar.add.event" text="Seleccionar Período"/></h4>
 		      	</div>
 				<div class="modal-body">
 		        	<table class="table" id="create-event">
-			        	<tr class="row">
-							<th class="col-lg-3">Title</th>
-							<td class="col-lg-9">
-								<input type="textarea" id="title" value="zen"/>
-							</td>
-						</tr>
 						<tr class="row">
-							<th class="col-lg-3">Start</th>
+							<th class="col-lg-3"><spring:message code="calendar.start" text="Início"/></th>
 							<td>
 								<span style="display:block;">
-									<input type="text" id="startdate" value="07/03/2014"/>
+									<input type="text" id="startdate"/>
 								</span>
 							</td>
 						</tr>
 						<tr class="row">
-							<th class="col-lg-3">Ends</th>
+							<th class="col-lg-3"><spring:message code="calendar.end" text="Fim"/></th>
 							<td class="col-lg-9">
 								
 								<span style="display:block;">
-									<input type="text" id="enddate" value="20/05/2014"/>
+									<input type="text" id="enddate"/>
 								</span>
 								
 							</td>
 						</tr>
 						<tr class="row">
-							<th class="col-lg-3">All day</th>
+							<th class="col-lg-3"><spring:message code="calendar.repeatsevery" text="Todo o dia"/></th>
 							<td class="col-lg-9">
 								<input type="checkbox" id="allday"/>
 								<span style="display:block;">
-										<input type="text" id="starttime" value="14:00"/>
+										<input type="text" id="starttime"/>
 									</span>
 									<span>
-										<input type="text" id="endtime" value="16:00"/>
+										<input type="text" id="endtime"/>
 									</span>
 								</td>
 							</tr>
 							<tr class="row">
-								<th class="col-lg-3">Repeats</th>
+								<th class="col-lg-3"><spring:message code="calendar.repeats" text="Repete"/></th>
 								<td class="col-lg-9">
 									<select id="frequency">
-										<option value="n">Never</option>
-										<option value="d">Daily</option>
-										<option value="w">Weekly</option>
-										<option value="m">Monthy</option>
-										<option value="y">Yearly</option>
+										<option value="n"><spring:message code="calendar.repeats.never" text="Nunca"/></option>
+										<option value="d"><spring:message code="calendar.repeats.daily" text="Diariamente"/></option>
+										<option value="w"><spring:message code="calendar.repeats.weekly" text="Semanalmente"/></option>
+										<option value="m"><spring:message code="calendar.repeats.monthly" text="Mensalmente"/></option>
+										<option value="y"><spring:message code="calendar.repeats.yearly" text="Anualmente"/></option>
 									</select>
 								</td>
 							</tr>
 							<tr class="repeats row">
-								<th class="col-lg-3">Repeats every</th>
+								<th class="col-lg-3"><spring:message code="calendar.repeatsevery" text="Repete a cada"/></th>
 								<td class="col-lg-9">
 									<select name="" id="repeatsevery">
 									</select>
-									<label id="repeatsevery-label">days</label>
+									<label id="repeatsevery-label"><spring:message code="calendar.repeatsevery.days" text="Dias"/></label>
 								</td>
 							</tr>
 							<tr id="repeatsconfig" class="repeats row">
 							</tr>
 							<tr class="row">
-								<th class="col-lg-2">Summary</th>
+								<th class="col-lg-2"><spring:message code="calendar.summary" text="Resumo"/></th>
 								<td class="col-lg-9" id="summary"></td>
 							</tr>
 					</table>
 				</div>
 			    <div class="modal-footer">
-			      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			      <button type="button" id="delete" class="btn btn-danger">Delete</button>
-			      <button type="button" class="btn btn-primary" id="save">Save changes</button>
+			      <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="calendar.close" text="Fechar"/></button>
+			      <button type="button" id="delete" class="btn btn-danger"><spring:message code="calendar.delete" text="Apagar"/></button>
+			      <button type="button" class="btn btn-primary" id="save"><spring:message code="calendar.save" text="Guardar alterações"/></button>
 			    </div>
     		</div>
 	  	</div>

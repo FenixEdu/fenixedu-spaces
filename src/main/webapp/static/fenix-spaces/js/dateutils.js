@@ -1,3 +1,6 @@
+var dayNames = ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado'];
+var dayNamesShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+	
 function nthdayOfTheWeek(when) {
 	var checkpoint = when.clone();
 	var whenDayOfWeek = checkpoint.isoWeekday();
@@ -32,19 +35,6 @@ function getNextNthdayOfWeek(when, nthdayOfTheWeek, dayOfTheWeek) {
 		return checkpoint;
 	}
 }
-
-function nthDayOfTheWeekLabel(when) {
-	var nth = nthdayOfTheWeek(when)
-	if (nth > 3) {
-		return "last";
-	}
-	var labels = ["first", "second", "third", "fourth"]
-	return labels[nth];
-}
-
-function dayOfWeekLabel(when) {
-	return when.format("dddd");
-};
 
 function getMomentDateFormat() {
 	return "DD/MM/YYYY";

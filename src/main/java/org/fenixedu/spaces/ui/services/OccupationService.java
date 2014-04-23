@@ -2,6 +2,7 @@ package org.fenixedu.spaces.ui.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState;
 import org.fenixedu.spaces.ui.OccupationRequestBean;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.springframework.stereotype.Service;
 
 import pt.ist.fenixframework.Atomic;
@@ -87,6 +89,16 @@ public class OccupationService {
     @Atomic
     public void closeRequest(OccupationRequest request, User owner) {
         request.closeRequestAndAssociateOwnerOnlyForEmployees(new DateTime(), owner);
+    }
+
+    public Set<Space> searchFreeSpaces(List<Interval> intervals) {
+        final Set<Space> freeSpaces = new HashSet<>();
+        for (Space space : Bennu.getInstance().getSpaceSet()) {
+            if (space.isFree(intervals)) {
+                freeSpaces.add(space);
+            }
+        }
+        return freeSpaces;
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.groups.Group;
+import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -29,9 +30,7 @@ public class Space extends Space_Base {
         setCreated(new DateTime());
         add(information);
         setParent(parent);
-        if (parent == null) {
-            setBennu(Bennu.getInstance());
-        }
+        setBennu(Bennu.getInstance());
     }
 
     public InformationBean bean() throws UnavailableException {
@@ -332,6 +331,15 @@ public class Space extends Space_Base {
             return surroundingSpace.getOccupationsAccessGroupWithChainOfResponsability();
         }
         return null;
+    }
+
+    public boolean isFree(List<Interval> intervals) {
+        for (Occupation occupation : getOccupationSet()) {
+            if (occupation.overlaps(intervals)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
