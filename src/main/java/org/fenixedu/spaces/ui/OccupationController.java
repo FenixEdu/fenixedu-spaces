@@ -57,6 +57,7 @@ public class OccupationController {
     @RequestMapping(value = "search-create", method = RequestMethod.POST)
     public String searchSpaces(Model model, @RequestParam String events, @RequestParam String config) {
         final List<Interval> intervals = parseIntervals(events);
+        model.addAttribute("events", events);
         model.addAttribute("config", config);
         model.addAttribute("freeSpaces", occupationService.searchFreeSpaces(intervals));
         return "occupations/searchcreate";

@@ -11,7 +11,7 @@
 	<link href="${staticUrl}/css/fullcalendar.css" rel="stylesheet">
 	<link href="${staticUrl}/css/fullcalendar.print.css" rel="stylesheet" media="print">
 	<link rel="stylesheet" href="${staticUrl}/css/jquery.datetimepicker.css">
-	
+		
 	<!-- <link href="./libs/bootstrap/dist/css/bootstrap.css" rel="stylesheet"> -->
 	
 	<!--  <script src="./libs/jquery/jquery.min.js"></script>--> 

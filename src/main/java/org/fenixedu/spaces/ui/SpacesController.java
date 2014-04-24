@@ -31,10 +31,23 @@ import org.springframework.web.servlet.view.RedirectView;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+
 @SpringApplication(group = "anyone", path = "spaces", title = "title.space.management", hint = "spaces-manager")
 @SpringFunctionality(app = SpacesController.class, title = "title.space.management")
 @RequestMapping("/spaces")
 public class SpacesController {
+
+    private Set<Space> getTopLevelSpaces() {
+        return FluentIterable.from(Bennu.getInstance().getSpaceSet()).filter(new Predicate<Space>() {
+
+            @Override
+            public boolean apply(Space input) {
+                return input.getParent() == null && input.isActive();
+            }
+        }).toSet();
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView home() {
@@ -44,7 +57,7 @@ public class SpacesController {
     @RequestMapping(value = "{space}", method = RequestMethod.GET)
     public ModelAndView home(@PathVariable Space space) {
         Set<Space> spaces;
-        spaces = space == null ? Bennu.getInstance().getSpaceSet() : space.getValidChildrenSet();
+        spaces = space == null ? getTopLevelSpaces() : space.getValidChildrenSet();
         return new ModelAndView("spaces/home", "spaces", spaces);
     }
 

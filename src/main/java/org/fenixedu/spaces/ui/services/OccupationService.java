@@ -2,6 +2,7 @@ package org.fenixedu.spaces.ui.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,8 @@ import org.joda.time.Interval;
 import org.springframework.stereotype.Service;
 
 import pt.ist.fenixframework.Atomic;
+
+import com.google.common.collect.Ordering;
 
 @Service
 public class OccupationService {
@@ -91,14 +94,22 @@ public class OccupationService {
         request.closeRequestAndAssociateOwnerOnlyForEmployees(new DateTime(), owner);
     }
 
-    public Set<Space> searchFreeSpaces(List<Interval> intervals) {
+    public List<Space> searchFreeSpaces(List<Interval> intervals, User user) {
         final Set<Space> freeSpaces = new HashSet<>();
         for (Space space : Bennu.getInstance().getSpaceSet()) {
-            if (space.isFree(intervals)) {
+            if (space.isActive() && space.isFree(intervals)
+                    && space.getOccupationsAccessGroupWithChainOfResponsability().isMember(user)) {
                 freeSpaces.add(space);
             }
         }
-        return freeSpaces;
+        return Ordering.from(new Comparator<Space>() {
+
+            @Override
+            public int compare(Space o1, Space o2) {
+                return o1.getNameWithParents().compareTo(o2.getNameWithParents());
+            }
+
+        }).immutableSortedCopy(freeSpaces);
     }
 
 }

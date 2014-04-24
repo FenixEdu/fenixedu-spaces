@@ -15,6 +15,8 @@ import org.joda.time.Interval;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
@@ -52,12 +54,17 @@ public class Space extends Space_Base {
         return Lists.reverse(timeline);
     }
 
-    public String getName() throws UnavailableException {
-        return getInformation().getName();
-    }
-
     public SpaceClassification getClassification() throws UnavailableException {
         return getInformation().getClassification();
+    }
+
+    public boolean isActive() {
+        try {
+            getInformation();
+            return true;
+        } catch (UnavailableException e) {
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -275,6 +282,18 @@ public class Space extends Space_Base {
         return getInformation(when).getName();
     }
 
+    public String getName() throws UnavailableException {
+        return getInformation().getName();
+    }
+
+    public Integer getAllocatableCapacity(DateTime when) throws UnavailableException {
+        return getInformation(when).getAllocatableCapacity();
+    }
+
+    public Integer getAllocatableCapacity() throws UnavailableException {
+        return getInformation().getAllocatableCapacity();
+    }
+
     public Set<Space> getValidChildrenSet() {
         return FluentIterable.from(getChildrenSet()).filter(new Predicate<Space>() {
 
@@ -342,4 +361,33 @@ public class Space extends Space_Base {
         return true;
     }
 
+    public String getNameWithParents() {
+        final List<Space> path = Lists.reverse(getPath());
+        final Space space = path.get(0);
+        final Set<String> parents = FluentIterable.from(path.subList(1, path.size())).filter(new Predicate<Space>() {
+
+            @Override
+            public boolean apply(Space input) {
+                return input.isActive();
+            }
+        }).transform(new Function<Space, String>() {
+
+            @Override
+            public String apply(Space input) {
+                try {
+                    return input.getName();
+                } catch (UnavailableException e) {
+                    return "";
+                }
+            }
+
+        }).toSet();
+
+        final String others = Joiner.on(", ").join(parents);
+        try {
+            return String.format("%s (%s)", space.getName(), others);
+        } catch (UnavailableException e) {
+            return "";
+        }
+    }
 }

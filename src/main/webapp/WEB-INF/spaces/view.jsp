@@ -16,16 +16,6 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title"><spring:message code="title.sub.spaces" text="Sub Spaces" /></h3>
-	</div>
-	<div class="panel-body">
-		<%@include file="fragments/spaces.jsp"%>
-	</div>
-</div>
-
-
-<div class="panel panel-primary">
-	<div class="panel-heading">
 		<h3 class="panel-title"><spring:message code="title.view.space" text="Space Details" /></h3>
 	</div>
 	<div class="panel-body">
@@ -87,5 +77,14 @@
 				</tr>
 			</c:forEach>
 		</table>
+	</div>
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title"><spring:message code="title.sub.spaces" text="Sub Spaces" /></h3>
+	</div>
+	<div class="panel-body">
+		<%@include file="fragments/spaces.jsp"%>
 	</div>
 </div>
