@@ -3,6 +3,7 @@ package org.fenixedu.spaces.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.ui.services.OccupationService;
 import org.joda.time.DateTime;
@@ -59,12 +60,15 @@ public class OccupationController {
         final List<Interval> intervals = parseIntervals(events);
         model.addAttribute("events", events);
         model.addAttribute("config", config);
-        model.addAttribute("freeSpaces", occupationService.searchFreeSpaces(intervals));
+        model.addAttribute("freeSpaces", occupationService.searchFreeSpaces(intervals, Authenticate.getUser()));
         return "occupations/searchcreate";
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String create(Model model) {
+    public String create(Model model, @RequestParam String emails, @RequestParam String subject,
+            @RequestParam String description, @RequestParam String selectedSpaces, @RequestParam String config,
+            @RequestParam String events) {
+        occupationService.createOccupation(emails, subject, description, selectedSpaces, config, events);
         return "occupations/create";
     }
 

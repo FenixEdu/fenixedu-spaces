@@ -15,6 +15,9 @@ class Space {
 }
 
 class occupation.Occupation {
+	String emails;
+	String subject;
+	String description;
 	OccupationConfig config (REQUIRED);
 }
 
@@ -75,6 +78,13 @@ relation SpaceManagementAccessGroup {
 relation OccupationCommentPerson {
     .org.fenixedu.bennu.core.domain.User playsRole owner;
     occupation.requests.OccupationComment playsRole occupationComment {
+        multiplicity *;
+    }
+}
+
+relation OccupationRequestOccupations {
+    occupation.requests.OccupationRequest playsRole request;
+    occupation.Occupation playsRole occupation {
         multiplicity *;
     }
 }
@@ -174,7 +184,9 @@ relation InformationInformation {
 }
 
 relation SpaceOccupation {
-	Space playsRole space;
+	Space playsRole space {
+		multiplicity *;
+	}
 	occupation.Occupation playsRole occupation {
 		multiplicity *;
 	}

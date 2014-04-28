@@ -138,6 +138,12 @@
 				selectSpace(selectedSpace)
 			});
 			
+			$("#create-occupation-form").submit(function(e){
+				$("#selected-spaces-input").val(JSON.stringify(selectedSpaces));
+				$("#config-input").val(JSON.stringify(config));
+				$("#events-input").val(JSON.stringify(events));
+			});
+			
 		};
 	
 	$(document).ready(documentReady);
@@ -212,14 +218,54 @@
   <button type="submit" class="btn btn-success"><spring:message code="label.create.occupation.add.space" text="Adicionar Espaço"/></button>
 </form>
 
+<h2><spring:message code="title.create.occupation.selected.space" text="Espaços Selecionados"/></h2>
+
 <table class="table" id="selected-spaces">
 	<thead>
-		<th><spring:message code="label.create.occupation.selected.space.name" text="Nome"></spring:message></th>
-		<th><spring:message code="label.create.occupation.selected.space.normal.capacity" text="Capacidade Normal"></spring:message></th>
-		<th><spring:message code="label.create.occupation.selected.space.operations" text="Ações"></spring:message>
+		<th><spring:message code="label.create.occupation.selected.space.name" text="Nome"/></th>
+		<th><spring:message code="label.create.occupation.selected.space.normal.capacity" text="Capacidade Normal"/></th>
+		<th><spring:message code="label.create.occupation.selected.space.operations" text="Ações"/>
 	</thead>
 	<tbody>
 	</tbody>
 </table>
 
+<h2><spring:message code="title.create.occupation.reason" text="Motivo da Ocupação de Espaços"/></h2>
 
+<spring:url var="createUrl" value="/spaces/occupations/create" />
+
+
+<form class="form-horizontal" role="form" id="create-occupation-form" method="POST" action ="${createUrl}">
+  <div class="form-group">
+    <label for="occupation-emails" class="col-sm-2 control-label">
+    	<spring:message code="label.create.occupation.reason.emails" text="Destinatários (emails separados por virgula):"></spring:message>
+    </label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="emails" id="occupation-emails">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="occupation-subject" class="col-sm-2 control-label">
+    	<spring:message code="label.create.occupation.reason.subject" text="Descrição Breve"></spring:message>
+    </label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="subject" id="occupation-subject">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="occupation-description" class="col-sm-2 control-label">
+    	<spring:message code="label.create.occupation.reason.description" text="Descrição Completa"></spring:message>
+    </label>
+    <div class="col-sm-10">
+      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-10">
+      <button type="submit" class="btn btn-success"><spring:message code="label.create.occupation.reason.submit" text="Criar Ocupação"/></button>
+    </div>
+  </div>
+  <input type="hidden" name="selectedSpaces" id="selected-spaces-input"/>
+  <input type="hidden" name="config" id="config-input"/>
+  <input type="hidden" name="events" id="events-input"/>
+</form>

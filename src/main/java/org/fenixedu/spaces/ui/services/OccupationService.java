@@ -11,6 +11,8 @@ import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.spaces.domain.Space;
+import org.fenixedu.spaces.domain.occupation.Occupation;
+import org.fenixedu.spaces.domain.occupation.config.ExplicitConfig;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState;
 import org.fenixedu.spaces.ui.OccupationRequestBean;
@@ -19,11 +21,21 @@ import org.joda.time.Interval;
 import org.springframework.stereotype.Service;
 
 import pt.ist.fenixframework.Atomic;
+import pt.ist.fenixframework.FenixFramework;
 
 import com.google.common.collect.Ordering;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 @Service
 public class OccupationService {
+
+    private JsonParser jsonParser;
+
+    public OccupationService() {
+        jsonParser = new JsonParser();
+    }
 
     @Atomic
     public OccupationRequest createRequest(OccupationRequestBean bean) {
@@ -94,11 +106,11 @@ public class OccupationService {
         request.closeRequestAndAssociateOwnerOnlyForEmployees(new DateTime(), owner);
     }
 
+    //TODO: Access Control
     public List<Space> searchFreeSpaces(List<Interval> intervals, User user) {
         final Set<Space> freeSpaces = new HashSet<>();
         for (Space space : Bennu.getInstance().getSpaceSet()) {
-            if (space.isActive() && space.isFree(intervals)
-                    && space.getOccupationsAccessGroupWithChainOfResponsability().isMember(user)) {
+            if (space.isActive() && space.isFree(intervals)) {
                 freeSpaces.add(space);
             }
         }
@@ -112,4 +124,44 @@ public class OccupationService {
         }).immutableSortedCopy(freeSpaces);
     }
 
+    @Atomic
+    public void createOccupation(String emails, String subject, String description, String selectedSpaces, String config,
+            String events) {
+        final Set<Space> selectedSpaceSet = selectSpaces(selectedSpaces);
+        final List<Interval> intervals = selectEvents(events);
+        final Occupation occupation =
+                new Occupation(emails, subject, description, new ExplicitConfig(jsonParser.parse(config), intervals));
+        for (Space space : selectedSpaceSet) {
+            occupation.addSpace(space);
+        }
+    }
+
+    private DateTime selectDate(JsonElement jsonElement, String memberName) {
+        final String timestamp = jsonElement.getAsJsonObject().get(memberName).getAsString();
+        return new DateTime(Long.parseLong(timestamp) * 1000L);
+    }
+
+    private List<Interval> selectEvents(String events) {
+        final List<Interval> intervals = new ArrayList<>();
+        final JsonArray eventsJson = jsonParser.parse(events).getAsJsonArray();
+        for (JsonElement eventElement : eventsJson) {
+            final DateTime start = selectDate(eventElement, "start");
+            final DateTime end = selectDate(eventElement, "end");
+            intervals.add(new Interval(start, end));
+        }
+        return intervals;
+    }
+
+    private Set<Space> selectSpaces(String selectedSpaces) {
+        final Set<Space> selectedSpaceSet = new HashSet<>();
+        final JsonArray spacesJson = jsonParser.parse(selectedSpaces).getAsJsonArray();
+        for (JsonElement spaceJson : spacesJson) {
+            String spaceId = spaceJson.getAsString();
+            final Space space = FenixFramework.getDomainObject(spaceId);
+            if (FenixFramework.isDomainObjectValid(space)) {
+                selectedSpaceSet.add(space);
+            }
+        }
+        return selectedSpaceSet;
+    }
 }
