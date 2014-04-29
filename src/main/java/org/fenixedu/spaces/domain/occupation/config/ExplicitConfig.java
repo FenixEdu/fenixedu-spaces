@@ -7,7 +7,6 @@ import org.joda.time.Interval;
 import com.google.gson.JsonElement;
 
 public class ExplicitConfig extends OccupationConfig {
-
     private final JsonElement config;
     private final List<Interval> intervals;
 

@@ -5,17 +5,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.fenixedu.bennu.core.domain.groups.PersistentGroup;
 import org.fenixedu.bennu.scheduler.custom.CustomTask;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
+import org.fenixedu.spaces.domain.occupation.Occupation;
+import org.fenixedu.spaces.domain.occupation.config.ExplicitConfig;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.YearMonthDay;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +33,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 
 @SuppressWarnings("unused")
@@ -36,13 +43,15 @@ public class ImportSpacesTask extends CustomTask {
 
     private static final Map<String, String> codes = new HashMap<String, String>() {
         {
-            put("Campus", "10");
-            put("Room", "11");
-            put("RoomSubdivision", "12");
-            put("Building", "13");
-            put("Floor", "14");
+            put("Campus", "100");
+            put("Room", "101");
+            put("RoomSubdivision", "102");
+            put("Building", "103");
+            put("Floor", "104");
         }
     };
+
+    private static final String IMPORT_URL = "/home/sfbs/Documents/fenix-spaces/import";
 
     @Override
     public TxMode getTxMode() {
@@ -96,6 +105,20 @@ public class ImportSpacesTask extends CustomTask {
             this.intervals = intervals;
         }
 
+        public List<Interval> getIntervals() {
+            return FluentIterable.from(intervals).transform(new Function<IntervalBean, Interval>() {
+
+                private final DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+
+                @Override
+                public Interval apply(IntervalBean input) {
+                    final DateTime start = dateTimeFormat.parseDateTime(input.start);
+                    final DateTime end = dateTimeFormat.parseDateTime(input.end);
+                    return new Interval(start, end);
+                }
+
+            }).toList();
+        }
     }
 
     public class SpaceBean {
@@ -105,6 +128,8 @@ public class ImportSpacesTask extends CustomTask {
         public Integer examCapacity;
         public Integer normalCapacity;
         public String type;
+        public String occupationGroup;
+        public String managementSpaceGroup;
         public Set<SpaceInformationBean> informations;
         public Set<BlueprintBean> blueprints;
 
@@ -198,21 +223,36 @@ public class ImportSpacesTask extends CustomTask {
     public void runTask() throws Exception {
         Gson gson = new Gson();
         processSpaces(gson);
+        processOccupations(gson);
     }
 
     public void processOccupations(Gson gson) throws FileNotFoundException {
-        File file = new File("/home/sfbs/Downloads/occupations.json");
+        File file = new File(IMPORT_URL + "/occupations_recent.json");
         final List<ImportOccupationBean> fromJson =
                 gson.fromJson(new JsonReader(new FileReader(file)), new TypeToken<List<ImportOccupationBean>>() {
                 }.getType());
 
         for (ImportOccupationBean importOccupationBean : fromJson) {
-        }
+            Set<Space> occupationSpaces = new HashSet<>();
+            for (String spaceId : importOccupationBean.spaces) {
+                final SpaceBean spaceBean = idToBeansMap.get(spaceId);
+                final Space e = beanToSpaceMap.get(spaceBean);
+                occupationSpaces.add(e);
+            }
 
+            final ExplicitConfig explicitConfig = new ExplicitConfig(new JsonObject(), importOccupationBean.getIntervals());
+
+            final Occupation occupation =
+                    new Occupation(importOccupationBean.title, importOccupationBean.description, explicitConfig);
+
+            for (Space space : occupationSpaces) {
+                occupation.addSpace(space);
+            }
+        }
     }
 
     public void processSpaces(Gson gson) throws FileNotFoundException {
-        File file = new File("/home/sfbs/Downloads/spaces2.json");
+        File file = new File(IMPORT_URL + "/spaces_recent.json");
         final List<SpaceBean> fromJson = gson.fromJson(new JsonReader(new FileReader(file)), new TypeToken<List<SpaceBean>>() {
         }.getType());
 
@@ -257,6 +297,17 @@ public class ImportSpacesTask extends CustomTask {
                     spaceBean.normalCapacity == null ? null : spaceBean.normalCapacity.toString());
             space.bean(infoBean);
         }
+        final PersistentGroup occupationGroup = FenixFramework.getDomainObject(spaceBean.occupationGroup);
+        final PersistentGroup managementGroup = FenixFramework.getDomainObject(spaceBean.managementSpaceGroup);
+
+        if (FenixFramework.isDomainObjectValid(occupationGroup)) {
+            space.setOccupationsAccessGroup(occupationGroup.toGroup());
+        }
+
+        if (FenixFramework.isDomainObjectValid(managementGroup)) {
+            space.setManagementAccessGroup(managementGroup.toGroup());
+        }
+
         return space;
     }
 }

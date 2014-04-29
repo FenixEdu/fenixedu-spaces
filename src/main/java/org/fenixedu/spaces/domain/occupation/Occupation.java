@@ -8,15 +8,13 @@ import org.joda.time.Interval;
 public class Occupation extends Occupation_Base {
 
     public Occupation(String subject, String description, OccupationConfig config) {
-        super();
-        setConfig(config);
-        setSubject(subject);
-        setDescription(description);
+        this(null, subject, description, config);
     }
 
     public Occupation(String emails, String subject, String description, OccupationConfig config) {
-        this(subject, description, config);
-        setEmails(emails);
+        super();
+        setConfig(config);
+        setDetails(new OccupationDetails(emails, subject, description));
     }
 
     public List<Interval> getIntervals() {
@@ -34,19 +32,23 @@ public class Occupation extends Occupation_Base {
         return false;
     }
 
-    @Override
     public String getSubject() {
         if (getRequest() != null) {
             return getRequest().getSubject();
         }
-        return super.getSubject();
+        if (getDetails() != null) {
+            return getDetails().getSubject();
+        }
+        return null;
     }
 
-    @Override
     public String getDescription() {
         if (getRequest() != null) {
             return getRequest().getDescription();
         }
-        return super.getDescription();
+        if (getDetails() != null) {
+            return getDetails().getDescription();
+        }
+        return null;
     }
 }

@@ -3,6 +3,8 @@ package org.fenixedu.spaces.domain;
 import java.util.HashMap;
 import java.util.List;
 
+import org.fenixedu.bennu.core.domain.User;
+
 public class BlueprintFile extends BlueprintFile_Base {
 
     public BlueprintFile(String filename, byte[] content) {
@@ -71,6 +73,11 @@ public class BlueprintFile extends BlueprintFile_Base {
         public int getY() {
             return y;
         }
+    }
+
+    @Override
+    public boolean isAccessible(User user) {
+        return true;
     }
 
 }

@@ -9,16 +9,24 @@ valueType org.fenixedu.spaces.domain.occupation.config.OccupationConfig as Occup
     internalizeWith internalize();
 }
 
+valueType java.math.BigDecimal as BigDecimal {
+    externalizeWith {
+        String toString();
+    }
+}
 
 class Space {
 	DateTime created (REQUIRED);
 }
 
 class occupation.Occupation {
+	OccupationConfig config (REQUIRED);
+}
+
+class occupation.OccupationDetails {
 	String emails;
 	String subject;
 	String description;
-	OccupationConfig config (REQUIRED);
 }
 
 class Information {
@@ -66,12 +74,12 @@ class occupation.requests.OccupationStateInstant  {
 
 relation SpaceOccupationsAccessGroup {
 	Space playsRole occupationSpace;
-	.org.fenixedu.bennu.core.domain.groups.Group playsRole occupationsAccessGroup;
+	protected .org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole occupationsAccessGroup;
 }
 
 relation SpaceManagementAccessGroup {
 	Space playsRole managementSpace;
-	.org.fenixedu.bennu.core.domain.groups.Group playsRole managementAccessGroup;
+	protected .org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole managementAccessGroup;
 }
 
 
@@ -183,6 +191,12 @@ relation InformationInformation {
 	Information playsRole previous;
 }
 
+
+relation OccupationOccupationDetails {
+	occupation.Occupation playsRole occupation;
+	occupation.OccupationDetails playsRole details;
+}
+
 relation SpaceOccupation {
 	Space playsRole space {
 		multiplicity *;
@@ -213,6 +227,13 @@ relation SpaceInformationHistory {
 	}
 }
 
+
+relation BennuSpaceOccupation {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
+	occupation.Occupation playsRole occupation {
+		multiplicity *;
+	}
+}
 relation BennuSpaces {
 	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
 	Space playsRole space {

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.bennu.core.domain.groups.Group;
+import org.fenixedu.bennu.core.domain.groups.PersistentGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
@@ -329,9 +330,9 @@ public class Space extends Space_Base {
     }
 
     public Group getManagementAccessGroupWithChainOfResponsability() {
-        final Group accessGroup = getManagementAccessGroup();
-        if (accessGroup != null && !accessGroup.getMembers().isEmpty()) {
-            return accessGroup;
+        final PersistentGroup accessGroup = getManagementAccessGroup();
+        if (accessGroup != null) {
+            return accessGroup.toGroup();
         }
         final Space surroundingSpace = getParent();
         if (surroundingSpace != null) {
@@ -341,15 +342,23 @@ public class Space extends Space_Base {
     }
 
     public Group getOccupationsAccessGroupWithChainOfResponsability() {
-        final Group accessGroup = getOccupationsAccessGroup();
-        if (accessGroup != null && !accessGroup.getMembers().isEmpty()) {
-            return accessGroup;
+        final PersistentGroup accessGroup = getOccupationsAccessGroup();
+        if (accessGroup != null) {
+            return accessGroup.toGroup();
         }
         final Space surroundingSpace = getParent();
         if (surroundingSpace != null) {
             return surroundingSpace.getOccupationsAccessGroupWithChainOfResponsability();
         }
         return null;
+    }
+
+    public void setManagementAccessGroup(Group managementAccessGroup) {
+        super.setManagementAccessGroup(managementAccessGroup.toPersistentGroup());
+    }
+
+    public void setOccupationsAccessGroup(Group occupationsAccessGroup) {
+        super.setOccupationsAccessGroup(occupationsAccessGroup.toPersistentGroup());
     }
 
     public boolean isFree(List<Interval> intervals) {
