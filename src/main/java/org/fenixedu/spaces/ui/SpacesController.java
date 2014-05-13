@@ -131,6 +131,21 @@ public class SpacesController {
         return "spaces/timeline";
     }
 
+    @RequestMapping(value = "/access/{space}", method = RequestMethod.GET)
+    public String access(@PathVariable Space space, Model model) throws UnavailableException {
+        model.addAttribute("space", space);
+        model.addAttribute("localOccupationsGroup", space.getOccupationsAccessGroup());
+        model.addAttribute("localManagementGroup", space.getManagementAccessGroup());
+        model.addAttribute("chainOccupationsGroup", space.getOccupationsAccessGroupWithChainOfResponsability());
+        model.addAttribute("chainManagementGroup", space.getManagementAccessGroupWithChainOfResponsability());
+        return "spaces/access";
+    }
+
+    @RequestMapping(value = "/access/{space}", method = RequestMethod.POST)
+    public String changeAccess(@PathVariable Space space, Model model) throws UnavailableException {
+        return "spaces/timeline";
+    }
+
     @ResponseBody
     @RequestMapping(value = "/{space}", method = RequestMethod.DELETE)
     public String delete(@PathVariable() Space space) throws UnavailableException {
@@ -142,7 +157,7 @@ public class SpacesController {
     public void blueprint(@PathVariable Space space, @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
             defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, @RequestParam(defaultValue = "50") BigDecimal scale,
             HttpServletResponse response) throws IOException, UnavailableException {
-        Boolean isSuroundingSpaceBlueprint = false;
+        Boolean isSuroundingSpaceBlueprint = true;
         Boolean isToViewOriginalSpaceBlueprint = false;
         Boolean viewBlueprintNumbers = true;
         Boolean isToViewIdentifications = true;

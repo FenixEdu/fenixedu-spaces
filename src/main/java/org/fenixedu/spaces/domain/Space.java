@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.domain.groups.PersistentGroup;
 import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.spaces.domain.occupation.Occupation;
@@ -25,15 +26,31 @@ import com.google.gson.JsonObject;
 
 public class Space extends Space_Base {
 
+    public Space() {
+
+    }
+
     public Space(Information information) {
         this(null, information);
     }
 
     public Space(Space parent, Information information) {
+        init(parent, information);
+    }
+
+    private void init(Space parent, Information information) {
         setCreated(new DateTime());
         add(information);
         setParent(parent);
         setBennu(Bennu.getInstance());
+    }
+
+    public void init(Space parent, InformationBean informationBean) {
+        init(parent, Information.builder(informationBean).build());
+    }
+
+    public Space(Space parent, InformationBean informationBean) {
+        init(parent, informationBean);
     }
 
     public InformationBean bean() throws UnavailableException {
@@ -253,7 +270,7 @@ public class Space extends Space_Base {
             @Override
             public boolean apply(Space input) {
                 try {
-                    return input.getInformation(when).getBlueprintNumber().equals(blueprintNumber);
+                    return blueprintNumber.equals(input.getBlueprintNumber());
                 } catch (UnavailableException e) {
                     return false;
                 }
@@ -261,8 +278,16 @@ public class Space extends Space_Base {
         }).orNull();
     }
 
+    public String getBlueprintNumber() throws UnavailableException {
+        return getBlueprintNumber(new DateTime());
+    }
+
     public String getBlueprintNumber(DateTime when) throws UnavailableException {
-        return getInformation().getBlueprintNumber();
+        return getInformation(when).getBlueprintNumber();
+    }
+
+    public BlueprintFile getBlueprintFile() throws UnavailableException {
+        return getBlueprintFile(new DateTime());
     }
 
     public BlueprintFile getBlueprintFile(DateTime when) throws UnavailableException {
@@ -354,11 +379,11 @@ public class Space extends Space_Base {
     }
 
     public void setManagementAccessGroup(Group managementAccessGroup) {
-        super.setManagementAccessGroup(managementAccessGroup.toPersistentGroup());
+        super.setManagementAccessGroup(managementAccessGroup == null ? null : managementAccessGroup.toPersistentGroup());
     }
 
     public void setOccupationsAccessGroup(Group occupationsAccessGroup) {
-        super.setOccupationsAccessGroup(occupationsAccessGroup.toPersistentGroup());
+        super.setOccupationsAccessGroup(occupationsAccessGroup == null ? null : occupationsAccessGroup.toPersistentGroup());
     }
 
     public boolean isFree(List<Interval> intervals) {
@@ -399,4 +424,15 @@ public class Space extends Space_Base {
             return "";
         }
     }
+
+    public boolean isOccupationMember(final User user) {
+        final Group group = getOccupationsAccessGroupWithChainOfResponsability();
+        return group != null && group.isMember(user);
+    }
+
+    public boolean isSpaceManagementMember(final User user) {
+        final Group group = getManagementAccessGroupWithChainOfResponsability();
+        return group != null && group.isMember(user);
+    }
+
 }

@@ -7,8 +7,10 @@ import java.util.Locale;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.i18n.LocalizedString;
-import org.fenixedu.spaces.domain.exception.SpaceException;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.FluentIterable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
@@ -16,44 +18,72 @@ public class SpaceClassification extends SpaceClassification_Base {
 
     public SpaceClassification(String code, LocalizedString name, SpaceClassification parent, JsonElement metadataSpec) {
         super();
-        validateCode(code);
         setCode(code);
         setName(name);
-        setParent(null);
+        setParent(parent);
         if (parent == null) {
             setBennu(Bennu.getInstance());
         }
         setMetadataSpec(metadataSpec);
     }
 
+    public SpaceClassification(String code, LocalizedString name, SpaceClassification parent) {
+        this(code, name, parent, new JsonArray());
+    }
+
     public SpaceClassification(String code, LocalizedString name) {
-        this(code, name, null, new JsonArray());
+        this(code, name, null);
     }
 
     public static SpaceClassification get(String code) {
-        for (SpaceClassification spaceClassification : all()) {
-            if (spaceClassification.getCode().equals(code)) {
-                return spaceClassification;
+        String parentCode = null;
+        String childCode = null;
+        if (code.indexOf(".") != -1) {
+            String[] subCodes = code.split("\\.");
+            parentCode = subCodes[0];
+            childCode = subCodes[1];
+        } else {
+            parentCode = code;
+        }
+        for (SpaceClassification classification : Bennu.getInstance().getRootClassificationSet()) {
+            if (classification.getCode().equals(parentCode)) {
+                if (childCode != null) {
+                    return classification.getChild(childCode);
+                }
+                return classification;
             }
         }
         return null;
     }
 
-    private void validateChildCode(String code) {
-        if (getCode().equals(code)) {
-            throw new SpaceException("error.space.classfication.must.be.unique");
-        }
-        for (SpaceClassification classification : getChildrenSet()) {
-            if (classification.getCode().equals(code)) {
-                throw new SpaceException("error.space.classfication.must.be.unique");
+    private SpaceClassification getChild(String code) {
+        for (SpaceClassification child : getChildrenSet()) {
+            if (child.getCode().equals(code)) {
+                return child;
             }
         }
+        return null;
     }
 
-    private void validateCode(String code) {
-        for (SpaceClassification classification : Bennu.getInstance().getRootClassificationSet()) {
-            classification.validateChildCode(code);
+    public String getAbsoluteCode() {
+        return Joiner.on(".").join(FluentIterable.from(getPath()).transform(new Function<SpaceClassification, String>() {
+
+            @Override
+            public String apply(SpaceClassification input) {
+                return input.getCode();
+            }
+
+        }).toList());
+    }
+
+    private List<SpaceClassification> getPath() {
+        List<SpaceClassification> path = new ArrayList<>();
+        SpaceClassification parent = this;
+        while (parent != null) {
+            path.add(0, parent);
+            parent = parent.getParent();
         }
+        return path;
     }
 
     private void dump(List<SpaceClassification> classifications) {
@@ -98,6 +128,15 @@ public class SpaceClassification extends SpaceClassification_Base {
             specs.add(new MetadataSpec(metadataSpec));
         }
         return specs;
+    }
+
+    @Override
+    public void setMetadataSpec(JsonElement metadataSpec) {
+        if (metadataSpec == null) {
+            super.setMetadataSpec(new JsonArray());
+        } else {
+            super.setMetadataSpec(metadataSpec);
+        }
     }
 
     public void setMetadataSpecs(Collection<MetadataSpec> specs) {

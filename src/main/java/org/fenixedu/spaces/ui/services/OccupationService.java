@@ -106,11 +106,10 @@ public class OccupationService {
         request.closeRequestAndAssociateOwnerOnlyForEmployees(new DateTime(), owner);
     }
 
-    //TODO: Access Control
     public List<Space> searchFreeSpaces(List<Interval> intervals, User user) {
         final Set<Space> freeSpaces = new HashSet<>();
         for (Space space : Bennu.getInstance().getSpaceSet()) {
-            if (space.isActive() && space.isFree(intervals)) {
+            if (space.isActive() && space.isFree(intervals) && space.isOccupationMember(user)) {
                 freeSpaces.add(space);
             }
         }

@@ -80,7 +80,8 @@ public class MetadataSpec {
         json.addProperty("name", getName());
         json.add("description", getDescription().json());
         json.addProperty("required", isRequired());
-        json.addProperty(defaultValue, getDefaultValue());
+        json.addProperty("defaultValue", getDefaultValue());
+        json.addProperty("type", getType().getName());
         return json;
     }
 

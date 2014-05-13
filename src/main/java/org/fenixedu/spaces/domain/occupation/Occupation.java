@@ -7,6 +7,10 @@ import org.joda.time.Interval;
 
 public class Occupation extends Occupation_Base {
 
+    public Occupation() {
+        super();
+    }
+
     public Occupation(String subject, String description, OccupationConfig config) {
         this(null, subject, description, config);
     }
@@ -51,4 +55,13 @@ public class Occupation extends Occupation_Base {
         }
         return null;
     }
+
+    public Boolean isActive() {
+        return !getIntervals().get(getIntervals().size() - 1).getEnd().isBeforeNow();
+    }
+
+    public String getSummary() {
+        return null;
+    }
+
 }

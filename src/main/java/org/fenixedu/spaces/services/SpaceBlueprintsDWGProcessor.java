@@ -231,7 +231,7 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
 //                }
 
                 try {
-                    return space.getMetadata("doorNumber");
+                    return space.getBlueprintNumber();
                 } catch (UnavailableException e) {
                     return "-";
                 }
@@ -280,7 +280,12 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
             Boolean isToViewDoorNumbers, BigDecimal scalePercentage, final OutputStream writer) throws IOException,
             UnavailableException {
 
-        final BlueprintFile blueprintFile = space.getBlueprintFile(when);
+        BlueprintFile blueprintFile = space.getBlueprintFile(when);
+
+        if (blueprintFile == null) {
+            blueprintFile = space.getParent().getBlueprintFile(when);
+        }
+
         final byte[] blueprintBytes = blueprintFile.getContent();
         final InputStream inputStream = new ByteArrayInputStream(blueprintBytes);
 

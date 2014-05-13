@@ -62,6 +62,9 @@ public abstract class OccupationConfig {
     public abstract List<Interval> getIntervals();
 
     public static OccupationConfig internalize(JsonElement json) {
+        if (json == null) {
+            return null;
+        }
         final JsonObject jsonObject = json.getAsJsonObject();
         final String type = jsonObject.get("type").getAsString();
         try {

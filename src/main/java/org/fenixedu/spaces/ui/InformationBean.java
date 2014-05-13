@@ -37,6 +37,7 @@ public class InformationBean {
     private String externalId;
     private BlueprintFile blueprint;
     private MultipartFile blueprintMultipartFile;
+    private byte[] rawBlueprint;
     private User user;
 
     private static Gson gson = new Gson();
@@ -160,6 +161,9 @@ public class InformationBean {
     }
 
     private static JsonElement convert(Class<?> type, String value) {
+        if (value == null) {
+            return null;
+        }
         if (String.class.isAssignableFrom(type)) {
             return new JsonPrimitive(value);
         }
@@ -199,12 +203,27 @@ public class InformationBean {
         this.blueprintMultipartFile = blueprintMultipartFile;
     }
 
+    public void setBlueprint(BlueprintFile file) {
+        this.blueprint = file;
+    }
+
+    public BlueprintFile getBlueprint() {
+        return this.blueprint;
+    }
+
+    public void setRawBlueprint(byte[] rawBlueprint) {
+        this.rawBlueprint = rawBlueprint;
+    }
+
     public byte[] getBlueprintContent() {
         try {
-            if (getBlueprintMultipartFile() == null) {
-                return null;
+            if (getBlueprintMultipartFile() != null) {
+                return getBlueprintMultipartFile().getBytes();
             }
-            return getBlueprintMultipartFile().getBytes();
+            if (rawBlueprint != null) {
+                return rawBlueprint;
+            }
+            return null;
         } catch (IOException e) {
             return null;
         }

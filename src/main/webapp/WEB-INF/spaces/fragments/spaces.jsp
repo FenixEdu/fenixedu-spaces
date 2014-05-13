@@ -40,6 +40,8 @@
 					<spring:url value="/spaces/timeline/${space.externalId}" var="timelineUrl" />
 					<spring:url value="/spaces/view/${space.externalId}" var="viewUrl" />
 					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
+					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
+					
 					<tr>
 						<td>${space.classification.name.content}</td>
 						<td>${space.name}</td>
@@ -52,6 +54,7 @@
 							<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a> 
 							<!-- <a href="${createSubSpaceUrl}" class="btn btn-success"><spring:message code="link.space.subspace.create" text="Create Subspace" /></a> -->
 							<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
+							<a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a>
 						</td>
 					</tr>
 				</c:forEach>

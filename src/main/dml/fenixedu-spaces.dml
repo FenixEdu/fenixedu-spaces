@@ -9,7 +9,7 @@ valueType org.fenixedu.spaces.domain.occupation.config.OccupationConfig as Occup
     internalizeWith internalize();
 }
 
-valueType java.math.BigDecimal as BigDecimal {
+valueType java.math.BigDecimal as SpacesBigDecimal {
     externalizeWith {
         String toString();
     }
@@ -20,7 +20,7 @@ class Space {
 }
 
 class occupation.Occupation {
-	OccupationConfig config (REQUIRED);
+	OccupationConfig config;
 }
 
 class occupation.OccupationDetails {
@@ -32,7 +32,7 @@ class occupation.OccupationDetails {
 class Information {
 	Integer allocatableCapacity;
 	String blueprintNumber;
-	BigDecimal area;
+	SpacesBigDecimal area;
 	String name;
 	String identification;
 	JsonElement metadata;
@@ -73,13 +73,17 @@ class occupation.requests.OccupationStateInstant  {
 
 
 relation SpaceOccupationsAccessGroup {
-	Space playsRole occupationSpace;
-	protected .org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole occupationsAccessGroup;
+	Space playsRole occupationSpace {
+		multiplicity *;
+	}
+	.org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole occupationsAccessGroup;
 }
 
 relation SpaceManagementAccessGroup {
-	Space playsRole managementSpace;
-	protected .org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole managementAccessGroup;
+	Space playsRole managementSpace {
+		multiplicity *;
+	}
+	.org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole managementAccessGroup;
 }
 
 
@@ -155,7 +159,9 @@ relation RootDomainObjectOccupationComment {
 
 relation InformationUser {
 	.org.fenixedu.bennu.core.domain.User playsRole user;
-	Information playsRole information;
+	Information playsRole information {
+		multiplicity *;
+	}
 }
 
 relation BennuSpaceClassification {
