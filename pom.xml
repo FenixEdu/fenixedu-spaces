@@ -16,8 +16,15 @@
 	<name>FenixEduSpaces</name>
 
 	<properties>
-		<version.bennu>3.0.0</version.bennu>
+		<version.bennu>3.0.1</version.bennu>
 	</properties>
+
+	<scm>
+		<connection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</connection>
+		<developerConnection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</developerConnection>
+		<url>http://fenixedu.github.io/spaces</url>
+		<tag>HEAD</tag>
+	</scm>
 
 	<dependencies>
 		<dependency>
@@ -48,7 +55,7 @@
 		<dependency>
 			<groupId>pt.ist</groupId>
 			<artifactId>fenix-legacy-tools</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
