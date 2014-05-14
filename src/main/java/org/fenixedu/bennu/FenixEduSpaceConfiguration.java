@@ -7,6 +7,7 @@ import org.fenixedu.commons.configuration.ConfigurationProperty;
 
 @BennuSpringModule(basePackages = "org.fenixedu.spaces.ui", bundles = "SpacesResources")
 public class FenixEduSpaceConfiguration {
+
     @ConfigurationManager(description = "Fenix Space Configuration")
     public interface ConfigurationProperties {
         @ConfigurationProperty(key = "scaleRatio", defaultValue = "1200")

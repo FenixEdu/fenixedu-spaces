@@ -3,7 +3,6 @@ package org.fenixedu.spaces.services;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -283,7 +282,6 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
         }
 
         final byte[] blueprintBytes = blueprintFile.getContent();
-        final InputStream inputStream = new ByteArrayInputStream(blueprintBytes);
 
         SpaceBlueprintsDWGProcessor processor = null;
 
@@ -297,7 +295,7 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
         }
 
         if (processor != null) {
-            processor.generateJPEGImage(inputStream, writer);
+            processor.generateJPEGImage(blueprintBytes, writer);
         }
     }
 }

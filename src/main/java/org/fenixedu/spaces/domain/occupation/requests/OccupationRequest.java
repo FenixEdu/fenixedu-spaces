@@ -6,38 +6,40 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.comparators.ComparatorChain;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceDomainException;
 import org.joda.time.DateTime;
 
-import pt.ist.fenixframework.DomainObject;
-
 public class OccupationRequest extends OccupationRequest_Base {
 
-    public static final Comparator<OccupationRequest> COMPARATOR_BY_IDENTIFICATION = new BeanComparator("identification");
-    public static final Comparator<OccupationRequest> COMPARATOR_BY_INSTANT = new ComparatorChain();
-    public static final Comparator<OccupationRequest> COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT = new ComparatorChain();
-    private static final Comparator<DomainObject> COMPARATOR_BY_ID = new Comparator<DomainObject>() {
+    public static final Comparator<OccupationRequest> COMPARATOR_BY_IDENTIFICATION = new Comparator<OccupationRequest>() {
         @Override
-        public int compare(DomainObject o1, DomainObject o2) {
-            return o1.getExternalId().compareTo(o2.getExternalId());
+        public int compare(OccupationRequest o1, OccupationRequest o2) {
+            return o1.getIdentification().compareTo(o2.getIdentification());
         }
     };
-    static {
-        ((ComparatorChain) COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT).addComparator(
-                new BeanComparator("moreRecentCommentInstant"), true);
-        ((ComparatorChain) COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT).addComparator(COMPARATOR_BY_ID);
 
-        ((ComparatorChain) COMPARATOR_BY_INSTANT).addComparator(new BeanComparator("instant"), true);
-        ((ComparatorChain) COMPARATOR_BY_INSTANT).addComparator(COMPARATOR_BY_ID);
-    }
+    public static final Comparator<OccupationRequest> COMPARATOR_BY_INSTANT = new Comparator<OccupationRequest>() {
+
+        @Override
+        public int compare(OccupationRequest o1, OccupationRequest o2) {
+            int o = o1.getInstant().compareTo(o2.getInstant());
+            return o != 0 ? o : o1.getExternalId().compareTo(o2.getExternalId());
+        }
+    };
+
+    public static final Comparator<OccupationRequest> COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT =
+            new Comparator<OccupationRequest>() {
+                @Override
+                public int compare(OccupationRequest o1, OccupationRequest o2) {
+                    int o = o1.getMoreRecentCommentInstant().compareTo(o2.getMoreRecentCommentInstant());
+                    return o != 0 ? o : o1.getExternalId().compareTo(o2.getExternalId());
+                }
+            };
 
     public OccupationRequest(User requestor, String subject, Space campus, String description) {
-//        check(this, ResourceAllocationRolePredicates.checkPermissionsToManageOccupationRequests);
         super();
         checkIfRequestAlreadyExists(requestor, subject, description);
         setRootDomainObject(Bennu.getInstance());

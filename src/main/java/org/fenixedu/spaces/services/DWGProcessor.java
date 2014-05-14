@@ -8,17 +8,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
 import org.fenixedu.bennu.FenixEduSpaceConfiguration;
 
-import pt.utl.ist.fenix.tools.util.FileUtils;
-
+import com.google.common.io.Files;
 import com.iver.cit.jdwglib.dwg.DwgFile;
 import com.iver.cit.jdwglib.dwg.DwgObject;
 import com.iver.cit.jdwglib.dwg.objects.DwgArc;
@@ -89,9 +88,13 @@ public class DWGProcessor {
         return outputDirname + "/" + simplename.substring(0, simplename.length() - 3) + "jpg";
     }
 
-    public void generateJPEGImage(final InputStream inputStream, final OutputStream outputStream) throws IOException {
+    private static final String TEMPORARY_FILE_GLOBAL_UNIQUE_NAME_PREFIX = UUID.randomUUID().toString();
 
-        final File file = FileUtils.copyToTemporaryFile(inputStream);
+    public void generateJPEGImage(byte[] bytes, final OutputStream outputStream) throws IOException {
+
+        final File file = File.createTempFile(TEMPORARY_FILE_GLOBAL_UNIQUE_NAME_PREFIX, "");
+        file.deleteOnExit();
+        Files.write(bytes, file);
         generateJPEGImage(file.getAbsolutePath(), outputStream);
     }
 
