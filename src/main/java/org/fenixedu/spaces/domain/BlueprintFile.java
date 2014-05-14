@@ -13,6 +13,7 @@ public class BlueprintFile extends BlueprintFile_Base {
     }
 
     public static class BlueprintTextRectangles extends HashMap<Space, List<BlueprintTextRectangle>> {
+        private static final long serialVersionUID = 4137530994580538348L;
     }
 
     public static class BlueprintTextRectangle {

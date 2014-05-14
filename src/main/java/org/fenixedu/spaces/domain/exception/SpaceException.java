@@ -6,6 +6,8 @@ import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 
 public class SpaceException extends DomainException {
 
+    private static final long serialVersionUID = -59199476461461293L;
+
     public SpaceException(Status status, String bundle, String key, String... args) {
         super(status, bundle, key, args);
     }

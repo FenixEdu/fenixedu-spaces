@@ -308,16 +308,24 @@ public class Space extends Space_Base {
         return getInformation(when).getName();
     }
 
-    public String getName() throws UnavailableException {
-        return getInformation().getName();
+    public String getName() {
+        try {
+            return getInformation().getName();
+        } catch (UnavailableException e) {
+            return "";
+        }
     }
 
     public Integer getAllocatableCapacity(DateTime when) throws UnavailableException {
         return getInformation(when).getAllocatableCapacity();
     }
 
-    public Integer getAllocatableCapacity() throws UnavailableException {
-        return getInformation().getAllocatableCapacity();
+    public Integer getAllocatableCapacity() {
+        try {
+            return getInformation().getAllocatableCapacity();
+        } catch (UnavailableException e) {
+            return 0;
+        }
     }
 
     public Set<Space> getValidChildrenSet() {
@@ -408,21 +416,13 @@ public class Space extends Space_Base {
 
             @Override
             public String apply(Space input) {
-                try {
-                    return input.getName();
-                } catch (UnavailableException e) {
-                    return "";
-                }
+                return input.getName();
             }
 
         }).toSet();
 
         final String others = Joiner.on(", ").join(parents);
-        try {
-            return String.format("%s (%s)", space.getName(), others);
-        } catch (UnavailableException e) {
-            return "";
-        }
+        return String.format("%s (%s)", space.getName(), others);
     }
 
     public boolean isOccupationMember(final User user) {

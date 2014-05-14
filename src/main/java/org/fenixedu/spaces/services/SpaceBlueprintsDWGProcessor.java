@@ -39,7 +39,7 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
 
     private Boolean suroundingSpaceBlueprint;
 
-    private Boolean viewOriginalSpaceBlueprint;
+    private final Boolean viewOriginalSpaceBlueprint;
 
     private Space thisSpace;
 
@@ -217,11 +217,7 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
 //                    textToInsert = ((BuildingInformation) spaceInformation).getName();
 //                }
 
-                try {
-                    return space.getName();
-                } catch (UnavailableException e) {
-                    return "-";
-                }
+                return space.getName();
 
             } else if (isToViewDoorNumbers != null && isToViewDoorNumbers) {
 
