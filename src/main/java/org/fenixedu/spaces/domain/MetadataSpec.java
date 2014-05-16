@@ -84,5 +84,4 @@ public class MetadataSpec {
         json.addProperty("type", getType().getName());
         return json;
     }
-
 }

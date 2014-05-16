@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
-import org.fenixedu.spaces.domain.UnavailableException;
 import org.fenixedu.spaces.services.SpaceBlueprintsDWGProcessor;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -31,22 +31,13 @@ import org.springframework.web.servlet.view.RedirectView;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-
 @SpringApplication(group = "anyone", path = "spaces", title = "title.space.management", hint = "spaces-manager")
 @SpringFunctionality(app = SpacesController.class, title = "title.space.management")
 @RequestMapping("/spaces")
 public class SpacesController {
 
     private Set<Space> getTopLevelSpaces() {
-        return FluentIterable.from(Bennu.getInstance().getSpaceSet()).filter(new Predicate<Space>() {
-
-            @Override
-            public boolean apply(Space input) {
-                return input.getParent() == null && input.isActive();
-            }
-        }).toSet();
+        return Space.getSpaces().filter(space -> space.getParent() == null).collect(Collectors.toSet());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -57,7 +48,7 @@ public class SpacesController {
     @RequestMapping(value = "{space}", method = RequestMethod.GET)
     public ModelAndView home(@PathVariable Space space) {
         Set<Space> spaces;
-        spaces = space == null ? getTopLevelSpaces() : space.getValidChildrenSet();
+        spaces = space == null ? getTopLevelSpaces() : space.getChildren();
         return new ModelAndView("spaces/home", "spaces", spaces);
     }
 
@@ -72,7 +63,7 @@ public class SpacesController {
     }
 
     @RequestMapping(value = "/create/{space}", method = RequestMethod.GET)
-    public String create(@PathVariable Space space, Model model) throws UnavailableException {
+    public String create(@PathVariable Space space, Model model) {
         if (space == null) {
             model.addAttribute("action", "/spaces/create");
         } else {
@@ -117,7 +108,7 @@ public class SpacesController {
     @RequestMapping(value = "/view/{space}", method = RequestMethod.GET)
     public String view(@PathVariable Space space, Model model) throws UnavailableException {
         model.addAttribute("information", space.bean());
-        model.addAttribute("spaces", space.getValidChildrenSet());
+        model.addAttribute("spaces", space.getChildren());
         model.addAttribute("parentSpace", space.getParent());
         return "spaces/view";
     }
@@ -134,10 +125,10 @@ public class SpacesController {
     @RequestMapping(value = "/access/{space}", method = RequestMethod.GET)
     public String access(@PathVariable Space space, Model model) throws UnavailableException {
         model.addAttribute("space", space);
-        model.addAttribute("localOccupationsGroup", space.getOccupationsAccessGroup());
-        model.addAttribute("localManagementGroup", space.getManagementAccessGroup());
-        model.addAttribute("chainOccupationsGroup", space.getOccupationsAccessGroupWithChainOfResponsability());
-        model.addAttribute("chainManagementGroup", space.getManagementAccessGroupWithChainOfResponsability());
+        model.addAttribute("localOccupationsGroup", space.getOccupationsGroup());
+        model.addAttribute("localManagementGroup", space.getManagementGroup());
+        model.addAttribute("chainOccupationsGroup", space.getOccupationsGroupWithChainOfResponsability());
+        model.addAttribute("chainManagementGroup", space.getManagementGroupWithChainOfResponsability());
         return "spaces/access";
     }
 

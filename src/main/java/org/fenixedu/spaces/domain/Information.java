@@ -3,6 +3,7 @@ package org.fenixedu.spaces.domain;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.spaces.ui.InformationBean;
@@ -14,6 +15,7 @@ import pt.ist.fenixframework.Atomic.TxMode;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class Information extends Information_Base {
 
@@ -177,6 +179,26 @@ public class Information extends Information_Base {
         setUser(user);
     }
 
+    public <T extends Object> Optional<T> getMetadata(String field) {
+        Optional<MetadataSpec> spec = getClassification().getMetadataSpec(field);
+        if (spec.isPresent()) {
+            final Class<?> type = spec.get().getType();
+            final JsonObject metadata = getMetadata().getAsJsonObject();
+
+            if (Boolean.class.isAssignableFrom(type)) {
+                return (Optional<T>) Optional.of(new Boolean(metadata.get(field).getAsBoolean()));
+            }
+            if (Integer.class.isAssignableFrom(type)) {
+                return (Optional<T>) Optional.of(new Integer(metadata.get(field).getAsInt()));
+            }
+            if (BigDecimal.class.isAssignableFrom(type)) {
+                return (Optional<T>) Optional.of(metadata.get(field).getAsBigDecimal());
+            }
+            return (Optional<T>) Optional.of(new String(metadata.get(field).getAsString()));
+        }
+        return Optional.empty();
+    }
+
     protected Information copy() {
         Information clone = new Information();
         clone.setAllocatableCapacity(getAllocatableCapacity());
@@ -219,7 +241,7 @@ public class Information extends Information_Base {
 
     /**
      * Does requested checkpoint is after current validity period
-     * 
+     *
      * @param checkpoint
      * @return
      */

@@ -1,13 +1,16 @@
 package org.fenixedu.spaces.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.bennu.core.domain.groups.PersistentGroup;
 import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.ui.InformationBean;
@@ -17,17 +20,11 @@ import org.joda.time.Interval;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonObject;
 
-public class Space extends Space_Base {
-
+public final class Space extends Space_Base {
     public Space() {
-
+        super();
     }
 
     public Space(Information information) {
@@ -53,8 +50,8 @@ public class Space extends Space_Base {
         init(parent, informationBean);
     }
 
-    public InformationBean bean() throws UnavailableException {
-        return Information.builder(getInformation()).bean();
+    public InformationBean bean() {
+        return getInformation().map(info -> Information.builder(info)).orElse(Information.builder()).bean();
     }
 
     @Atomic(mode = TxMode.WRITE)
@@ -72,84 +69,56 @@ public class Space extends Space_Base {
         return Lists.reverse(timeline);
     }
 
-    public SpaceClassification getClassification() throws UnavailableException {
-        return getInformation().getClassification();
+    public SpaceClassification getClassification() {
+        return getInformation().map(info -> info.getClassification()).get();
     }
 
     public boolean isActive() {
-        try {
-            getInformation();
-            return true;
-        } catch (UnavailableException e) {
-            return false;
-        }
+        return getInformation().isPresent();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Object> T getMetadata(String field) throws UnavailableException {
-        Information information = getInformation();
-        final MetadataSpec metadataSpec = information.getClassification().getMetadataSpec(field);
-        if (metadataSpec == null) {
-            throw new UnavailableException();
-        }
-        final Class<?> type = metadataSpec.getType();
-        final JsonObject metadata = information.getMetadata().getAsJsonObject();
-
-        if (Boolean.class.isAssignableFrom(type)) {
-            return (T) new Boolean(metadata.get(field).getAsBoolean());
-        }
-        if (Integer.class.isAssignableFrom(type)) {
-            return (T) new Integer(metadata.get(field).getAsInt());
-        }
-        if (String.class.isAssignableFrom(type)) {
-            return (T) new String(metadata.get(field).getAsString());
-        }
-        if (BigDecimal.class.isAssignableFrom(type)) {
-            return (T) metadata.get(field).getAsBigDecimal();
-        }
-
-        throw new UnavailableException();
+    public <T extends Object> Optional<T> getMetadata(String field) {
+        Optional<Information> information = getInformation();
+        return information.isPresent() ? information.get().getMetadata(field) : Optional.empty();
     }
 
     /**
      * get the most recent space information
-     * 
+     *
      * @return
-     * @throws UnavailableException
      */
-    protected Information getInformation() throws UnavailableException {
+    protected Optional<Information> getInformation() {
         return getInformation(new DateTime());
     }
 
     /**
      * get the most recent space information valid at the specified datetime.
-     * 
+     *
      * @param when
      * @return
-     * @throws UnavailableException
      */
 
-    protected Information getInformation(DateTime when) throws UnavailableException {
+    protected Optional<Information> getInformation(DateTime when) {
         return getInformation(when, new DateTime());
     }
 
     /**
      * get the space information valid at the specified when date, created on atWhatDate.
-     * 
+     *
      * @param when
      * @param atWhatDate
      * @return
      */
 
-    protected Information getInformation(final DateTime when, final DateTime creationDate) throws UnavailableException {
+    protected Optional<Information> getInformation(final DateTime when, final DateTime creationDate) {
         Information current = getCurrent();
         while (current != null) {
             if (current.contains(when)) {
-                return current;
+                return Optional.of(current);
             }
             current = current.getPrevious();
         }
-        throw new UnavailableException();
+        return Optional.empty();
     }
 
     protected void add(Information information) {
@@ -264,124 +233,92 @@ public class Space extends Space_Base {
         setDeletedBennu(Bennu.getInstance());
     }
 
-    public Space readChildByBlueprintNumber(final String blueprintNumber, final DateTime when) {
-        return FluentIterable.from(getChildrenSet()).firstMatch(new Predicate<Space>() {
-
-            @Override
-            public boolean apply(Space input) {
-                try {
-                    return blueprintNumber.equals(input.getBlueprintNumber());
-                } catch (UnavailableException e) {
-                    return false;
-                }
-            }
-        }).orNull();
+    public Optional<Space> readChildByBlueprintNumber(final String blueprintNumber, final DateTime when) {
+        return getChildrenSet().stream().filter(space -> blueprintNumber.equals(space.getBlueprintNumber())).findFirst();
     }
 
-    public String getBlueprintNumber() throws UnavailableException {
-        return getBlueprintNumber(new DateTime());
+    public Optional<String> getBlueprintNumber() {
+        return getInformation().map(info -> info.getBlueprintNumber());
     }
 
-    public String getBlueprintNumber(DateTime when) throws UnavailableException {
-        return getInformation(when).getBlueprintNumber();
+    public Optional<String> getBlueprintNumber(DateTime when) {
+        return getInformation(when).map(info -> info.getBlueprintNumber());
     }
 
-    public BlueprintFile getBlueprintFile() throws UnavailableException {
+    public Optional<BlueprintFile> getBlueprintFile() throws UnavailableException {
         return getBlueprintFile(new DateTime());
     }
 
-    public BlueprintFile getBlueprintFile(DateTime when) throws UnavailableException {
-        return getInformation(when).getBlueprint();
+    public Optional<BlueprintFile> getBlueprintFile(DateTime when) {
+        return getInformation(when).map(info -> info.getBlueprint());
     }
 
     public List<Space> getPath() {
         List<Space> path = new ArrayList<>();
         Space parent = this;
-        while (parent != null) {
+        while (parent != null && parent.isActive()) {
             path.add(0, parent);
             parent = parent.getParent();
         }
         return path;
     }
 
-    public String getName(DateTime when) throws UnavailableException {
-        return getInformation(when).getName();
+    public Optional<String> getName(DateTime when) {
+        return getInformation(when).map(info -> info.getName());
     }
 
     public String getName() {
-        try {
-            return getInformation().getName();
-        } catch (UnavailableException e) {
-            return "";
-        }
+        return getInformation().map(info -> info.getName()).get();
     }
 
-    public Integer getAllocatableCapacity(DateTime when) throws UnavailableException {
-        return getInformation(when).getAllocatableCapacity();
+    public Optional<Integer> getAllocatableCapacity(DateTime when) {
+        return getInformation(when).map(info -> info.getAllocatableCapacity());
     }
 
     public Integer getAllocatableCapacity() {
-        try {
-            return getInformation().getAllocatableCapacity();
-        } catch (UnavailableException e) {
-            return 0;
-        }
+        return getInformation().map(info -> info.getAllocatableCapacity()).orElse(0);
     }
 
-    public Set<Space> getValidChildrenSet() {
-        return FluentIterable.from(getChildrenSet()).filter(new Predicate<Space>() {
-
-            @Override
-            public boolean apply(Space input) {
-                try {
-                    input.getInformation();
-                    return true;
-                } catch (UnavailableException e) {
-                    return false;
-                }
-            }
-        }).toSet();
+    public Set<Space> getChildren() {
+        return getChildrenSet().stream().filter(space -> space.isActive()).collect(Collectors.toSet());
     }
 
     public static Set<Space> getSpaces(final SpaceClassification classification) {
-        Set<Space> spaces = Bennu.getInstance().getSpaceSet();
-        return FluentIterable.from(spaces).filter(new Predicate<Space>() {
-
-            @Override
-            public boolean apply(Space space) {
-                try {
-                    return classification.equals(space.getClassification());
-                } catch (UnavailableException e) {
-                    return false;
-                }
-            }
-        }).toSet();
+        return getSpaces().filter(space -> classification.equals(space.getClassification())).collect(Collectors.toSet());
     }
 
     public static Set<Space> getAllCampus() {
         return getSpaces(SpaceClassification.getCampusClassification());
     }
 
-    public Group getManagementAccessGroupWithChainOfResponsability() {
-        final PersistentGroup accessGroup = getManagementAccessGroup();
+    public Group getManagementGroup() {
+        return getManagementAccessGroup() != null ? getManagementAccessGroup().toGroup() : null;
+    }
+
+    public Group getManagementGroupWithChainOfResponsability() {
+        final Group accessGroup = getManagementGroup();
         if (accessGroup != null) {
-            return accessGroup.toGroup();
+            return accessGroup;
         }
         final Space surroundingSpace = getParent();
         if (surroundingSpace != null) {
-            return surroundingSpace.getManagementAccessGroupWithChainOfResponsability();
+            return surroundingSpace.getManagementGroupWithChainOfResponsability();
         }
         return null;
     }
 
-    public Group getOccupationsAccessGroupWithChainOfResponsability() {
-        final PersistentGroup accessGroup = getOccupationsAccessGroup();
+    public Group getOccupationsGroup() {
+        return getOccupationsAccessGroup() != null ? getOccupationsAccessGroup().toGroup() : null;
+    }
+
+    public Group getOccupationsGroupWithChainOfResponsability() {
+        final Group accessGroup = getOccupationsGroup();
         if (accessGroup != null) {
-            return accessGroup.toGroup();
+            return accessGroup;
         }
         final Space surroundingSpace = getParent();
         if (surroundingSpace != null) {
-            return surroundingSpace.getOccupationsAccessGroupWithChainOfResponsability();
+            return surroundingSpace.getOccupationsGroupWithChainOfResponsability();
         }
         return null;
     }
@@ -392,6 +329,15 @@ public class Space extends Space_Base {
 
     public void setOccupationsAccessGroup(Group occupationsAccessGroup) {
         super.setOccupationsAccessGroup(occupationsAccessGroup == null ? null : occupationsAccessGroup.toPersistentGroup());
+    }
+
+    public boolean isFree(Interval... intervals) {
+        for (Occupation occupation : getOccupationSet()) {
+            if (occupation.overlaps(intervals)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isFree(List<Interval> intervals) {
@@ -405,34 +351,25 @@ public class Space extends Space_Base {
 
     public String getNameWithParents() {
         final List<Space> path = Lists.reverse(getPath());
-        final Space space = path.get(0);
-        final Set<String> parents = FluentIterable.from(path.subList(1, path.size())).filter(new Predicate<Space>() {
-
-            @Override
-            public boolean apply(Space input) {
-                return input.isActive();
-            }
-        }).transform(new Function<Space, String>() {
-
-            @Override
-            public String apply(Space input) {
-                return input.getName();
-            }
-
-        }).toSet();
-
-        final String others = Joiner.on(", ").join(parents);
-        return String.format("%s (%s)", space.getName(), others);
+        String others = path.subList(1, path.size()).stream().map(s -> s.getName()).collect(Collectors.joining(", "));
+        return String.format("%s (%s)", path.get(0).getName(), others);
     }
 
     public boolean isOccupationMember(final User user) {
-        final Group group = getOccupationsAccessGroupWithChainOfResponsability();
+        final Group group = getOccupationsGroupWithChainOfResponsability();
         return group != null && group.isMember(user);
     }
 
     public boolean isSpaceManagementMember(final User user) {
-        final Group group = getManagementAccessGroupWithChainOfResponsability();
+        final Group group = getManagementGroupWithChainOfResponsability();
         return group != null && group.isMember(user);
     }
 
+    public static Stream<Space> getSpaces() {
+        return getAllSpaces().filter(space -> space.isActive());
+    }
+
+    public static Stream<Space> getAllSpaces() {
+        return Bennu.getInstance().getSpaceSet().stream();
+    }
 }

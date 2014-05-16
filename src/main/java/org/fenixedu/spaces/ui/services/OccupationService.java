@@ -2,10 +2,10 @@ package org.fenixedu.spaces.ui.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 
-import com.google.common.collect.Ordering;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -107,20 +106,8 @@ public class OccupationService {
     }
 
     public List<Space> searchFreeSpaces(List<Interval> intervals, User user) {
-        final Set<Space> freeSpaces = new HashSet<>();
-        for (Space space : Bennu.getInstance().getSpaceSet()) {
-            if (space.isActive() && space.isFree(intervals) && space.isOccupationMember(user)) {
-                freeSpaces.add(space);
-            }
-        }
-        return Ordering.from(new Comparator<Space>() {
-
-            @Override
-            public int compare(Space o1, Space o2) {
-                return o1.getNameWithParents().compareTo(o2.getNameWithParents());
-            }
-
-        }).immutableSortedCopy(freeSpaces);
+        return Space.getSpaces().filter(space -> space.isFree(intervals) && space.isOccupationMember(user))
+                .sorted((o1, o2) -> o1.getNameWithParents().compareTo(o2.getNameWithParents())).collect(Collectors.toList());
     }
 
     @Atomic

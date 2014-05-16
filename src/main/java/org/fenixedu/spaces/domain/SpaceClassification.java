@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.commons.i18n.LocalizedString;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.FluentIterable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
@@ -66,14 +65,7 @@ public class SpaceClassification extends SpaceClassification_Base {
     }
 
     public String getAbsoluteCode() {
-        return Joiner.on(".").join(FluentIterable.from(getPath()).transform(new Function<SpaceClassification, String>() {
-
-            @Override
-            public String apply(SpaceClassification input) {
-                return input.getCode();
-            }
-
-        }).toList());
+        return getPath().stream().map(c -> c.getCode()).collect(Collectors.joining("."));
     }
 
     private List<SpaceClassification> getPath() {
@@ -113,13 +105,13 @@ public class SpaceClassification extends SpaceClassification_Base {
         return metadataSpec;
     }
 
-    public MetadataSpec getMetadataSpec(String field) {
+    public Optional<MetadataSpec> getMetadataSpec(String field) {
         for (MetadataSpec spec : getMetadataSpecs()) {
             if (spec.getName().equals(field)) {
-                return spec;
+                return Optional.of(spec);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public Collection<MetadataSpec> getMetadataSpecs() {
@@ -166,5 +158,4 @@ public class SpaceClassification extends SpaceClassification_Base {
         }
         return null;
     }
-
 }

@@ -4,7 +4,7 @@ enum org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState as Oc
 
 valueType org.fenixedu.spaces.domain.occupation.config.OccupationConfig as OccupationConfig {
     externalizeWith {
-      JsonElement externalize();
+        JsonElement externalize();
     }
     internalizeWith internalize();
 }
@@ -16,11 +16,11 @@ valueType java.math.BigDecimal as SpacesBigDecimal {
 }
 
 class Space {
-	DateTime created (REQUIRED);
+	public DateTime created (REQUIRED);
 }
 
 class occupation.Occupation {
-	OccupationConfig config;
+	protected OccupationConfig config;
 }
 
 class occupation.OccupationDetails {
@@ -33,7 +33,7 @@ class Information {
 	Integer allocatableCapacity;
 	String blueprintNumber;
 	SpacesBigDecimal area;
-	String name;
+	String name (REQUIRED);
 	String identification;
 	JsonElement metadata;
 	
@@ -42,9 +42,7 @@ class Information {
 	DateTime created;
 }
 
-class BlueprintFile extends .org.fenixedu.bennu.io.domain.GenericFile {
-
-}
+class BlueprintFile extends .org.fenixedu.bennu.io.domain.GenericFile;
 
 class SpaceClassification {
 	String code;
@@ -71,21 +69,19 @@ class occupation.requests.OccupationStateInstant  {
     OccupationRequestState requestState;
 }
 
-
 relation SpaceOccupationsAccessGroup {
 	Space playsRole occupationSpace {
 		multiplicity *;
 	}
-	.org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole occupationsAccessGroup;
+	protected .org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole occupationsAccessGroup;
 }
 
 relation SpaceManagementAccessGroup {
 	Space playsRole managementSpace {
 		multiplicity *;
 	}
-	.org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole managementAccessGroup;
+	protected .org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole managementAccessGroup;
 }
-
 
 relation OccupationCommentPerson {
     .org.fenixedu.bennu.core.domain.User playsRole owner;
@@ -187,7 +183,9 @@ relation InformationClassification {
 	Information playsRole informations {
 		multiplicity *;
 	}
-	SpaceClassification playsRole classification;
+	SpaceClassification playsRole classification {
+        multiplicity 1..1;
+	}
 }
 
 relation InformationInformation {
@@ -204,7 +202,7 @@ relation OccupationOccupationDetails {
 }
 
 relation SpaceOccupation {
-	Space playsRole space {
+	protected Space playsRole space {
 		multiplicity *;
 	}
 	occupation.Occupation playsRole occupation {
@@ -214,7 +212,7 @@ relation SpaceOccupation {
 
 relation SpaceContainedSpaces {
 	Space playsRole parent;
-	Space playsRole children {
+	protected Space playsRole children {
 		multiplicity *;
 	}
 }
@@ -223,7 +221,9 @@ relation SpaceInformation {
 	Space playsRole space {
 		multiplicity *;
 	}
-	Information playsRole current;
+	protected Information playsRole current {
+		multiplicity 1..1;
+	}
 }
 
 relation SpaceInformationHistory {

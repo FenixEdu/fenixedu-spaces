@@ -67,7 +67,7 @@
 				</tr>
 				<c:forEach var="metadata" items="${information.metadata}">
 					<c:set var="field" value="${metadata.key}"/>
-					<c:set var="metadataSpec" value="${information.classification.getMetadataSpec(field)}"/>
+					<c:set var="metadataSpec" value="${information.classification.getMetadataSpec(field).get()}"/>
 					<c:set var="value" value="${metadata.value}"/>
 					<tr>
 						<th scope="row">${metadataSpec.description.content}</th>

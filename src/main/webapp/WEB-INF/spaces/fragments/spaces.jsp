@@ -45,7 +45,7 @@
 					<tr>
 						<td>${space.classification.name.content}</td>
 						<td>${space.name}</td>
-						<td>${fn:length(space.validChildrenSet)}</td>
+						<td>${fn:length(space.children)}</td>
 						<td>
 							<a href="${viewUrl}"  class="btn btn-default" title="View"><span class="glyphicon glyphicon-eye-open"></span></a>
 							<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a> 
