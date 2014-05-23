@@ -10,14 +10,22 @@ import java.util.stream.Collectors;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.commons.i18n.I18N;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.occupation.Occupation;
-import org.fenixedu.spaces.domain.occupation.config.ExplicitConfig;
+import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings;
+import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings.Frequency;
+import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings.MonthlyType;
+import org.fenixedu.spaces.domain.occupation.config.OccupationConfig;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState;
 import org.fenixedu.spaces.ui.OccupationRequestBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import pt.ist.fenixframework.Atomic;
@@ -25,6 +33,7 @@ import pt.ist.fenixframework.FenixFramework;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 @Service
@@ -32,8 +41,14 @@ public class OccupationService {
 
     private JsonParser jsonParser;
 
+    private DateTimeFormatter datetimeFormatter;
+
+    @Autowired
+    MessageSource messageSource;
+
     public OccupationService() {
         jsonParser = new JsonParser();
+        datetimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");;
     }
 
     @Atomic
@@ -107,19 +122,65 @@ public class OccupationService {
 
     public List<Space> searchFreeSpaces(List<Interval> intervals, User user) {
         return Space.getSpaces().filter(space -> space.isFree(intervals) && space.isOccupationMember(user))
-                .sorted((o1, o2) -> o1.getNameWithParents().compareTo(o2.getNameWithParents())).collect(Collectors.toList());
+                .sorted((o1, o2) -> o1.getPresentationName().compareTo(o2.getPresentationName())).collect(Collectors.toList());
     }
 
     @Atomic
     public void createOccupation(String emails, String subject, String description, String selectedSpaces, String config,
-            String events) {
+            String events) throws Exception {
         final Set<Space> selectedSpaceSet = selectSpaces(selectedSpaces);
         final List<Interval> intervals = selectEvents(events);
-        final Occupation occupation =
-                new Occupation(emails, subject, description, new ExplicitConfig(jsonParser.parse(config), intervals));
+        final Occupation occupation = new Occupation(emails, subject, description, parseConfig(config, intervals));
         for (Space space : selectedSpaceSet) {
+            if (!space.isFree(intervals)) {
+                throw new Exception(messageSource.getMessage("error.occupations.rooms.is.not.free", new Object[0],
+                        I18N.getLocale()));
+            }
             occupation.addSpace(space);
         }
+    }
+
+    private OccupationConfig parseConfig(String config, List<Interval> intervals) {
+        JsonObject json = jsonParser.parse(config).getAsJsonObject();
+
+        DateTime start = DateTime.parse(json.get("start").getAsString(), datetimeFormatter);
+        DateTime end = DateTime.parse(json.get("end").getAsString(), datetimeFormatter);
+        String jsonFrequency = json.get("frequency").getAsString();
+        Boolean allDay = json.get("isAllDay").getAsBoolean();
+        Integer repeatsEvery = null;
+        List<Integer> weekdays = null;
+        MonthlyType monthlyType = null;
+        Frequency frequency = null;
+
+        switch (jsonFrequency) {
+        case "n":
+            frequency = Frequency.NEVER;
+            break;
+        case "d":
+            frequency = Frequency.DAILY;
+            repeatsEvery = json.get("repeatsevery").getAsInt();
+            break;
+        case "w":
+            frequency = Frequency.WEEKLY;
+            repeatsEvery = json.get("repeatsevery").getAsInt();
+            weekdays = new ArrayList<>();
+            for (JsonElement day : json.get("weekdays").getAsJsonArray()) {
+                weekdays.add(day.getAsInt());
+            }
+            break;
+        case "m":
+            frequency = Frequency.MONTHLY;
+            repeatsEvery = json.get("repeatsevery").getAsInt();
+            monthlyType =
+                    json.get("monthlyType").getAsString().equals("dayofmonth") ? MonthlyType.DAY_OF_MONTH : MonthlyType.DAY_OF_WEEK;
+            break;
+        case "y":
+            frequency = Frequency.YEARLY;
+            repeatsEvery = json.get("repeatsevery").getAsInt();
+            break;
+        }
+
+        return new ExplicitConfigWithSettings(start, end, allDay, repeatsEvery, frequency, weekdays, monthlyType, intervals);
     }
 
     private DateTime selectDate(JsonElement jsonElement, String memberName) {
@@ -149,5 +210,13 @@ public class OccupationService {
             }
         }
         return selectedSpaceSet;
+    }
+
+    public List<Occupation> getOccupations(Integer month, Integer year) {
+        DateTime start = new DateTime(year, month, 1, 0, 0);
+        Interval interval = new Interval(start, start.plusMonths(1));
+        return Bennu.getInstance().getOccupationSet().stream().filter(o -> o.getClass().equals(Occupation.class))
+                .filter(o -> o.overlaps(interval)).sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                .collect(Collectors.toList());
     }
 }

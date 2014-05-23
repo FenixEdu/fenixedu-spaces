@@ -11,7 +11,10 @@
 <spring:url var="createRequestUrl" value="/spaces/occupations/requests/create"/>
 <spring:url var="listRequestsUrl" value="/spaces/occupations/requests"/>
 <spring:url var="listRequestsUrl" value="/spaces/occupations/create"/>
+<spring:url var="listOccupationsUrl" value="/spaces/occupations/list"/>
+
 
 <a href="${createRequestUrl}" class="btn btn-success"><spring:message code="link.occupations.create.request" text="Create Occupation Request"></spring:message></a>
 <a href="${listRequestsUrl}" class="btn btn-success"><spring:message code="link.occupations.list.request" text="List Occupation Request"></spring:message></a>
 <a href="${listRequestsUrl}" class="btn btn-success"><spring:message code="link.occupations.create" text="Criar Ocupação de Salas"></spring:message></a>
+<a href="${listOccupationsUrl}" class="btn btn-success"><spring:message code="link.occupations.list" text="List Occupations"></spring:message></a>

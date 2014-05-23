@@ -20,7 +20,7 @@ class Space {
 }
 
 class occupation.Occupation {
-	protected OccupationConfig config;
+	OccupationConfig config;
 }
 
 class occupation.OccupationDetails {

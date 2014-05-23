@@ -1,9 +1,12 @@
 package org.fenixedu.spaces;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.fenixedu.spaces.domain.occupation.config.DailyConfig;
-import org.fenixedu.spaces.domain.occupation.config.ExplicitConfig;
+import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings;
+import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings.MonthlyType;
 import org.fenixedu.spaces.domain.occupation.config.OccupationConfig;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -15,6 +18,7 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import com.google.common.collect.HashMultiset;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 public class TestOccupationSpec {
@@ -152,17 +156,32 @@ public class TestOccupationSpec {
         LocalTime endTime = new LocalTime(12, 00);
         final Interval interval = new Interval(now.minusMonths(1), now.plusDays(1));
         final DailyConfig dailyConfig = new DailyConfig(interval, startTime, endTime, 5);
-        System.out.println("Externalize ...");
         final String jsonAsString = dailyConfig.externalize().toString();
         final List<Interval> extIntervals = dailyConfig.getIntervals();
-        System.out.println("Internalize ...");
         final OccupationConfig internalize = OccupationConfig.internalize(new JsonParser().parse(jsonAsString));
         final List<Interval> intIntervals = internalize.getIntervals();
         assert HashMultiset.create(extIntervals).equals(HashMultiset.create(intIntervals)) == true;
+    }
 
-        final ExplicitConfig explicitConfig = new ExplicitConfig(null, intIntervals);
-        System.out.println("Explicit Config ...");
-        System.out.println(explicitConfig.externalize().toString());
+    @Test
+    public void testOccupationConfigWithSettings() {
+        DateTime now = new DateTime();
+        DateTime after = now.plusDays(10);
+        List<Interval> intervals = new ArrayList<>();
+        while (now.isBefore(after)) {
+            intervals.add(new Interval(now.hourOfDay().setCopy(10), now.hourOfDay().setCopy(20)));
+            now = now.plusDays(1);
+        }
 
+        //DateTime start, DateTime end, Boolean allDay, Integer repeatsEvery, Frequency frequency,
+        //List<Integer> weekdays, MonthlyType monthlyType, List<Interval> intervals
+
+        ExplicitConfigWithSettings config =
+                new ExplicitConfigWithSettings(now, after, Boolean.TRUE, 1, ExplicitConfigWithSettings.Frequency.DAILY,
+                        Arrays.asList(new Integer[] { 1, 2, 3 }), MonthlyType.DAY_OF_MONTH, intervals);
+
+        JsonElement externalize = config.externalize();
+
+        OccupationConfig internalize = config.internalize(externalize);
     }
 }

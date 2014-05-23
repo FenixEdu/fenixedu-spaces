@@ -60,7 +60,7 @@ $(document).ready(function() {
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupations.description" text="Description" /></th>
-					<td>${occupationRequest.description}</td>
+					<td><pre style="width: 80%;">${occupationRequest.description}</pre></td>
 				</tr>
 			</tbody>
 	   	</table>
@@ -78,7 +78,7 @@ $(document).ready(function() {
 	   			<div class="panel panel-default">
 	  				<div class="panel-heading"><strong>${comment.owner.presentationName}</strong> (<fmt:formatDate value="${date}" pattern="dd-MM-yyyy HH:mm"/>) </div>
 	  				<div class="panel-body">
-	    				${comment.description}
+	    				<pre style="width: 80%;">${comment.description}</pre>
 	  				</div>
 				</div>
 	   		</c:forEach>

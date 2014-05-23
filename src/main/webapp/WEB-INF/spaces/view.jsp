@@ -63,17 +63,21 @@
 				<c:set var="value" value="${metadata.value}" />
 				<tr>
 					<th scope="row">${metadataSpec.description.content}</th>
-					<td><c:choose>
-							<c:when test="${value == 'true' }">
-								<i class="glyphicon glyphicon-ok"></i>
-							</c:when>
-							<c:when test="${value == 'false' }">
-								<i class="glyphicon glyphicon-remove"></i>
-							</c:when>
-							<c:otherwise>
-						${value}
-					</c:otherwise>
-						</c:choose></td>
+					<td>
+						<c:if test='${metadataSpec.type.simpleName.equals("Boolean")}'>
+							<c:choose>
+								<c:when test="${value == true}">
+									<i class="glyphicon glyphicon-ok"></i>
+								</c:when>
+								<c:when test="${value == false }">
+									<i class="glyphicon glyphicon-remove"></i>
+								</c:when>
+							</c:choose>
+						</c:if>
+						<c:if test='${!metadataSpec.type.simpleName.equals("Boolean")}'>
+							${value}
+						</c:if>
+					</td>
 				</tr>
 			</c:forEach>
 		</table>

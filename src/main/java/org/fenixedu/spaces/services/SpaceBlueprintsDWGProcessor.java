@@ -50,9 +50,9 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
             Boolean viewSpaceIdentifications_, Boolean viewDoorNumbers_, BigDecimal scalePercentage) throws IOException {
 
         super(scalePercentage);
-        this.thisSpace = space.getParent();
-        this.parentSpace = space;
-        this.suroundingSpaceBlueprint = thisSpace != null;
+        this.thisSpace = space;
+        this.parentSpace = space.getParent();
+        this.suroundingSpaceBlueprint = parentSpace != null;
         this.viewOriginalSpaceBlueprint = false;
 
         this.viewDoorNumbers = viewDoorNumbers_;

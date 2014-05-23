@@ -179,22 +179,30 @@ public class Information extends Information_Base {
         setUser(user);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Object> Optional<T> getMetadata(String field) {
         Optional<MetadataSpec> spec = getClassification().getMetadataSpec(field);
         if (spec.isPresent()) {
             final Class<?> type = spec.get().getType();
             final JsonObject metadata = getMetadata().getAsJsonObject();
 
+            JsonElement fieldValue = metadata.get(field);
+
+            if (fieldValue == null || fieldValue.isJsonNull()) {
+                return Optional.empty();
+            }
+
             if (Boolean.class.isAssignableFrom(type)) {
-                return (Optional<T>) Optional.of(new Boolean(metadata.get(field).getAsBoolean()));
+                return (Optional<T>) Optional.of(new Boolean(fieldValue.getAsBoolean()));
             }
             if (Integer.class.isAssignableFrom(type)) {
-                return (Optional<T>) Optional.of(new Integer(metadata.get(field).getAsInt()));
+                return (Optional<T>) Optional.of(new Integer(fieldValue.getAsInt()));
             }
             if (BigDecimal.class.isAssignableFrom(type)) {
-                return (Optional<T>) Optional.of(metadata.get(field).getAsBigDecimal());
+                return (Optional<T>) Optional.of(fieldValue.getAsBigDecimal());
             }
-            return (Optional<T>) Optional.of(new String(metadata.get(field).getAsString()));
+
+            return (Optional<T>) Optional.of(new String(fieldValue.getAsString()));
         }
         return Optional.empty();
     }

@@ -20,6 +20,7 @@ import org.joda.time.Interval;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public final class Space extends Space_Base {
@@ -234,7 +235,8 @@ public final class Space extends Space_Base {
     }
 
     public Optional<Space> readChildByBlueprintNumber(final String blueprintNumber, final DateTime when) {
-        return getChildrenSet().stream().filter(space -> blueprintNumber.equals(space.getBlueprintNumber())).findFirst();
+        return Strings.isNullOrEmpty(blueprintNumber) ? Optional.empty() : getChildren().stream()
+                .filter(space -> blueprintNumber.equals(space.getBlueprintNumber().orElse(null))).findFirst();
     }
 
     public Optional<String> getBlueprintNumber() {
@@ -349,7 +351,7 @@ public final class Space extends Space_Base {
         return true;
     }
 
-    public String getNameWithParents() {
+    public String getPresentationName() {
         final List<Space> path = Lists.reverse(getPath());
         String others = path.subList(1, path.size()).stream().map(s -> s.getName()).collect(Collectors.joining(", "));
         return String.format("%s (%s)", path.get(0).getName(), others);

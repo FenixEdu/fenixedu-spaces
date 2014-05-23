@@ -93,18 +93,6 @@ public class SpaceClassification extends SpaceClassification_Base {
         return classifications;
     }
 
-    @Override
-    public JsonElement getMetadataSpec() {
-        JsonElement metadataSpec = super.getMetadataSpec();
-        if ((metadataSpec == null || metadataSpec.equals(new JsonArray())) && getParent() != null) {
-            metadataSpec = getParent().getMetadataSpec();
-        }
-        if (metadataSpec == null) {
-            return new JsonArray();
-        }
-        return metadataSpec;
-    }
-
     public Optional<MetadataSpec> getMetadataSpec(String field) {
         for (MetadataSpec spec : getMetadataSpecs()) {
             if (spec.getName().equals(field)) {

@@ -4,14 +4,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.occupation.config.OccupationConfig;
+import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 public class Occupation extends Occupation_Base {
 
     public Occupation() {
         super();
+        setBennu(Bennu.getInstance());
+    }
+
+    public Occupation(OccupationRequest request, OccupationConfig config) {
+        super();
+        setBennu(Bennu.getInstance());
+        setRequest(request);
+        setConfig(config);
     }
 
     public Occupation(String subject, String description, OccupationConfig config) {
@@ -19,7 +30,7 @@ public class Occupation extends Occupation_Base {
     }
 
     public Occupation(String emails, String subject, String description, OccupationConfig config) {
-        super();
+        this();
         setConfig(config);
         setDetails(new OccupationDetails(emails, subject, description));
     }
@@ -89,7 +100,19 @@ public class Occupation extends Occupation_Base {
     }
 
     public String getSummary() {
-        return null;
+        return getConfig().getSummary();
+    }
+
+    public String getExtendedSummary() {
+        return getConfig().getExtendedSummary();
+    }
+
+    public DateTime getStart() {
+        return getConfig().getStart();
+    }
+
+    public DateTime getEnd() {
+        return getConfig().getEnd();
     }
 
 }

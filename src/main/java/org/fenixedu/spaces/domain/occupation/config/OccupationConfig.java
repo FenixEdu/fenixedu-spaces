@@ -2,6 +2,7 @@ package org.fenixedu.spaces.domain.occupation.config;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -56,6 +57,21 @@ public abstract class OccupationConfig {
                     throws JsonParseException {
                 return LocalTime.parse(json.getAsString());
             }
+        }).registerTypeAdapter(DateTime.class, new JsonDeserializer<DateTime>() {
+
+            @Override
+            public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                    throws JsonParseException {
+                return DateTime.parse(json.getAsString());
+            }
+
+        }).registerTypeAdapter(DateTime.class, new JsonSerializer<DateTime>() {
+
+            @Override
+            public JsonElement serialize(DateTime src, Type typeOfSrc, JsonSerializationContext context) {
+                return new JsonPrimitive(src.toString());
+            }
+
         }).create();
     }
 
@@ -78,5 +94,29 @@ public abstract class OccupationConfig {
         final JsonElement jsonTree = gson.toJsonTree(this, this.getClass());
         jsonTree.getAsJsonObject().addProperty("type", this.getClass().getName());
         return jsonTree;
+    }
+
+    public static Gson gson() {
+        return gson;
+    }
+
+    public String getSummary() {
+        return getIntervals().toString();
+    }
+
+    public String getExtendedSummary() {
+        return getIntervals().toString();
+    }
+
+    public DateTime getStart() {
+        return getSortedIntervals().isEmpty() ? null : getSortedIntervals().get(0).getStart();
+    }
+
+    public DateTime getEnd() {
+        return getSortedIntervals().isEmpty() ? null : getSortedIntervals().get(getSortedIntervals().size() - 1).getEnd();
+    }
+
+    private List<Interval> getSortedIntervals() {
+        return getIntervals().stream().sorted((i1, i2) -> i1.getStart().compareTo(i2.getStart())).collect(Collectors.toList());
     }
 }

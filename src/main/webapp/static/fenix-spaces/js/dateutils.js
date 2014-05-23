@@ -67,17 +67,21 @@ function getEndMoment() {
 }
 
 function getStartTime() {
-	var when = $("#starttime").val()
+	var when;
 	if (isAllDay()) {
 		when = "00:00"
+	} else { 
+		when = $("#starttime").val()
 	}
 	return moment(when, getMomentTimeFormat())
 }
 
 function getEndTime() {
-	var when = $("#endtime").val()
+	var when;
 	if (isAllDay()) {
-		when = "23:59"
+		when = "00:00"
+	} else {
+		when = $("#endtime").val()
 	}
 	return moment(when, getMomentTimeFormat())
 }

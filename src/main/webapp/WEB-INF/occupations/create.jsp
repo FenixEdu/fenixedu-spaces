@@ -25,7 +25,30 @@
 				}
 				jsonEvents.push(jsonEvent)
 			});
-			$("#config").val(JSON.stringify(occupationEvents[1]));
+			
+			var exportConfig = function(config) {
+				var exportConfig = {
+					"w" : function(config) {
+							config.weekdays = config.weekdays();
+							return JSON.stringify(config);
+					},
+				};
+				
+				var frequency = config['frequency'];
+				var exportConfiguration = exportConfig[frequency];
+				
+				var datetimeFormatter = getMomentDateFormat() + " " + getMomentTimeFormat()
+				config.start = config.start.format(datetimeFormatter);
+				config.end = config.end.format(datetimeFormatter);
+				
+				if (exportConfiguration === undefined) {
+					exportConfiguration = JSON.stringify;
+				}
+				
+				return exportConfiguration(config);
+			}
+			
+			$("#config").val(exportConfig(occupationEvents[1]));
 			$("#events").val(JSON.stringify(jsonEvents));
 			$("#form-search-spaces").submit();
 		});

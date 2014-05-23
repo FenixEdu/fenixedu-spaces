@@ -2,12 +2,16 @@ package org.fenixedu.spaces.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.ui.services.OccupationService;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
 import org.joda.time.Interval;
+import org.joda.time.Partial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +54,26 @@ public class OccupationController {
         return "occupations/home";
     }
 
+    @RequestMapping("list")
+    public String list(Model model, @RequestParam(defaultValue = "#{new org.joda.time.DateTime().getMonthOfYear()}") int month,
+            @RequestParam(defaultValue = "#{new org.joda.time.DateTime().getYear()}") int year) {
+        DateTime now = new DateTime();
+        int currentYear = now.getYear();
+        model.addAttribute(
+                "years",
+                IntStream.rangeClosed(currentYear - 100, currentYear + 10).boxed().sorted((o1, o2) -> o2.compareTo(o1))
+                        .collect(Collectors.toList()));
+
+        List<Partial> months =
+                IntStream.rangeClosed(1, 12).boxed().map(m -> new Partial(DateTimeFieldType.monthOfYear(), m))
+                        .collect(Collectors.toList());
+        model.addAttribute("months", months);
+        model.addAttribute("currentMonth", month);
+        model.addAttribute("currentYear", year);
+        model.addAttribute("occupations", occupationService.getOccupations(month, year));
+        return "occupations/list";
+    }
+
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String getCreate(Model model) {
         return "occupations/create";
@@ -68,8 +92,13 @@ public class OccupationController {
     public String create(Model model, @RequestParam String emails, @RequestParam String subject,
             @RequestParam String description, @RequestParam String selectedSpaces, @RequestParam String config,
             @RequestParam String events) {
-        occupationService.createOccupation(emails, subject, description, selectedSpaces, config, events);
-        return "occupations/create";
+        try {
+            occupationService.createOccupation(emails, subject, description, selectedSpaces, config, events);
+            return "redirect:/spaces/occupations";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return searchSpaces(model, events, config);
+        }
     }
 
 }

@@ -208,6 +208,7 @@ $(document).ready(function() {
 	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
 	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
 	  			<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
+	  			<th><spring:message code="label.occupation.request.owner" text="owner" /></th>
 	  		</thead>
 	  		<tbody>
 	  			<c:forEach var="occupationRequest" items="${resolvedRequests}">
@@ -215,6 +216,7 @@ $(document).ready(function() {
 					<c:set var="instant" value="${occupationRequest.presentationInstant}" />
 					<c:set var="subject" value="${occupationRequest.subject}" />
 					<c:set var="requestor" value="${occupationRequest.requestor}" />
+					<c:set var="owner" value="${occupationRequest.owner}" />
 					<tr>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
@@ -227,7 +229,8 @@ $(document).ready(function() {
 								${subject}
 							</a>
 						</td>
-	 					<td>${requestor.presentationName}</td>
+	 					<td>${requestor.presentationName} (${requestor.username})</td>
+	 					<td>${owner.presentationName} (${owner.username})</td>
 					</tr>
 				</c:forEach>
 			</tbody>

@@ -24,6 +24,7 @@
 </head>
 
 <script>
+
 	var date = new Date();
 	var d = date.getDate();
 	var m = date.getMonth();
@@ -203,8 +204,8 @@
 							return this.id;
 						}).map(function() {
 							return dict[this];
-						});
-					}
+						}).get();
+					},
 				}
 			}
 		},
@@ -227,10 +228,10 @@
 					var iStart = when.clone();
 					var iEnd = when.clone();
 					if (occupation.isAllDay) {
-						iEnd.add('days', 1)						
+						iEnd.add('days', 1)
 					} else {
 						iEnd.hour(end.hour());
-						iEnd.minute(end.minute());	
+						iEnd.minute(end.minute());
 					}
 					intervals.push({
 						start: iStart,
@@ -278,16 +279,17 @@
 					end: getEndMoment(),
 					isAllDay: isAllDay(),
 					repeatsevery: $("#repeatsevery").val(),
-					monthlyType: $("input:radio[name=monthly]:checked").val()
+					monthlyType: $("input:radio[name=monthly]:checked").val(),
+					frequency: $("#frequency").val()
 				}
 			},
-			dayOfMonth : function(start, end, monthly) {
+			dayOfMonth : function(start, end, isAllDay, monthly) {
 				var when = start.clone();
 				var intervals = [];
 				while (when.isBefore(end) || when.isSame(end)) {
 					var iStart = when.clone();
 					var iEnd = when.clone();
-					if (occupation.isAllDay) {
+					if (isAllDay) {
 						iEnd.add('days', 1)						
 					} else {
 						iEnd.hour(end.hour());
@@ -301,7 +303,7 @@
 				}
 				return intervals;
 			},
-			dayOfWeek : function(start, end, monthly) {
+			dayOfWeek : function(start, end, isAllDay, monthly) {
 				var nthDayOfWeek = nthdayOfTheWeek(start);
 				var when = start.clone();
 				var dayOfWeek = when.isoWeekday();
@@ -309,7 +311,7 @@
 				while (when.isBefore(end) || when.isSame(end)) {
 					var iStart = when.clone();
 					var iEnd = when.clone();
-					if (occupation.isAllDay) {
+					if (isAllDay) {
 						iEnd.add('days', 1)						
 					} else {
 						iEnd.hour(end.hour());
@@ -329,12 +331,13 @@
 				var occupation = this.getOccupation();
 				var start = occupation.start
 				var end = occupation.end
+				var isAllDay = occupation.isAllDay
 				var monthly = occupation.repeatsevery
 				if (occupation.monthlyType == "dayofmonth") {
-					return this.dayOfMonth(start, end, monthly);
+					return this.dayOfMonth(start, end, isAllDay, monthly);
 				}
 				if (occupation.monthlyType == "dayofweek") {
-					return this.dayOfWeek(start, end, monthly);
+					return this.dayOfWeek(start, end, isAllDay, monthly);
 				}
 			}
 		},
@@ -351,7 +354,8 @@
 					start: getStartMoment(),
 					end: getEndMoment(),
 					isAllDay: isAllDay(),
-					repeatsevery: undefined
+					repeatsevery: undefined,
+					frequency: $("#frequency").val()
 				}
 			},
 			processIntervals: function() {
@@ -378,7 +382,8 @@
 					start: getStartMoment(),
 					end: getEndMoment(),
 					isAllDay: isAllDay(),
-					repeatsevery: $("#repeatsevery").val()
+					repeatsevery: $("#repeatsevery").val(),
+					frequency: $("#frequency").val()
 				}
 			},
 			processIntervals: function() {
@@ -688,4 +693,5 @@
 	</div>
 	
 </body></html>
+
 

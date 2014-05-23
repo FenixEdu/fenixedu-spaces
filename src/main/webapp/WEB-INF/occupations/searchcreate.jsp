@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 
 
+<script src="${staticUrl}/js/bootbox.js"></script>
 <script src="${staticUrl}/js/sprintf.min.js"></script>
 <script src="${staticUrl}/js/moment.min.js"></script>
 <script src="${staticUrl}/js/dateutils.js"></script>
@@ -17,24 +18,69 @@
 
 
 <script type="text/javascript">
+
+	
+	var weekdaysLabels = function () {
+		var weekdaysNumbers = [1,2,3,4,5,6,7];
+		var weekdaysAcronyms = ["mo","tu", "we", "th", "fr", "sa", "su"]
+		var weekdaysLabels = [
+			"<spring:message code="calendar.daysofweek.mo" text="Segunda-Feira"/>",
+			"<spring:message code="calendar.daysofweek.tu" text="Terça-Feira"/>",
+			"<spring:message code="calendar.daysofweek.we" text="Quarta-Feira"/>",
+			"<spring:message code="calendar.daysofweek.th" text="Quinta-Feira"/>",
+			"<spring:message code="calendar.daysofweek.fr" text="Sexta-Feira"/>",
+			"<spring:message code="calendar.daysofweek.sa" text="Sábado"/>",
+			"<spring:message code="calendar.daysofweek.su" text="Domingo"/>"
+		];
+		
+		return {
+			
+			getLabelByNumber : function(number) {
+				return weekdaysLabels[number - 1];
+			},
+			
+			getLabelByAcronym : function(acronym) {
+				var index = $.inArray(acronym, weekdaysAcronyms);
+				return weekdaysLabels[index];
+			}
+		}
+	};
+	
+	
+	
 	var config = ${config};
 	var freeSpaces = {};
 	var selectedSpaces = [];
 	
 	<c:forEach var="space" items="${freeSpaces}">
 		<c:if test="${not empty space.name}">
-			freeSpaces["${space.externalId}"] = {name : "${space.nameWithParents}", allocatableCapacity : "0"};
+			freeSpaces["${space.externalId}"] = {name : "${space.presentationName}", allocatableCapacity : "${space.allocatableCapacity}"};
 		</c:if>
 	</c:forEach>
 	
 	var documentReady = function() {
+	
+		var dateFormat = getMomentDateFormat();
+		var timeFormat = getMomentTimeFormat();
+		var eventFormatter = dateFormat + " " + timeFormat;
+		
+		function getStart(config) {
+			return moment(config.start, eventFormatter);
+		}
+		
+		function getEnd(config) {
+			return moment(config.end, eventFormatter);
+		}
+			
 		var repeatsconfig = {
 				"w": {
 					label: "<spring:message code="calendar.repeatson.weekly" text="Semanas"/>",
 					summary: "<spring:message code="calendar.repeats.weekly" text="Semanalmente"/>",
 					getSummary: function(config) {
 						var label = this['summary'];
+						var selectedDays = config.weekdays;
 						if (selectedDays.length > 0) {
+							selectedDays = $(selectedDays).map(function() {return weekdaysLabels().getLabelByNumber(this);}).get();
 							label += " <spring:message code="calendar.on" text="às"/> " + selectedDays.join(", ")
 						}
 						$("#summary").html(label)
@@ -52,8 +98,8 @@
 					label: "<spring:message code="calendar.repeatson.daily" text="Meses"/>",
 					summary: "<spring:message code="calendar.repeats.monthly" text="Mensalmente"/>",
 					getSummary: function(config) {
-						var startdate = moment($("#startdate").val(), "DD/MM/YYYY")
-						var value = $("input:radio[name=monthly]:checked").val();
+						var startdate = getStart(config)
+						var value = config.monthlyType;
 						if (value == "dayofmonth") {
 							$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofmonth" text=" ao dia "/>" + startdate.date());
 						}
@@ -65,38 +111,33 @@
 			
 				"n": {
 					label: false,
-					summary: "<spring:message code="calendar.repeats.never" text="Nunca"/>",
+					getSummary: function() {
+						return "<spring:message code="calendar.repeats.never" text="Nunca"/>";
+					}
 				},
 			
 				"y": {
 					label: "<spring:message code="calendar.repeatson.yearly" text="Anos"/>",
-					summary: "<spring:message code="calendar.repeats.yearly" text="Anualmente"/>",
+					getSummary: function() {
+						return "<spring:message code="calendar.repeats.yearly" text="Anualmente"/>"
+					}
 				}
 			};
-			var dateFormat = getMomentDateFormat();
-			var timeFormat = getMomentTimeFormat();
-			var eventFormatter = dateFormat + " " + timeFormat;
+			
 			if (config.isAllDay) {
-				eventFormatter = dateFormat;
 				$(".time").hide();
 			} else {
-				$("#starttime").html(moment(config.start).format(timeFormat));
-				$("#endtime").html(moment(config.end).format(timeFormat));
+				$("#starttime").html(getStart(config).format(timeFormat));
+				$("#endtime").html(getEnd(config).format(timeFormat));
 				$(".time").show();
 				$(".allday").hide();
 			}
 			
-			$("#startdate").html(moment(config.start).format(dateFormat));
-			$("#enddate").html(moment(config.end).format(dateFormat));
+			$("#startdate").html(getStart(config).format(dateFormat));
+			$("#enddate").html(getEnd(config).format(dateFormat));
 			
 			var repeatsconfig = repeatsconfig[config['frequency']];
-			var summary = null;
-			if (repeatsconfig.getSummary) {
-				summary = repeatsconfig.getSummary(config);
-			} else {
-				summary = repeatsconfig.summary;
-			}
-			$("#summary").html(summary);
+			$("#summary").html(repeatsconfig.getSummary(config));
 			
 			var events = ${events};
 
@@ -105,9 +146,9 @@
 				var start = moment(this.start, "X").format(eventFormatter)
 				var end = moment(this.end, "X").format(eventFormatter)
 				var event = sprintf("%s - %s", start, end)
-				content += sprintf("<li>%s</li>", event)
+				eventsContent += sprintf("<li>%s</li>", event)
 			});
-			content += "</ul>";
+			eventsContent += "</ul>";
 			$("#events-number").html(events.length);
 
 
@@ -119,8 +160,14 @@
 					$(this).parents("tr").remove()
 					var index = selectedSpaces.indexOf(spaceId)
 					selectedSpaces.splice(index, 1);
+					if (selectedSpaces.length == 0) {
+						$("#selected-spaces").hide();
+					}
 				});
 			}
+			
+			$("#selected-spaces").hide();
+			
 			function selectSpace(spaceId) {
 				if (selectedSpaces.indexOf(spaceId) != -1) {
 					return;
@@ -130,18 +177,24 @@
 				var freeSpace = freeSpaces[spaceId]
 				$("#selected-spaces tbody").append(sprintf(template, freeSpace.name, freeSpace.allocatableCapacity, spaceId))
 				reloadBtnRemoveSpace(spaceId)
+				$("#selected-spaces").show();
 			}
 
 			$("#choose-space-form").submit(function(e) {
-				e.preventDefault();
 				var selectedSpace = $("#choose-space :selected").val();
 				selectSpace(selectedSpace)
+				return false;
 			});
 			
 			$("#create-occupation-form").submit(function(e){
-				$("#selected-spaces-input").val(JSON.stringify(selectedSpaces));
-				$("#config-input").val(JSON.stringify(config));
-				$("#events-input").val(JSON.stringify(events));
+				if (selectedSpaces.length > 0) {
+					$("#selected-spaces-input").val(JSON.stringify(selectedSpaces));
+					$("#config-input").val(JSON.stringify(config));
+					$("#events-input").val(JSON.stringify(events));
+				} else {
+					bootbox.alert("<spring:message code="error.occupation.no.selected.spaces" text="You haven't select any space. Please select some space."/>");
+					return false;
+				}
 			});
 			
 		};
@@ -150,11 +203,15 @@
 	$(document).tooltip({
 		items : "#events-number",
 		content: function() {
-			var element = $(this);
-			return content;
+			return eventsContent;
 		}
 	});
 </script>
+
+
+<c:if test="${not empty errorMessage}">
+	<h3 class="bg-danger">${errorMessage}</h3>
+</c:if>
 
 <div class="page-header">
   <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.create.occupation" text="Reservar Espaço"/></small></h1>
@@ -210,17 +267,17 @@
 	<select id="choose-space">
 		<c:forEach var="space" items="${freeSpaces}">
 			<c:if test="${not empty space.name}">
-				<option value="${space.externalId}">${space.nameWithParents}</option>
+				<option value="${space.externalId}">${space.presentationName}</option>
 			</c:if>
 		</c:forEach>
 	</select>
   </div>
-  <button type="submit" class="btn btn-success"><spring:message code="label.create.occupation.add.space" text="Adicionar Espaço"/></button>
+  <input type="submit" class="btn btn-success" value="<spring:message code="label.create.occupation.add.space" text="Adicionar Espaço"/>"></input>
 </form>
 
-<h2><spring:message code="title.create.occupation.selected.space" text="Espaços Selecionados"/></h2>
 
 <table class="table" id="selected-spaces">
+	<caption><spring:message code="title.create.occupation.selected.space" text="Espaços Selecionados"/></caption>
 	<thead>
 		<th><spring:message code="label.create.occupation.selected.space.name" text="Nome"/></th>
 		<th><spring:message code="label.create.occupation.selected.space.normal.capacity" text="Capacidade Normal"/></th>
@@ -249,7 +306,7 @@
     	<spring:message code="label.create.occupation.reason.subject" text="Descrição Breve"></spring:message>
     </label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" name="subject" id="occupation-subject">
+      <input type="text" class="form-control" name="subject" id="occupation-subject" required>
     </div>
   </div>
   <div class="form-group">
@@ -257,7 +314,7 @@
     	<spring:message code="label.create.occupation.reason.description" text="Descrição Completa"></spring:message>
     </label>
     <div class="col-sm-10">
-      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description"></textarea>
+      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description" required></textarea>
     </div>
   </div>
   <div class="form-group">
