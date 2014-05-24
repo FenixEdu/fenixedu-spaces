@@ -5,7 +5,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#state${occupationRequest.currentState}").prop("checked", "checked");
@@ -15,6 +14,7 @@ $(document).ready(function() {
   	<h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.view.occupations" text="Occupation Requests"/></small></h1>
 </div>
 <main>
+	<h3><spring:message code="occupation.request.details" text="Detalhes do Pedido"/></h3>
   	<c:if test="${not empty occupationRequest}">
 	  	<table class="table">
 	  		<tbody>
@@ -53,14 +53,17 @@ $(document).ready(function() {
 				<tr>
 					<th class="row"><spring:message code="label.occupations" text="Occupations" /></th>
 					<td>
-						<ul>
-							<spring:url var="viewOccupationUrl" value="/spaces/occupations/view"/>
-							<c:forEach var="occupation" items="${occupationRequest.occupationSet}">
-								<li>
-									<a href="${viewOccupationUrl}/${occupation.externalId}" title="${occupation.extendedSummary}">${occupation.summary}</a>
-								</li>
-							</c:forEach>
-						</ul>
+						<spring:url var="viewOccupationUrl" value="/spaces/occupations/view"/>
+						<c:forEach var="occupation" items="${occupationRequest.occupationSet}">
+							<p>
+								<a href="${viewOccupationUrl}/${occupation.externalId}" title="${occupation.extendedSummary}">
+									${occupation.summary}&nbsp;&mdash;&nbsp;
+									<c:forEach var="space" items="${occupation.spaces}">
+										${space.name}
+									</c:forEach>
+								</a>
+							</p>
+						</c:forEach>
 					</td>
 				</tr>
 				<tr>
@@ -69,7 +72,10 @@ $(document).ready(function() {
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupations.description" text="Description" /></th>
-					<td><pre style="width: 80%;">${occupationRequest.description}</pre></td>
+					<td>
+						<pre class="comment">${occupationRequest.description}</pre>
+					</td>
+					
 				</tr>
 			</tbody>
 	   	</table>
@@ -87,7 +93,7 @@ $(document).ready(function() {
 	   			<div class="panel panel-default">
 	  				<div class="panel-heading"><strong>${comment.owner.presentationName} (${comment.owner.username})</strong> (<fmt:formatDate value="${date}" pattern="dd-MM-yyyy HH:mm"/>) </div>
 	  				<div class="panel-body">
-	    				<pre style="width: 80%;">${comment.description}</pre>
+	    				<pre class="comment">${comment.description}</pre>
 	  				</div>
 				</div>
 	   		</c:forEach>
@@ -122,3 +128,15 @@ $(document).ready(function() {
 		<h3><spring:message code="occupation.request.not.found" text="Occupation Request not found."></spring:message></h3>
 	</c:if>
 </main>
+
+<style type="text/css">
+.comment {
+	padding: 0px;
+	margin: 0px;
+	background-color: #ffffff;
+	border: 0px;
+}
+th.row {
+	background-color: #fafafa;
+}
+</style>
