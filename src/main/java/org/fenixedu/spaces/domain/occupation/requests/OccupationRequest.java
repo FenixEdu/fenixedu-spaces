@@ -2,9 +2,11 @@ package org.fenixedu.spaces.domain.occupation.requests;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
@@ -32,12 +34,12 @@ public class OccupationRequest extends OccupationRequest_Base {
 
     public static final Comparator<OccupationRequest> COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT =
             new Comparator<OccupationRequest>() {
-                @Override
-                public int compare(OccupationRequest o1, OccupationRequest o2) {
-                    int o = o1.getMoreRecentCommentInstant().compareTo(o2.getMoreRecentCommentInstant());
-                    return o != 0 ? o : o1.getExternalId().compareTo(o2.getExternalId());
-                }
-            };
+        @Override
+        public int compare(OccupationRequest o1, OccupationRequest o2) {
+            int o = o1.getMoreRecentCommentInstant().compareTo(o2.getMoreRecentCommentInstant());
+            return o != 0 ? o : o1.getExternalId().compareTo(o2.getExternalId());
+        }
+    };
 
     public OccupationRequest(User requestor, String subject, Space campus, String description) {
         super();
@@ -170,14 +172,12 @@ public class OccupationRequest extends OccupationRequest_Base {
         return getInstant().toString("dd/MM/yyyy HH:mm");
     }
 
-    public static Set<OccupationRequest> getRequestsByTypeOrderByDate(OccupationRequestState state, Space campus) {
-        Set<OccupationRequest> result = new TreeSet<OccupationRequest>(OccupationRequest.COMPARATOR_BY_INSTANT);
-        for (OccupationRequest request : Bennu.getInstance().getOccupationRequestSet()) {
-            if (request.getCurrentState().equals(state) && (request.getCampus() == null || request.getCampus().equals(campus))) {
-                result.add(request);
-            }
-        }
-        return result;
+    public static List<OccupationRequest> getRequestsByTypeOrderByDate(OccupationRequestState state, Space campus) {
+
+        return Bennu.getInstance().getOccupationRequestSet().stream()
+                .filter(r -> r.getCurrentState().equals(state) && (r.getCampus() == null || r.getCampus().equals(campus)))
+                .sorted(OccupationRequest.COMPARATOR_BY_INSTANT.reversed()).collect(Collectors.toList());
+
     }
 
     public static OccupationRequest getRequestById(Integer requestID) {

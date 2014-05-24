@@ -7,6 +7,7 @@
 
 <spring:url var="filterUrl" value="/spaces/occupations/requests/filter"/>
 <spring:url var="withoutFilterUrl" value="/spaces/occupations/requests"/>
+<spring:url var="viewRequestsUrl" value="/spaces/occupations/requests/"/>
 
 <script>
 $(document).ready(function() {
@@ -36,6 +37,12 @@ $(document).ready(function() {
 });
 </script>
 
+
+<c:if test="${not empty selectedCampi}">
+	<c:set var="viewRequestsUrl" value="${filterUrl}/${selectedCampi.externalId}"/>
+</c:if>
+
+
 <div class="page-header">
   	<h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.view.occupations" text="Occupation Requests"/></small></h1>
   	
@@ -64,10 +71,23 @@ $(document).ready(function() {
   	
   	<!--  My Requests -->
   	<h3><spring:message code="space.occupations.requests.my" text="My Requests"></spring:message></h3>
-  	<c:if test="${empty myRequests}">
+  	<c:if test="${empty myRequests.pageList}">
   		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
   	</c:if>
-  	<c:if test="${not empty myRequests}">
+  	<c:if test="${not empty myRequests.pageList}">
+  		<ul class="pagination">
+	  		<li><a href="${viewRequestsUrl}?p=f">&laquo;</a></li>
+  			<c:forEach var="page" begin="${myRequests.firstLinkedPage}" end="${myRequests.lastLinkedPage}">
+  				<c:set var="pageNumber" value="${page+1}"/>
+  				<c:if test="${page == myRequests.page}">
+  					<li class="active"><a href="${viewRequestsUrl}?p=${pageNumber}">${pageNumber}</a></li>
+  				</c:if>
+  				<c:if test="${page != myRequests.page}">
+  					<li><a href="${viewRequestsUrl}?p=${pageNumber}">${pageNumber}</a></li>
+  				</c:if>
+  			</c:forEach>
+	  		<li><a href="${viewRequestsUrl}?p=l">&raquo;</a></li>
+		</ul>
 	  	<table class="table">
 	  		<thead>
 	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
@@ -78,7 +98,7 @@ $(document).ready(function() {
 	  			
 	  		</thead>
 	  		<tbody>
-	  			<c:forEach var="occupationRequest" items="${myRequests}">
+	  			<c:forEach var="occupationRequest" items="${myRequests.pageList}">
 					<c:set var="id" value="${occupationRequest.identification}" />
 					<c:set var="instant" value="${occupationRequest.presentationInstant}" />
 					<c:set var="subject" value="${occupationRequest.subject}" />
@@ -109,10 +129,23 @@ $(document).ready(function() {
    	
    	<!--  New Requests -->
    	<h3><spring:message code="space.occupations.requests.new" text="New Requests"></spring:message></h3>
-   	<c:if test="${empty newRequests}">
+   	<c:if test="${empty newRequests.pageList}">
   		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
   	</c:if>
-  	<c:if test="${not empty newRequests}">
+  	<c:if test="${not empty newRequests.pageList}">
+  		<ul class="pagination">
+	  		<li><a href="${viewRequestsUrl}?p=f&state=NEW">&laquo;</a></li>
+  			<c:forEach var="page" begin="${newRequests.firstLinkedPage}" end="${newRequests.lastLinkedPage}">
+  				<c:set var="pageNumber" value="${page+1}"/>
+  				<c:if test="${page == newRequests.page}">
+  					<li class="active"><a href="${viewRequestsUrl}?p=${pageNumber}&state=NEW">${pageNumber}</a></li>
+  				</c:if>
+  				<c:if test="${page != newRequests.page}">
+  					<li><a href="${viewRequestsUrl}?p=${pageNumber}&state=NEW">${pageNumber}</a></li>
+  				</c:if>
+  			</c:forEach>
+	  		<li><a href="${viewRequestsUrl}?p=l&state=NEW">&raquo;</a></li>
+		</ul>
 	   	<table class="table">
 	  		<thead>
 	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
@@ -122,7 +155,7 @@ $(document).ready(function() {
 	  			<th><spring:message code="label.occupation.request.actions" text="actions" /></th>
 	  		</thead>
 	  		<tbody>
-	  			<c:forEach var="occupationRequest" items="${newRequests}">
+	  			<c:forEach var="occupationRequest" items="${newRequests.pageList}">
 					<c:set var="id" value="${occupationRequest.identification}" />
 					<c:set var="instant" value="${occupationRequest.presentationInstant}" />
 					<c:set var="subject" value="${occupationRequest.subject}" />
@@ -153,10 +186,23 @@ $(document).ready(function() {
    	
    	<!--  Open Requests -->
    	<h3><spring:message code="space.occupations.requests.open" text="Open Requests"></spring:message></h3>
-   	<c:if test="${empty openRequests}">
+   	<c:if test="${empty openRequests.pageList}">
   		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
   	</c:if>
-  	<c:if test="${not empty openRequests}">
+  	<c:if test="${not empty openRequests.pageList}">
+  		<ul class="pagination">
+	  		<li><a href="${viewRequestsUrl}?p=f&state=OPEN">&laquo;</a></li>
+  			<c:forEach var="page" begin="${openRequests.firstLinkedPage}" end="${openRequests.lastLinkedPage}">
+  				<c:set var="pageNumber" value="${page+1}"/>
+  				<c:if test="${page == openRequests.page}">
+  					<li class="active"><a href="${viewRequestsUrl}?p=${pageNumber}&state=OPEN">${pageNumber}</a></li>
+  				</c:if>
+  				<c:if test="${page != openRequests.page}">
+  					<li><a href="${viewRequestsUrl}?p=${pageNumber}&state=OPEN">${pageNumber}</a></li>
+  				</c:if>
+  			</c:forEach>
+	  		<li><a href="${viewRequestsUrl}?p=l&state=OPEN">&raquo;</a></li>
+		</ul>
 	   	<table class="table">
 	  		<thead>
 	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
@@ -166,7 +212,7 @@ $(document).ready(function() {
 				<th><spring:message code="label.occupation.request.actions" text="actions" /></th>
 	  		</thead>
 	  		<tbody>
-	  			<c:forEach var="occupationRequest" items="${openRequests}">
+	  			<c:forEach var="occupationRequest" items="${openRequests.pageList}">
 					<c:set var="id" value="${occupationRequest.identification}" />
 					<c:set var="instant" value="${occupationRequest.presentationInstant}" />
 					<c:set var="subject" value="${occupationRequest.subject}" />
@@ -196,12 +242,24 @@ $(document).ready(function() {
    	</c:if>
    	
 	<!--  Closed Requests -->
-	
 	<h3><spring:message code="space.occupations.requests.resolved" text="Resolved Requests"></spring:message></h3>
-	<c:if test="${empty resolvedRequests}">
+	<c:if test="${empty resolvedRequests.pageList}">
   		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
   	</c:if>
-  	<c:if test="${not empty resolvedRequests}">
+  	<c:if test="${not empty resolvedRequests.pageList}">
+  		<ul class="pagination">
+	  		<li><a href="${viewRequestsUrl}?p=f&state=RESOLVED">&laquo;</a></li>
+  			<c:forEach var="page" begin="${resolvedRequests.firstLinkedPage}" end="${resolvedRequests.lastLinkedPage}">
+  				<c:set var="pageNumber" value="${page+1}"/>
+  				<c:if test="${page == resolvedRequests.page}">
+  					<li class="active"><a href="${viewRequestsUrl}?p=${pageNumber}&state=RESOLVED">${pageNumber}</a></li>
+  				</c:if>
+  				<c:if test="${page != resolvedRequests.page}">
+  					<li><a href="${viewRequestsUrl}?p=${pageNumber}&state=RESOLVED">${pageNumber}</a></li>
+  				</c:if>
+  			</c:forEach>
+	  		<li><a href="${viewRequestsUrl}?p=l&state=RESOLVED">&raquo;</a></li>
+		</ul>
 		<table class="table">
 	  		<thead>
 	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
@@ -211,7 +269,7 @@ $(document).ready(function() {
 	  			<th><spring:message code="label.occupation.request.owner" text="Dono" /></th>
 	  		</thead>
 	  		<tbody>
-	  			<c:forEach var="occupationRequest" items="${resolvedRequests}">
+	  			<c:forEach var="occupationRequest" items="${resolvedRequests.pageList}">
 					<c:set var="id" value="${occupationRequest.identification}" />
 					<c:set var="instant" value="${occupationRequest.presentationInstant}" />
 					<c:set var="subject" value="${occupationRequest.subject}" />

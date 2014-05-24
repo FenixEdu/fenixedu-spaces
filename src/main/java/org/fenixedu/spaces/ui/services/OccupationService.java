@@ -1,7 +1,6 @@
 package org.fenixedu.spaces.ui.services;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,28 +64,23 @@ public class OccupationService {
         return Space.getAllCampus();
     }
 
-    public Set<OccupationRequest> all() {
-        return Bennu.getInstance().getOccupationRequestSet();
+    public List<OccupationRequest> all() {
+        return Bennu.getInstance().getOccupationRequestSet().stream().sorted(OccupationRequest.COMPARATOR_BY_INSTANT.reversed())
+                .collect(Collectors.toList());
     }
 
-    public Set<OccupationRequest> all(OccupationRequestState state, Space campus) {
+    public List<OccupationRequest> all(OccupationRequestState state, Space campus) {
         return OccupationRequest.getRequestsByTypeOrderByDate(state, campus);
     }
 
     public List<OccupationRequest> getRequestsToProcess(User user, Space campus) {
 
-        final List<OccupationRequest> result = new ArrayList<OccupationRequest>();
-        for (final OccupationRequest request : user.getOcuppationRequestsToProcessSet()) {
-            if (!request.getCurrentState().equals(OccupationRequestState.RESOLVED)
-                    && (request.getCampus() == null || request.getCampus().equals(campus))) {
-                result.add(request);
-            }
-        }
-
-        if (!result.isEmpty()) {
-            Collections.sort(result, OccupationRequest.COMPARATOR_BY_INSTANT);
-        }
-        return result;
+        return user
+                .getOcuppationRequestsToProcessSet()
+                .stream()
+                .filter(r -> !r.getCurrentState().equals(OccupationRequestState.RESOLVED)
+                        && (r.getCampus() == null || r.getCampus().equals(campus)))
+                .sorted(OccupationRequest.COMPARATOR_BY_INSTANT.reversed()).collect(Collectors.toList());
     }
 
     @Atomic
