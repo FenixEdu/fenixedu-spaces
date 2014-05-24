@@ -4,6 +4,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page trimDirectiveWhitespaces="true" %>
 
 <spring:url var="staticUrl" value="/static/fenix-spaces"/>
 
@@ -196,6 +197,12 @@
 				}
 			});
 			
+			<c:if test="${not empty occupation}">
+				<c:forEach var="space" items="${occupation.spaces}">
+					selectSpace(${space.externalId});
+				</c:forEach>
+			</c:if>
+			
 		};
 	
 	$(document).ready(documentReady);
@@ -208,13 +215,43 @@
 </script>
 
 
+<div class="page-header">
+  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.edit.occupation" text="Editar Ocupação"/></small></h1>
+</div>
+
 <c:if test="${not empty errorMessage}">
 	<h3 class="bg-danger">${errorMessage}</h3>
 </c:if>
 
-<div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.create.occupation" text="Reservar Espaço"/></small></h1>
-</div>
+<h3><spring:message code="title.edit.occupation.request.details" text="Detalhes do Pedido"/></h3>
+
+<c:if test="${empty occupation.request}">
+	<p>Não existe nenhum pedido associado a esta ocupação</p>
+</c:if>
+
+<c:if test="${not empty occupation.request}">
+	<spring:url var="requestUrl" value="/spaces/occupations/requests"/>
+	
+	<c:set var="oid" value="${occupation.request.externalId}"/>
+	<c:set var="id" value="${occupation.request.identification}"/>
+	<c:set var="requestor" value="${occupation.request.requestor}"/>
+	<c:set var="owner" value="${occupation.request.owner}"/>
+	<table class="table">
+		<tr class="row">
+			<th><spring:message code="label.occupation.request.identification" text="Nº Pedido"/></th>
+			<td><a href="${requestUrl}/${oid}">${id}</a></td>
+		</tr>
+		<tr class="row">
+			<th><spring:message code="label.occupation.request.requestor" text="Requisitante" /></th>
+			<td>${requestor.presentationName} (${requestor.username})</td>
+		</tr>
+		<tr class="row">
+			<th><spring:message code="label.occupation.request.owner" text="Dono" /></th>
+			<td>${owner.presentationName} (${owner.username})</td>
+		</tr>
+	</table>
+</c:if>
+
 
 <h3><spring:message code="title.create.occupation.details" text="Detalhes da ocupação"/></h3>
 
@@ -276,7 +313,6 @@
 
 
 <table class="table" id="selected-spaces">
-	<caption><spring:message code="title.create.occupation.selected.space" text="Espaços Selecionados"/></caption>
 	<thead>
 		<th><spring:message code="label.create.occupation.selected.space.name" text="Nome"/></th>
 		<th><spring:message code="label.create.occupation.selected.space.normal.capacity" text="Capacidade Normal"/></th>
@@ -288,9 +324,9 @@
 
 <h3><spring:message code="title.create.occupation.reason" text="Motivo da Ocupação de Espaços"/></h3>
 
-<spring:url var="createUrl" value="/spaces/occupations/create" />
+<spring:url var="editUrl" value="/spaces/occupations/edit" />
 
-<form class="form-horizontal" role="form" id="create-occupation-form" method="POST" action ="${createUrl}">
+<form class="form-horizontal" role="form" id="create-occupation-form" method="POST" action ="${editUrl}">
   <div class="form-group">
     <label for="occupation-emails" class="col-sm-2 control-label">
     	<spring:message code="label.create.occupation.reason.emails" text="Destinatários (emails separados por virgula):"></spring:message>
@@ -304,7 +340,7 @@
     	<spring:message code="label.create.occupation.reason.subject" text="Descrição Breve"></spring:message>
     </label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" name="subject" id="occupation-subject" required>
+      <input type="text" class="form-control" name="subject" id="occupation-subject" value="${occupation.subject}" required>
     </div>
   </div>
   <div class="form-group">
@@ -312,15 +348,15 @@
     	<spring:message code="label.create.occupation.reason.description" text="Descrição Completa"></spring:message>
     </label>
     <div class="col-sm-10">
-      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description" required></textarea>
+      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description" required> ${occupation.description}</textarea>
     </div>
   </div>
   <div class="form-group">
     <div class="col-sm-10">
-      <button type="submit" class="btn btn-success"><spring:message code="label.create.occupation.reason.submit" text="Criar Ocupação"/></button>
+      <button type="submit" class="btn btn-success"><spring:message code="label.create.occupation.reason.edit" text="Editar Ocupação"/></button>
     </div>
   </div>
+  
   <input type="hidden" name="selectedSpaces" id="selected-spaces-input"/>
-  <input type="hidden" name="config" id="config-input"/>
-  <input type="hidden" name="events" id="events-input"/>
+  <input type="hidden" name="occupation" value="${occupation.externalId}"/>
 </form>

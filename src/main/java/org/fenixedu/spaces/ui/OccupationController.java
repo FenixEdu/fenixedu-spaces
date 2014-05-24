@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
+import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.ui.services.OccupationService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
@@ -14,6 +15,7 @@ import org.joda.time.Interval;
 import org.joda.time.Partial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -62,11 +64,11 @@ public class OccupationController {
         model.addAttribute(
                 "years",
                 IntStream.rangeClosed(currentYear - 100, currentYear + 10).boxed().sorted((o1, o2) -> o2.compareTo(o1))
-                        .collect(Collectors.toList()));
+                .collect(Collectors.toList()));
 
         List<Partial> months =
                 IntStream.rangeClosed(1, 12).boxed().map(m -> new Partial(DateTimeFieldType.monthOfYear(), m))
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
         model.addAttribute("months", months);
         model.addAttribute("currentMonth", month);
         model.addAttribute("currentYear", year);
@@ -98,6 +100,27 @@ public class OccupationController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return searchSpaces(model, events, config);
+        }
+    }
+
+    @RequestMapping("view/{occupation}")
+    public String view(Model model, @PathVariable Occupation occupation) {
+        model.addAttribute("occupation", occupation);
+        model.addAttribute("events", occupationService.exportEvents(occupation));
+        model.addAttribute("config", occupationService.exportConfig(occupation));
+        model.addAttribute("freeSpaces", occupationService.getFreeAndSelectedSpaces(occupation, Authenticate.getUser()));
+        return "occupations/edit";
+    }
+
+    @RequestMapping(value = "edit", method = RequestMethod.POST)
+    public String edit(Model model, @RequestParam Occupation occupation, @RequestParam String emails,
+            @RequestParam String subject, @RequestParam String description, @RequestParam String selectedSpaces) {
+        try {
+            occupationService.editOccupation(occupation, emails, subject, description, selectedSpaces);
+            return "redirect:/spaces/occupations";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return view(model, occupation);
         }
     }
 

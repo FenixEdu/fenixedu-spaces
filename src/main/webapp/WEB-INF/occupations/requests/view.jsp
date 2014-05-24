@@ -208,7 +208,7 @@ $(document).ready(function() {
 	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
 	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
 	  			<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
-	  			<th><spring:message code="label.occupation.request.owner" text="owner" /></th>
+	  			<th><spring:message code="label.occupation.request.owner" text="Dono" /></th>
 	  		</thead>
 	  		<tbody>
 	  			<c:forEach var="occupationRequest" items="${resolvedRequests}">

@@ -40,7 +40,7 @@ $(document).ready(function() {
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.requestor" text="Requestor" /></th>
-					<td>${requestor.presentationName}</td>
+					<td>${requestor.presentationName} (${requestor.username})</td>
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.instant" text="Instant" /></th>
@@ -52,7 +52,16 @@ $(document).ready(function() {
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupations" text="Occupations" /></th>
-					<td>-</td>
+					<td>
+						<ul>
+							<spring:url var="viewOccupationUrl" value="/spaces/occupations/view"/>
+							<c:forEach var="occupation" items="${occupationRequest.occupationSet}">
+								<li>
+									<a href="${viewOccupationUrl}/${occupation.externalId}" title="${occupation.extendedSummary}">${occupation.summary}</a>
+								</li>
+							</c:forEach>
+						</ul>
+					</td>
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.campus" text="Campus" /></th>
@@ -76,7 +85,7 @@ $(document).ready(function() {
 	   			<c:set var="date" value="${comment.instant.toDate()}"/>
 	   			
 	   			<div class="panel panel-default">
-	  				<div class="panel-heading"><strong>${comment.owner.presentationName}</strong> (<fmt:formatDate value="${date}" pattern="dd-MM-yyyy HH:mm"/>) </div>
+	  				<div class="panel-heading"><strong>${comment.owner.presentationName} (${comment.owner.username})</strong> (<fmt:formatDate value="${date}" pattern="dd-MM-yyyy HH:mm"/>) </div>
 	  				<div class="panel-body">
 	    				<pre style="width: 80%;">${comment.description}</pre>
 	  				</div>

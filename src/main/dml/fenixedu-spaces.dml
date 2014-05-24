@@ -21,9 +21,6 @@ class Space {
 
 class occupation.Occupation {
 	OccupationConfig config;
-}
-
-class occupation.OccupationDetails {
 	String emails;
 	String subject;
 	String description;
@@ -195,11 +192,6 @@ relation InformationInformation {
 	Information playsRole previous;
 }
 
-
-relation OccupationOccupationDetails {
-	occupation.Occupation playsRole occupation;
-	occupation.OccupationDetails playsRole details;
-}
 
 relation SpaceOccupation {
 	protected Space playsRole space {

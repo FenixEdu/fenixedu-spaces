@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -218,5 +219,69 @@ public class OccupationService {
         return Bennu.getInstance().getOccupationSet().stream().filter(o -> o.getClass().equals(Occupation.class))
                 .filter(o -> o.overlaps(interval)).sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                 .collect(Collectors.toList());
+    }
+
+    public String exportConfig(Occupation occupation) {
+        ExplicitConfigWithSettings config = (ExplicitConfigWithSettings) occupation.getConfig();
+        JsonObject jsonConfig = new JsonObject();
+        jsonConfig.addProperty("start", config.getStart().toString(datetimeFormatter));
+        jsonConfig.addProperty("end", config.getEnd().toString(datetimeFormatter));
+        String jsonFrequency = Character.toString(config.getFrequency().name().toLowerCase().charAt(0));
+        jsonConfig.addProperty("frequency", jsonFrequency);
+        jsonConfig.addProperty("isAllDay", config.getAllDay() != null && config.getAllDay());
+
+        switch (jsonFrequency) {
+        case "d":
+            jsonConfig.addProperty("repeatsevery", config.getRepeatsevery());
+            break;
+        case "w":
+            jsonConfig.addProperty("repeatsevery", config.getRepeatsevery());
+            jsonConfig.add("weekdays", new Gson().toJsonTree(config.getWeekdays()));
+            break;
+        case "m":
+            jsonConfig.addProperty("repeatsevery", config.getRepeatsevery());
+            jsonConfig.addProperty("monthlyType",
+                    config.getMonthlyType().equals(MonthlyType.DAY_OF_MONTH) ? "dayofmonth" : "dayofweek");
+            break;
+        case "y":
+            jsonConfig.addProperty("repeatsevery", config.getRepeatsevery());
+            break;
+        }
+
+        return jsonConfig.toString();
+    }
+
+    public String exportEvents(Occupation occupation) {
+        JsonArray events = new JsonArray();
+        for (final Interval i : occupation.getIntervals()) {
+            JsonObject event = new JsonObject();
+            event.addProperty("start", i.getStartMillis() / 1000);
+            event.addProperty("end", i.getEndMillis() / 1000);
+            events.add(event);
+        }
+        return events.toString();
+    }
+
+    public List<Space> getFreeAndSelectedSpaces(Occupation occupation, User user) {
+        List<Space> spaces = searchFreeSpaces(occupation.getIntervals(), user);
+        spaces.addAll(occupation.getSpaces());
+        return spaces;
+    }
+
+    @Atomic
+    public void editOccupation(Occupation occupation, String emails, String subject, String description, String selectedSpaces)
+            throws Exception {
+        occupation.setEmails(emails);
+        occupation.setSubject(subject);
+        occupation.setDescription(description);
+        final Set<Space> selectedSpaceSet = selectSpaces(selectedSpaces);
+        occupation.getSpaces().stream().forEach(s -> occupation.removeSpace(s));
+        for (Space space : selectedSpaceSet) {
+            if (!space.isFree(occupation.getIntervals())) {
+                throw new Exception(messageSource.getMessage("error.occupations.rooms.is.not.free", new Object[0],
+                        I18N.getLocale()));
+            }
+            occupation.addSpace(space);
+        }
     }
 }

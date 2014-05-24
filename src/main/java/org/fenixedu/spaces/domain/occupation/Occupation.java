@@ -18,21 +18,17 @@ public class Occupation extends Occupation_Base {
         setBennu(Bennu.getInstance());
     }
 
-    public Occupation(OccupationRequest request, OccupationConfig config) {
-        super();
-        setBennu(Bennu.getInstance());
-        setRequest(request);
-        setConfig(config);
-    }
-
-    public Occupation(String subject, String description, OccupationConfig config) {
-        this(null, subject, description, config);
-    }
-
     public Occupation(String emails, String subject, String description, OccupationConfig config) {
+        this(emails, subject, description, config, null);
+    }
+
+    public Occupation(String emails, String subject, String description, OccupationConfig config, OccupationRequest request) {
         this();
         setConfig(config);
-        setDetails(new OccupationDetails(emails, subject, description));
+        setEmails(emails);
+        setSubject(subject);
+        setDescription(description);
+        setRequest(request);
     }
 
     @Override
@@ -73,26 +69,6 @@ public class Occupation extends Occupation_Base {
             }
         }
         return false;
-    }
-
-    public String getSubject() {
-        if (getRequest() != null) {
-            return getRequest().getSubject();
-        }
-        if (getDetails() != null) {
-            return getDetails().getSubject();
-        }
-        return null;
-    }
-
-    public String getDescription() {
-        if (getRequest() != null) {
-            return getRequest().getDescription();
-        }
-        if (getDetails() != null) {
-            return getDetails().getDescription();
-        }
-        return null;
     }
 
     public Boolean isActive() {

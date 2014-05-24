@@ -80,5 +80,5 @@
 	</table>
 </c:if>
 <c:if test="${empty occupations}">
-	<h3><spring:message code="label.occupations.empty" text="Não existem ocupações para o período seleccionado."/></h3>
+	<h4><spring:message code="label.occupations.empty" text="Não existem ocupações para o período seleccionado."/></h4>
 </c:if>
