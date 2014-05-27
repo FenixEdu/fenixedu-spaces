@@ -27,12 +27,18 @@ public class OccupationRequestsController {
 
     @Autowired
     OccupationService occupationService;
-    private int parseInt;
 
     @RequestMapping(value = "/search/{id}", method = RequestMethod.GET)
-    public String search(@PathVariable Integer id, Model model) {
-        model.addAttribute("occupationRequest", occupationService.search(id));
-        return "occupations/requests/single";
+    public String search(@PathVariable String id, Model model, @RequestParam(required = false, defaultValue = "1") String p) {
+        List<OccupationRequest> result = occupationService.search(id);
+
+        if (result.size() < 2) {
+            model.addAttribute("occupationRequest", result.isEmpty() ? null : result.iterator().next());
+            return "occupations/requests/single";
+        }
+        model.addAttribute("searchId", id);
+        model.addAttribute("userRequestSearchResult", getBook(result, p));
+        return viewRequests(model, null, null);
     }
 
     @RequestMapping(value = "/{occupationRequest}", method = RequestMethod.GET)
@@ -140,6 +146,13 @@ public class OccupationRequestsController {
 
     private Model addCampus(Model model) {
         return model.addAttribute("campus", occupationService.getAllCampus());
+    }
+
+    @RequestMapping("my")
+    public String myRequests(Model model, @RequestParam(defaultValue = "1") String p) {
+        model.addAttribute("requestor", Authenticate.getUser());
+        model.addAttribute("requests", getBook(occupationService.all(Authenticate.getUser()), p));
+        return "occupations/requests/my";
     }
 
 }

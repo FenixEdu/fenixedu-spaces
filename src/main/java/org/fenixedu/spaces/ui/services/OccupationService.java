@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
@@ -56,8 +57,17 @@ public class OccupationService {
         return new OccupationRequest(bean.getRequestor(), bean.getSubject(), bean.getCampus(), bean.getDescription());
     }
 
-    public OccupationRequest search(Integer requestID) {
-        return OccupationRequest.getRequestById(requestID);
+    public List<OccupationRequest> search(String requestIdOrUsername) {
+        try {
+            return Stream.of(OccupationRequest.getRequestById(Integer.parseInt(requestIdOrUsername)))
+                    .collect(Collectors.toList());
+        } catch (NumberFormatException nfe) {
+            User user = User.findByUsername(requestIdOrUsername);
+            if (user == null) {
+                return new ArrayList<>();
+            }
+            return all(user);
+        }
     }
 
     public Set<Space> getAllCampus() {
@@ -67,6 +77,10 @@ public class OccupationService {
     public List<OccupationRequest> all() {
         return Bennu.getInstance().getOccupationRequestSet().stream().sorted(OccupationRequest.COMPARATOR_BY_INSTANT.reversed())
                 .collect(Collectors.toList());
+    }
+
+    public List<OccupationRequest> all(User user) {
+        return all().stream().filter(o -> user != null && user.equals(o.getRequestor())).collect(Collectors.toList());
     }
 
     public List<OccupationRequest> all(OccupationRequestState state, Space campus) {
@@ -80,7 +94,7 @@ public class OccupationService {
                 .stream()
                 .filter(r -> !r.getCurrentState().equals(OccupationRequestState.RESOLVED)
                         && (r.getCampus() == null || r.getCampus().equals(campus)))
-                .sorted(OccupationRequest.COMPARATOR_BY_INSTANT.reversed()).collect(Collectors.toList());
+                        .sorted(OccupationRequest.COMPARATOR_BY_INSTANT.reversed()).collect(Collectors.toList());
     }
 
     @Atomic

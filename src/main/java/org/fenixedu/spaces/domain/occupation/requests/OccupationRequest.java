@@ -34,12 +34,12 @@ public class OccupationRequest extends OccupationRequest_Base {
 
     public static final Comparator<OccupationRequest> COMPARATOR_BY_MORE_RECENT_COMMENT_INSTANT =
             new Comparator<OccupationRequest>() {
-        @Override
-        public int compare(OccupationRequest o1, OccupationRequest o2) {
-            int o = o1.getMoreRecentCommentInstant().compareTo(o2.getMoreRecentCommentInstant());
-            return o != 0 ? o : o1.getExternalId().compareTo(o2.getExternalId());
-        }
-    };
+                @Override
+                public int compare(OccupationRequest o1, OccupationRequest o2) {
+                    int o = o1.getMoreRecentCommentInstant().compareTo(o2.getMoreRecentCommentInstant());
+                    return o != 0 ? o : o1.getExternalId().compareTo(o2.getExternalId());
+                }
+            };
 
     public OccupationRequest(User requestor, String subject, Space campus, String description) {
         super();

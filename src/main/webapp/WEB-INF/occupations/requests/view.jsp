@@ -8,6 +8,8 @@
 <spring:url var="filterUrl" value="/spaces/occupations/requests/filter"/>
 <spring:url var="withoutFilterUrl" value="/spaces/occupations/requests"/>
 <spring:url var="viewRequestsUrl" value="/spaces/occupations/requests/"/>
+<spring:url var="searchUrl" value="/spaces/occupations/requests/search/"/>
+<spring:url var="requestUrl" value="/spaces/occupations/requests"/>
 
 <script>
 $(document).ready(function() {
@@ -27,8 +29,6 @@ $(document).ready(function() {
 			}
 		);
 	</c:if>
-	
-	<spring:url var="searchUrl" value="/spaces/occupations/requests/search/"/>
 	
 	$("#searchForm").submit(function(e) {
 		e.preventDefault();
@@ -50,10 +50,60 @@ $(document).ready(function() {
   	<form id="searchForm" class="form-inline" role="form">
   		<div class="form-group">
    		  <label class="sr-only" for="searchRequest"><spring:message code="occupations.requests.search" text="Procurar Pedido"/></label>
-    	  <input name="search" type="number" min="1" class="form-control" id="searchRequest" placeholder="<spring:message code="occupations.requests.search" text="Procurar Pedido"/>"></input>
+    	  <input name="search" type="text" class="form-control" id="searchRequest" value="${searchId}" placeholder="<spring:message code="occupations.requests.search" text="Nº Pedido"/>"></input>
   		</div>
   		 <button id="searchRequest" class="btn btn-default"><spring:message code="label.search" text="Procurar"/></button>
   	</form>
+  	
+  	
+  	   <c:if test="${not empty userRequestSearchResult.pageList}">
+  	   	
+  	   	<c:set var="searchPageUrl" value="${searchUrl}${searchId}"/>
+  	   	<h3><spring:message code="label.occupation.request.search.result" text="Resultado da pesquisa por"/> ${searchId}</h3>
+  		<ul class="pagination">
+	  		<li><a href="${searchPageUrl}?p=f">&laquo;</a></li>
+  			<c:forEach var="page" begin="${userRequestSearchResult.firstLinkedPage}" end="${userRequestSearchResult.lastLinkedPage}">
+  				<c:set var="pageNumber" value="${page+1}"/>
+  				<c:if test="${page == userRequestSearchResult.page}">
+  					<li class="active"><a href="${searchPageUrl}?p=${pageNumber}">${pageNumber}</a></li>
+  				</c:if>
+  				<c:if test="${page != userRequestSearchResult.page}">
+  					<li><a href="${searchPageUrl}?p=${pageNumber}">${pageNumber}</a></li>
+  				</c:if>
+  			</c:forEach>
+	  		<li><a href="${searchPageUrl}?p=l">&raquo;</a></li>
+		</ul>
+	  	<table class="table">
+	  		<thead>
+	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
+	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
+	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
+	  			<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
+	  		</thead>
+	  		<tbody>
+	  			<c:forEach var="occupationRequest" items="${userRequestSearchResult.pageList}">
+					<c:set var="id" value="${occupationRequest.identification}" />
+					<c:set var="instant" value="${occupationRequest.presentationInstant}" />
+					<c:set var="subject" value="${occupationRequest.subject}" />
+					<c:set var="requestor" value="${occupationRequest.requestor}" />
+					<tr>
+						<td>
+							<a href="${requestUrl}/${occupationRequest.externalId}">
+								${id}
+							</a>
+						</td>
+						<td>${instant}</td>
+						<td>
+							<a href="${requestUrl}/${occupationRequest.externalId}">
+								${subject}
+							</a>
+						</td>
+	 					<td>${requestor.presentationName}</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+	   	</table>
+  	</c:if>
   	
   	<h3><spring:message code="space.occupations.filter.campus" text="Filter by Campus"></spring:message></h3>
   	<div class="form-group">
@@ -65,8 +115,6 @@ $(document).ready(function() {
 	    	</c:forEach>
 	    <select>
   	</div>
-  	
-  	<spring:url var="requestUrl" value="/spaces/occupations/requests"/>
   	
   	
   	<!--  My Requests -->
