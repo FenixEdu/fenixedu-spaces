@@ -98,7 +98,7 @@ $(document).ready(function() {
 								${subject}
 							</a>
 						</td>
-	 					<td>${requestor.presentationName}</td>
+	 					<td>${requestor.presentationName} (${requestor.username})</td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -163,7 +163,7 @@ $(document).ready(function() {
 								${subject}
 							</a>
 						</td>
-	 					<td>${requestor.presentationName}</td>
+	 					<td>${requestor.presentationName} (${requestor.username})</td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
 								<spring:message code="label.occupation.request.deal" text="Tratar Pedido"/>
@@ -220,7 +220,7 @@ $(document).ready(function() {
 								${subject}
 							</a>
 						</td>
-	 					<td>${requestor.presentationName}</td>
+	 					<td>${requestor.presentationName} (${requestor.username})</td>
 	 					<td>
 	 						<a href="${requestUrl}/${occupationRequest.externalId}/OPEN">
 	 							<spring:message code="label.occupation.request.open" text="Abrir Pedido"/>
@@ -277,7 +277,7 @@ $(document).ready(function() {
 								${subject}
 							</a>
 						</td>
-	 					<td>${requestor.presentationName}</td>
+	 					<td>${requestor.presentationName} (${requestor.username})</td>
 	 					<td>
 	 						<a href="${requestUrl}/${occupationRequest.externalId}">
 	 							<spring:message code="label.occupation.request.open" text="Tratar Pedido"/>

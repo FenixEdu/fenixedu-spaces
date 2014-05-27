@@ -69,4 +69,7 @@
 <form action="${searchUrl}" id="form-search-spaces" method="post">
 	<input type="hidden" name="events" id="events"/>
 	<input type="hidden" name="config" id="config"/>
+	<c:if test="${not empty request}">
+		<input type="hidden" name="request" value="${request.externalId}"/>
+	</c:if>
 </form>

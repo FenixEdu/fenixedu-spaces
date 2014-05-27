@@ -5,6 +5,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<spring:url var="listUrl" value="/spaces/occupations/requests"/>
+
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#state${occupationRequest.currentState}").prop("checked", "checked");
@@ -14,6 +16,7 @@ $(document).ready(function() {
   	<h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.view.occupations" text="Occupation Requests"/></small></h1>
 </div>
 <main>
+	<em><a href="${listUrl}"><spring:message code="label.back" text="Voltar"/></a></em>
 	<h3><spring:message code="occupation.request.details" text="Detalhes do Pedido"/></h3>
   	<c:if test="${not empty occupationRequest}">
 	  	<table class="table">
@@ -48,7 +51,7 @@ $(document).ready(function() {
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.state" text="State" /></th>
-					<td><spring:message code="${stateBundleKey}"></spring:message></td>
+					<td><b><spring:message code="${stateBundleKey}"></spring:message></b></td>
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupations" text="Occupations" /></th>
@@ -79,6 +82,11 @@ $(document).ready(function() {
 				</tr>
 			</tbody>
 	   	</table>
+	   	
+	   	<spring:url var="createOccupationUrl" value="/spaces/occupations/create?request=${occupationRequest.externalId}"/>
+	   	<c:if test="${occupationRequest.currentState.name == 'OPEN'}">
+	   		<p><a href="${createOccupationUrl}"><spring:message code="occupation.request.create.occupation" text="Fazer Marcação"/></a></p>
+	   	</c:if>
 	   	
 	   	<!--  Comments -->
 	   	<h3><spring:message code="occupation.request.comments" text="Comments"/></h3>

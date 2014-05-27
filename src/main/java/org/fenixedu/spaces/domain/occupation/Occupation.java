@@ -91,4 +91,13 @@ public class Occupation extends Occupation_Base {
         return getConfig().getEnd();
     }
 
+    public void delete() {
+        if (getRequest() != null) {
+            setRequest(null);
+        }
+        setBennu(null);
+        getSpaceSet().clear();
+        super.deleteDomainObject();
+    }
+
 }

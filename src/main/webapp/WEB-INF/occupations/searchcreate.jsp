@@ -323,4 +323,7 @@
   <input type="hidden" name="selectedSpaces" id="selected-spaces-input"/>
   <input type="hidden" name="config" id="config-input"/>
   <input type="hidden" name="events" id="events-input"/>
+  <c:if test="${not empty request}">
+		<input type="hidden" name="request" value="${request.externalId}"/>
+	</c:if>
 </form>

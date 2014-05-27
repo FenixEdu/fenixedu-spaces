@@ -136,7 +136,7 @@ public class OccupationService {
 
     @Atomic
     public void createOccupation(String emails, String subject, String description, String selectedSpaces, String config,
-            String events) throws Exception {
+            String events, OccupationRequest request) throws Exception {
         final Set<Space> selectedSpaceSet = selectSpaces(selectedSpaces);
         final List<Interval> intervals = selectEvents(events);
         final Occupation occupation = new Occupation(emails, subject, description, parseConfig(config, intervals));
@@ -146,6 +146,9 @@ public class OccupationService {
                         I18N.getLocale()));
             }
             occupation.addSpace(space);
+        }
+        if (request != null) {
+            request.addOccupation(occupation);
         }
     }
 
@@ -291,5 +294,10 @@ public class OccupationService {
             }
             occupation.addSpace(space);
         }
+    }
+
+    @Atomic
+    public void delete(Occupation occupation) {
+        occupation.delete();
     }
 }

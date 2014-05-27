@@ -130,8 +130,8 @@ public class ExplicitConfigWithSettings extends OccupationConfig {
             }
             if (Frequency.WEEKLY.equals(getFrequency())) {
                 String weekdays =
-                        getWeekdays().stream().map(w -> new Partial(DateTimeFieldType.dayOfWeek(), w))
-                        .map(p -> p.toString("EEEE")).collect(Collectors.joining(","));
+                        getWeekdays().stream().map(w -> new Partial(DateTimeFieldType.dayOfWeek(), w)).map(p -> p.toString("E"))
+                        .collect(Collectors.joining(","));
                 repeats =
                         Stream.of(repeats, BundleUtil.getString(BUNDLE, "label.occupation.config.summary.weekdays", weekdays))
                         .collect(Collectors.joining(" "));
@@ -143,15 +143,6 @@ public class ExplicitConfigWithSettings extends OccupationConfig {
     }
 
     private String getMonthlySummary() {
-//        if (value == "dayofmonth") {
-//            $("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofmonth" text=" ao dia "/>" + startdate.date());
-//        }
-//        if (value == "dayofweek") {
-//            $("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofweek" text=" à "/>" + nthDayOfTheWeekLabel(startdate) + " " + dayOfWeekLabel(startdate));
-//        }
-
-//        label.occupation.config.summary.DAY_OF_MONTH= ao dia {0}
-//        label.occupation.config.summary.DAY_OF_WEEK= à {1} {2}
         switch (getMonthlyType()) {
         case DAY_OF_MONTH:
             return BundleUtil.getString(BUNDLE, "label.occupation.config.summary.DAY_OF_MONTH", new Integer(getStart()

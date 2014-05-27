@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.occupation.Occupation;
+import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.ui.services.OccupationService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
@@ -77,15 +78,18 @@ public class OccupationController {
     }
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String getCreate(Model model) {
+    public String getCreate(Model model, @RequestParam(required = false) OccupationRequest request) {
+        model.addAttribute("request", request);
         return "occupations/create";
     }
 
     @RequestMapping(value = "search-create", method = RequestMethod.POST)
-    public String searchSpaces(Model model, @RequestParam String events, @RequestParam String config) {
+    public String searchSpaces(Model model, @RequestParam String events, @RequestParam String config, @RequestParam(
+            required = false) OccupationRequest request) {
         final List<Interval> intervals = parseIntervals(events);
         model.addAttribute("events", events);
         model.addAttribute("config", config);
+        model.addAttribute("request", request);
         model.addAttribute("freeSpaces", occupationService.searchFreeSpaces(intervals, Authenticate.getUser()));
         return "occupations/searchcreate";
     }
@@ -93,13 +97,16 @@ public class OccupationController {
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public String create(Model model, @RequestParam String emails, @RequestParam String subject,
             @RequestParam String description, @RequestParam String selectedSpaces, @RequestParam String config,
-            @RequestParam String events) {
+            @RequestParam String events, @RequestParam(required = false) OccupationRequest request) {
         try {
-            occupationService.createOccupation(emails, subject, description, selectedSpaces, config, events);
+            occupationService.createOccupation(emails, subject, description, selectedSpaces, config, events, request);
+            if (request != null) {
+                return "redirect:/spaces/occupations/requests/" + request.getExternalId();
+            }
             return "redirect:/spaces/occupations";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return searchSpaces(model, events, config);
+            return searchSpaces(model, events, config, request);
         }
     }
 
@@ -122,6 +129,12 @@ public class OccupationController {
             model.addAttribute("errorMessage", e.getMessage());
             return view(model, occupation);
         }
+    }
+
+    @RequestMapping(value = "{occupation}", method = RequestMethod.DELETE)
+    public String delete(@PathVariable Occupation occupation) {
+        occupationService.delete(occupation);
+        return "redirect:/spaces/occupations/list";
     }
 
 }

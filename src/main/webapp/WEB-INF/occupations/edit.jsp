@@ -192,7 +192,7 @@
 					$("#config-input").val(JSON.stringify(config));
 					$("#events-input").val(JSON.stringify(events));
 				} else {
-					bootbox.alert("<spring:message code="error.occupation.no.selected.spaces" text="You haven't select any space. Please select some space."/>");
+					bootbox.alert("<spring:message code="error.occupation.no.selected.spaces" text="Por favor, selecione um espaço."/>");
 					return false;
 				}
 			});
@@ -202,6 +202,14 @@
 					selectSpace(${space.externalId});
 				</c:forEach>
 			</c:if>
+			
+			<spring:url var="deleteUrl" value="/spaces/occupations/${occupation.externalId}"/>
+			
+			$("#delete-occupation").click(function() {
+				$.ajax( { url : "${deleteUrl}", type: "DELETE", success: function() {
+					history.back();
+				}});
+			});
 			
 		};
 	
@@ -226,7 +234,7 @@
 <h3><spring:message code="title.edit.occupation.request.details" text="Detalhes do Pedido"/></h3>
 
 <c:if test="${empty occupation.request}">
-	<p>Não existe nenhum pedido associado a esta ocupação</p>
+	<p><spring:message code="title.edit.occupation.no.request" text="Não existe nenhum pedido associado a esta ocupação"/></p>
 </c:if>
 
 <c:if test="${not empty occupation.request}">
@@ -294,6 +302,9 @@
 		</td>
 	</tr>
 </table>
+
+
+<button class="btn btn-danger" id="delete-occupation"><spring:message code="link.occupation.delete" text="Apagar Ocupação"/></button>
 
 <h3><spring:message code="title.create.occupation.choose.space" text="Escolher Espaço"/></h3>
 

@@ -141,7 +141,7 @@ public class OccupationRequestsController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public RedirectView createRequest(@ModelAttribute OccupationRequestBean bean, BindingResult errors) {
         occupationService.createRequest(bean);
-        return new RedirectView("/spaces/occupations/requests", true);
+        return new RedirectView("/spaces/occupations/requests/my", true);
     }
 
     private Model addCampus(Model model) {
