@@ -4,14 +4,16 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<spring:url var="requestUrl" value="/spaces/occupations/requests"/>
-<spring:url var="createUrl" value="/spaces/occupations/requests/create"/>
+<spring:url var="requestUrl" value="/spaces/occupations/requests/my"/>
+<spring:url var="createUrl" value="/spaces/occupations/requests/my/create"/>
 
 
 <div class="page-header">
   	<h1><spring:message code="title.view.my.occupations" text="Os meus pedidos de ocupação de espaços"/></h1>
 	
-	<p><a href="${createUrl}"><spring:message code="link.occupations.create.request"></spring:message></a></p>
+	<p><a class="btn btn-primary" href="${createUrl}"><spring:message code="link.occupations.create.request" text="Fazer Pedido de Ocupação de Espaços"></spring:message></a></p>
+	
+	
   	<c:if test="${not empty requests.pageList}">
   	   	<c:set var="searchPageUrl" value="${searchUrl}${searchId}"/>
   	   	<h3><spring:message code="title.view.my.occupations.list" text="Lista de pedidos"/></h3>

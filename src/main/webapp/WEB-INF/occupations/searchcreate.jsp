@@ -191,7 +191,7 @@
 					$("#config-input").val(JSON.stringify(config));
 					$("#events-input").val(JSON.stringify(events));
 				} else {
-					bootbox.alert("<spring:message code="error.occupation.no.selected.spaces" text="You haven't select any space. Please select some space."/>");
+					bootbox.alert("<spring:message code="error.occupation.no.selected.spaces" text="Por favor selecione no mínimo um espaço."/>");
 					return false;
 				}
 			});

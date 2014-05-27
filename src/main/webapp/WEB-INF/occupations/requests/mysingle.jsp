@@ -5,7 +5,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<spring:url var="listUrl" value="/spaces/occupations/requests"/>
+<spring:url var="listUrl" value="/spaces/occupations/requests/my"/>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -56,15 +56,12 @@ $(document).ready(function() {
 				<tr>
 					<th class="row"><spring:message code="label.occupations" text="Occupations" /></th>
 					<td>
-						<spring:url var="viewOccupationUrl" value="/spaces/occupations/view"/>
 						<c:forEach var="occupation" items="${occupationRequest.occupationSet}">
 							<p>
-								<a href="${viewOccupationUrl}/${occupation.externalId}" title="${occupation.extendedSummary}">
 									${occupation.summary}&nbsp;&mdash;&nbsp;
 									<c:forEach var="space" items="${occupation.spaces}">
 										${space.name}
 									</c:forEach>
-								</a>
 							</p>
 						</c:forEach>
 					</td>
@@ -82,11 +79,6 @@ $(document).ready(function() {
 				</tr>
 			</tbody>
 	   	</table>
-	   	
-	   	<spring:url var="createOccupationUrl" value="/spaces/occupations/create?request=${occupationRequest.externalId}"/>
-	   	<c:if test="${occupationRequest.currentState.name == 'OPEN'}">
-	   		<p><a href="${createOccupationUrl}"><spring:message code="occupation.request.create.occupation" text="Fazer Marcação"/></a></p>
-	   	</c:if>
 	   	
 	   	<!--  Comments -->
 	   	<h3><spring:message code="occupation.request.comments" text="Comments"/></h3>
@@ -108,7 +100,7 @@ $(document).ready(function() {
 	   	</c:if>
 	   	
 	   	<!-- New Comment -->
-	   	<spring:url var="commentUrl" value="/spaces/occupations/requests/${occupationRequest.externalId}/comments"/>
+	   	<spring:url var="commentUrl" value="/spaces/occupations/requests/my/${occupationRequest.externalId}/comments"/>
 	   	<h3><spring:message code="occupation.request.comments.add" text="Add comment"/></h3>
 	   	<form class="form" role="form" action="${commentUrl}" method="post">
 	  		<div class="form-group">

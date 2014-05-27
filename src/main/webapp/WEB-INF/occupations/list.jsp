@@ -11,6 +11,12 @@
 	</h1>
 </div>
 
+<spring:url var="viewUrl" value="/spaces/occupations/view"/>
+
+<spring:url var="createUrl" value="/spaces/occupations/create"/>
+<a href="${createUrl}"><spring:message code="title.create.occupation" text="Criar Ocupação"/></a>
+
+<h2><spring:message code="label.filters" text="Filtros"/></h2>
 
 <form role="form" action="" method="GET">
   <div class="form-group">
@@ -48,7 +54,6 @@
 </form>
 
 <h2><spring:message code="title.list.occupation.details" text="Detalhes das ocupações" /></h2>
-
 
 <spring:url var="viewUrl" value="/spaces/occupations/view"/>
 

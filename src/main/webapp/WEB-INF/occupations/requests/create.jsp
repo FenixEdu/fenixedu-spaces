@@ -9,9 +9,9 @@
   <h1><spring:message code="title.space.management.occupations" text="Space Occupation Management"/><small><spring:message code="title.create.occupation" text="Create Occupation Request"/></small></h1>
 </div>
 
-<spring:url var="formActionUrl" value="/spaces/occupations/requests/create"/>
+<spring:url var="createUrl" value="/spaces/occupations/requests/my/create"/>
 
-<form:form modelAttribute="occupation" role="form" method="post" action="${formActionUrl}">
+<form:form modelAttribute="occupation" role="form" method="post" action="${createUrl}">
 	<div class="form-group">
 	    <form:label for="campusInput" path="campus"><spring:message code="label.occupations.campus" text="Campus"/></form:label>
 	    <form:select class="form-control" id="campusInput" path="campus">

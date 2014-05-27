@@ -25,12 +25,14 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -94,7 +96,7 @@ public class OccupationService {
                 .stream()
                 .filter(r -> !r.getCurrentState().equals(OccupationRequestState.RESOLVED)
                         && (r.getCampus() == null || r.getCampus().equals(campus)))
-                        .sorted(OccupationRequest.COMPARATOR_BY_INSTANT.reversed()).collect(Collectors.toList());
+                .sorted(OccupationRequest.COMPARATOR_BY_INSTANT.reversed()).collect(Collectors.toList());
     }
 
     @Atomic
@@ -299,5 +301,27 @@ public class OccupationService {
     @Atomic
     public void delete(Occupation occupation) {
         occupation.delete();
+    }
+
+    public PagedListHolder<OccupationRequest> getBook(List<OccupationRequest> requests, String pageString) {
+        PagedListHolder<OccupationRequest> book = new PagedListHolder<>(requests);
+        book.setPageSize(30);
+        int page = 0;
+
+        if (Strings.isNullOrEmpty(pageString)) {
+            page = 0;
+        } else {
+            try {
+                page = Integer.parseInt(pageString);
+            } catch (NumberFormatException nfe) {
+                if ("f".equals(pageString)) {
+                    page = 0;
+                } else if ("l".equals(pageString)) {
+                    page = book.getPageCount();
+                }
+            }
+        }
+        book.setPage(page == 0 ? 0 : page - 1);
+        return book;
     }
 }

@@ -9,17 +9,12 @@ import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState;
 import org.fenixedu.spaces.ui.services.OccupationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
-
-import com.google.common.base.Strings;
 
 @SpringFunctionality(app = SpacesController.class, title = "title.space.occupations.requests")
 @RequestMapping("/spaces/occupations/requests")
@@ -37,7 +32,7 @@ public class OccupationRequestsController {
             return "occupations/requests/single";
         }
         model.addAttribute("searchId", id);
-        model.addAttribute("userRequestSearchResult", getBook(result, p));
+        model.addAttribute("userRequestSearchResult", occupationService.getBook(result, p));
         return viewRequests(model, null, null);
     }
 
@@ -73,7 +68,7 @@ public class OccupationRequestsController {
     @RequestMapping(value = "/filter/{campus}", method = RequestMethod.GET)
     public String filter(@PathVariable Space campus, Model model, @RequestParam(defaultValue = "1") String p, @RequestParam(
             required = false) OccupationRequestState state) {
-        addCampus(model);
+        model.addAttribute("campus", occupationService.getAllCampus());
         model.addAttribute("selectedCampi", campus);
         addRequests(model, campus, p, state);
         return "occupations/requests/view";
@@ -82,7 +77,7 @@ public class OccupationRequestsController {
     @RequestMapping(method = RequestMethod.GET)
     public String viewRequests(Model model, @RequestParam(defaultValue = "1") String p,
             @RequestParam(required = false) OccupationRequestState state) {
-        addCampus(model);
+        model.addAttribute("campus", occupationService.getAllCampus());
         addRequests(model, null, p, state);
         return "occupations/requests/view";
     }
@@ -103,56 +98,10 @@ public class OccupationRequestsController {
         List<OccupationRequest> newRequests = occupationService.all(OccupationRequestState.NEW, campus);
         List<OccupationRequest> resolvedRequests = occupationService.all(OccupationRequestState.RESOLVED, campus);
 
-        model.addAttribute("myRequests", getBook(myRequests, myRequestsPage));
-        model.addAttribute("openRequests", getBook(openRequests, openRequestsPage));
-        model.addAttribute("newRequests", getBook(newRequests, newRequestsPage));
-        model.addAttribute("resolvedRequests", getBook(resolvedRequests, resolvedRequestsPage));
-    }
-
-    private PagedListHolder<OccupationRequest> getBook(List<OccupationRequest> requests, String pageString) {
-        PagedListHolder<OccupationRequest> book = new PagedListHolder<>(requests);
-        book.setPageSize(30);
-        int page = 0;
-
-        if (Strings.isNullOrEmpty(pageString)) {
-            page = 0;
-        } else {
-            try {
-                page = Integer.parseInt(pageString);
-            } catch (NumberFormatException nfe) {
-                if ("f".equals(pageString)) {
-                    page = 0;
-                } else if ("l".equals(pageString)) {
-                    page = book.getPageCount();
-                }
-            }
-        }
-        book.setPage(page == 0 ? 0 : page - 1);
-        return book;
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String showCreateForm(Model model) {
-        addCampus(model);
-        model.addAttribute("occupation", new OccupationRequestBean());
-        return "occupations/requests/create";
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public RedirectView createRequest(@ModelAttribute OccupationRequestBean bean, BindingResult errors) {
-        occupationService.createRequest(bean);
-        return new RedirectView("/spaces/occupations/requests/my", true);
-    }
-
-    private Model addCampus(Model model) {
-        return model.addAttribute("campus", occupationService.getAllCampus());
-    }
-
-    @RequestMapping("my")
-    public String myRequests(Model model, @RequestParam(defaultValue = "1") String p) {
-        model.addAttribute("requestor", Authenticate.getUser());
-        model.addAttribute("requests", getBook(occupationService.all(Authenticate.getUser()), p));
-        return "occupations/requests/my";
+        model.addAttribute("myRequests", occupationService.getBook(myRequests, myRequestsPage));
+        model.addAttribute("openRequests", occupationService.getBook(openRequests, openRequestsPage));
+        model.addAttribute("newRequests", occupationService.getBook(newRequests, newRequestsPage));
+        model.addAttribute("resolvedRequests", occupationService.getBook(resolvedRequests, resolvedRequestsPage));
     }
 
 }

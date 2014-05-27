@@ -204,11 +204,16 @@
 			</c:if>
 			
 			<spring:url var="deleteUrl" value="/spaces/occupations/${occupation.externalId}"/>
+			<spring:url var="redirectUrl" value="/spaces/occupations/list"/>
 			
 			$("#delete-occupation").click(function() {
-				$.ajax( { url : "${deleteUrl}", type: "DELETE", success: function() {
-					history.back();
-				}});
+				bootbox.confirm("Tem a certeza que pretende apagar a ocupação?", function(result) {
+					if (result) {
+  						$.ajax( { url : "${deleteUrl}", type: "DELETE", success: function() {
+							location.href = "${redirectUrl}";
+						}});
+					}	
+				}); 
 			});
 			
 		};
@@ -306,32 +311,43 @@
 
 <button class="btn btn-danger" id="delete-occupation"><spring:message code="link.occupation.delete" text="Apagar Ocupação"/></button>
 
-<h3><spring:message code="title.create.occupation.choose.space" text="Escolher Espaço"/></h3>
+</hr>
 
-<form role="form" id="choose-space-form">
-  <div class="form-group">
-	<label for="choose-space"></label>
-	<select id="choose-space">
-		<c:forEach var="space" items="${freeSpaces}">
-			<c:if test="${not empty space.name}">
-				<option value="${space.externalId}">${space.presentationName}</option>
-			</c:if>
-		</c:forEach>
-	</select>
+<div class="panel panel-primary">
+  <div class="panel-heading"><spring:message code="title.create.occupation.choose.space" text="Escolher Espaço"/></div>
+  <div class="panel-body">
+    <form role="form" id="choose-space-form">
+	  <div class="form-group">
+		<label for="choose-space"></label>
+		<select id="choose-space">
+			<c:forEach var="space" items="${freeSpaces}">
+				<c:if test="${not empty space.name}">
+					<option value="${space.externalId}">${space.presentationName}</option>
+				</c:if>
+			</c:forEach>
+		</select>
+	  </div>
+	  <input type="submit" class="btn btn-success" value="<spring:message code="label.create.occupation.add.space" text="Adicionar Espaço"/>"></input>
+	</form>
+	<table class="table" id="selected-spaces">
+		<thead>
+			<th><spring:message code="label.create.occupation.selected.space.name" text="Nome"/></th>
+			<th><spring:message code="label.create.occupation.selected.space.normal.capacity" text="Capacidade Normal"/></th>
+			<th><spring:message code="label.create.occupation.selected.space.operations" text="Ações"/>
+		</thead>
+		<tbody>
+		</tbody>
+		</table>
   </div>
-  <input type="submit" class="btn btn-success" value="<spring:message code="label.create.occupation.add.space" text="Adicionar Espaço"/>"></input>
-</form>
+</div>
+
+<style type="text/css">
+	.panel {
+		margin-top: 10px;
+	}
+</style>
 
 
-<table class="table" id="selected-spaces">
-	<thead>
-		<th><spring:message code="label.create.occupation.selected.space.name" text="Nome"/></th>
-		<th><spring:message code="label.create.occupation.selected.space.normal.capacity" text="Capacidade Normal"/></th>
-		<th><spring:message code="label.create.occupation.selected.space.operations" text="Ações"/>
-	</thead>
-	<tbody>
-	</tbody>
-</table>
 
 <h3><spring:message code="title.create.occupation.reason" text="Motivo da Ocupação de Espaços"/></h3>
 
