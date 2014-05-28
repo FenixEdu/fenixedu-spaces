@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletResponse;
 
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Information;
@@ -44,11 +45,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
+
+import com.google.common.base.Strings;
 
 @SpringApplication(group = "anyone", path = "spaces", title = "title.space.management", hint = "spaces-manager")
 @SpringFunctionality(app = SpacesController.class, title = "title.space.management")
@@ -60,15 +62,15 @@ public class SpacesController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView home() {
-        return home(null);
+    public String home(Model model) {
+        return home(null, model);
     }
 
     @RequestMapping(value = "{space}", method = RequestMethod.GET)
-    public ModelAndView home(@PathVariable Space space) {
-        Set<Space> spaces;
-        spaces = space == null ? getTopLevelSpaces() : space.getChildren();
-        return new ModelAndView("spaces/home", "spaces", spaces);
+    public String home(@PathVariable Space space, Model model) {
+        model.addAttribute("spaces", space == null ? getTopLevelSpaces() : space.getChildren());
+        model.addAttribute("currentUser", Authenticate.getUser());
+        return "spaces/home";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
@@ -91,6 +93,7 @@ public class SpacesController {
         }
         model.addAttribute("information", new InformationBean());
         model.addAttribute("classifications", allClassifications());
+        model.addAttribute("currentUser", Authenticate.getUser());
         return "spaces/create";
     }
 
@@ -108,8 +111,19 @@ public class SpacesController {
         return new RedirectView("/spaces/" + space.getExternalId(), true);
     }
 
+    private boolean accessControl(Space space) {
+        return space.isSpaceManagementMember(Authenticate.getUser());
+    }
+
+    private void canWrite(Space space) {
+        if (!accessControl(space)) {
+            throw new RuntimeException("Unauthorized");
+        }
+    }
+
     @Atomic(mode = TxMode.WRITE)
     private void create(Space space, InformationBean infoBean) {
+        canWrite(space);
         final Information information = new Information.Builder(infoBean).build();
         new Space(space, information);
     }
@@ -118,15 +132,17 @@ public class SpacesController {
     public String edit(@PathVariable Space space, Model model) throws UnavailableException {
         model.addAttribute("information", space.bean());
         model.addAttribute("classifications", allClassifications());
+        model.addAttribute("currentUser", Authenticate.getUser());
         model.addAttribute("action", "/spaces/edit/" + space.getExternalId());
         return "spaces/create";
     }
 
     @RequestMapping(value = "/edit/{space}", method = RequestMethod.POST)
-    public ModelAndView edit(@PathVariable Space space, @ModelAttribute InformationBean informationBean, BindingResult errors)
+    public String edit(@PathVariable Space space, @ModelAttribute InformationBean informationBean, BindingResult errors)
             throws UnavailableException {
+        canWrite(space);
         space.bean(informationBean);
-        return home();
+        return "redirect:/spaces/view/" + space.getExternalId();
     }
 
     @RequestMapping(value = "/view/{space}", method = RequestMethod.GET)
@@ -134,11 +150,13 @@ public class SpacesController {
         model.addAttribute("information", space.bean());
         model.addAttribute("spaces", space.getChildren());
         model.addAttribute("parentSpace", space.getParent());
+        model.addAttribute("currentUser", Authenticate.getUser());
         return "spaces/view";
     }
 
     @RequestMapping(value = "/timeline/{space}", method = RequestMethod.GET)
     public String timeline(@PathVariable Space space, Model model) throws UnavailableException {
+        model.addAttribute("currentUser", Authenticate.getUser());
         model.addAttribute("timeline", space.timeline());
         if (space.getParent() != null) {
             model.addAttribute("parent", space.getParent().bean());
@@ -182,5 +200,18 @@ public class SpacesController {
             SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isSuroundingSpaceBlueprint, isToViewOriginalSpaceBlueprint,
                     viewBlueprintNumbers, isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
         }
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String search(@RequestParam(required = false) String name, Model model) {
+        model.addAttribute("name", name);
+        if (!Strings.isNullOrEmpty(name)) {
+            model.addAttribute("foundSpaces", findSpace(name));
+        }
+        return "spaces/search";
+    }
+
+    private Set<Space> findSpace(String text) {
+        return Space.getSpaces().filter(s -> s.getName().toLowerCase().contains(text.toLowerCase())).collect(Collectors.toSet());
     }
 }

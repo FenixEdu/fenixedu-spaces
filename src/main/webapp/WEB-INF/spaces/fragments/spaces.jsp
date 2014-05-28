@@ -43,6 +43,7 @@
 			  });
 		});
 </script>
+
 <c:choose>
 	<c:when test="${not empty spaces}">
 		<table class="table">
@@ -68,13 +69,12 @@
 						<td>${fn:length(space.children)}</td>
 						<td>
 							<a href="${viewUrl}"  class="btn btn-default" title="View"><span class="glyphicon glyphicon-eye-open"></span></a>
-							<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a> 
-							<!--  <a href="${timelineUrl}" class="btn btn-primary"> <spring:message code="link.space.view" text="Timeline" /></a>--> 
-							<!-- <a href="${editUrl}" class="btn btn-warning"><spring:message code="link.space.edit" text="Edit" /></a> -->
-							<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a> 
-							<!-- <a href="${createSubSpaceUrl}" class="btn btn-success"><spring:message code="link.space.subspace.create" text="Create Subspace" /></a> -->
-							<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
-							<a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a>
+							<c:if test="${space.isSpaceManagementMember(currentUser)}">
+								<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a>
+								<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+								<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
+							</c:if>
+							<%-- <a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a> --%>
 						</td>
 					</tr>
 				</c:forEach>
