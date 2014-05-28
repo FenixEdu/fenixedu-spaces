@@ -1,0 +1,124 @@
+<!--
+
+    Copyright © 2014 Instituto Superior Técnico
+
+    This file is part of FenixEdu Spaces.
+
+    FenixEdu Spaces is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    FenixEdu Spaces is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with FenixEdu Spaces.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script src="./bower_components/jquery/jquery.min.js"></script>
+		<script src="./bower_components/momentjs/min/moment.min.js"></script>
+		<!--<script src="./bower_components/momentjs/lang/pt.js"></script>-->
+		<script type="text/javascript">
+				var now = moment();
+
+				
+				function format(when) {
+					return when.format("DD/MM/YYYY");
+				}
+
+				function dayOfWeek(when) {
+					return when.format("dddd");
+				}
+
+				function log(msg) {
+					$("#cenas").append("<p>" + msg + "</p>");
+				}
+				
+				function alldays(when) {
+					var checkpoint = when.clone();
+					var whenDayOfWeek = checkpoint.day();
+					var month = checkpoint.month();
+					var weekdays = []
+					checkpoint.date(1);
+					checkpoint.day(whenDayOfWeek)
+					numWeeksToAdd = -1 * (checkpoint.month() - month);
+					checkpoint.add("weeks", numWeeksToAdd)
+					
+					while(checkpoint.month() == month) {
+						weekdays.push(checkpoint.clone());
+						checkpoint.add("weeks", 1)	
+					}
+
+					var dict = {}
+
+					$(weekdays).each(function(i,e) {
+						dict[format(e)] = i+1;						
+					});
+
+					return dict;
+				}
+
+				function nthdayOfTheWeek(when) {
+					var checkpoint = when.clone();
+					var whenDayOfWeek = checkpoint.day();
+					var month = checkpoint.month();
+					checkpoint.date(1);
+					checkpoint.day(whenDayOfWeek)
+					checkpoint.add("weeks", -1 * (checkpoint.month() - month));
+
+					var i = 0;
+					while(checkpoint.month() == month && !checkpoint.isSame(when)) {
+						checkpoint.add("weeks", 1)
+						i++;
+					}
+					return i;
+				}
+
+				function nthDayOfTheWeekLabel(when) {
+					var nth = nthdayOfTheWeek(when)
+					if (nth > 3) {
+						return "last";
+					}
+					var labels = ["first", "second", "third", "fourth"]
+					return labels[nth];
+				}
+
+
+			$(document).ready(function() {
+				var now = moment("28/02/2014", "DD/MM/YYYY");
+				log("Today is " + format(now) + " and "  + dayOfWeek(now))
+				var days = alldays(now)
+				for(day in days){
+					log("The day " + day + " is the " + days[day] + " of the month.")
+				}
+				log("on the " + nthDayOfTheWeekLabel(now) + " " + dayOfWeek(now))
+
+				now = moment("23/06/2014", "DD/MM/YYYY")
+				log("on the " + nthDayOfTheWeekLabel(now) + " " + dayOfWeek(now))
+
+				now = moment("29/12/2014", "DD/MM/YYYY")
+				log("on the " + nthDayOfTheWeekLabel(now) + " " + dayOfWeek(now))
+
+				now = moment("18/03/2014", "DD/MM/YYYY")
+				log("on the " + nthDayOfTheWeekLabel(now) + " " + dayOfWeek(now))
+
+
+			});
+
+		</script>
+	</head>
+
+	<body>
+		<input type="checkbox" id="allday"/>
+		<pre id="cenas">
+			
+		</pre>
+		<button id="doit">doit</button>
+	</body>
+</html>

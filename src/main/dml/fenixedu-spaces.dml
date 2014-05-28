@@ -1,0 +1,247 @@
+package org.fenixedu.spaces.domain;
+
+enum org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState as OccupationRequestState;
+
+valueType org.fenixedu.spaces.domain.occupation.config.OccupationConfig as OccupationConfig {
+    externalizeWith {
+        JsonElement externalize();
+    }
+    internalizeWith internalize();
+}
+
+valueType java.math.BigDecimal as SpacesBigDecimal {
+    externalizeWith {
+        String toString();
+    }
+}
+
+class Space {
+	public DateTime created (REQUIRED);
+}
+
+class occupation.Occupation {
+	OccupationConfig config;
+	String emails;
+	String subject;
+	String description;
+}
+
+class Information {
+	Integer allocatableCapacity;
+	String blueprintNumber;
+	SpacesBigDecimal area;
+	String name (REQUIRED);
+	String identification;
+	JsonElement metadata;
+	
+	DateTime validFrom;
+	DateTime validUntil;
+	DateTime created;
+}
+
+class BlueprintFile extends .org.fenixedu.bennu.io.domain.GenericFile;
+
+class SpaceClassification {
+	String code;
+	LocalizedString name;
+	JsonElement metadataSpec;
+}
+
+
+class occupation.requests.OccupationComment  {
+    String description;
+    DateTime instant;
+    String subject;
+}
+
+class occupation.requests.OccupationRequest  {
+    Integer employeeReadComments;
+    Integer identification;
+    DateTime instant;
+    Integer teacherReadComments;
+}
+
+class occupation.requests.OccupationStateInstant  {
+    DateTime instant;
+    OccupationRequestState requestState;
+}
+
+relation SpaceOccupationsAccessGroup {
+	Space playsRole occupationSpace {
+		multiplicity *;
+	}
+	protected .org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole occupationsAccessGroup;
+}
+
+relation SpaceManagementAccessGroup {
+	Space playsRole managementSpace {
+		multiplicity *;
+	}
+	protected .org.fenixedu.bennu.core.domain.groups.PersistentGroup playsRole managementAccessGroup;
+}
+
+relation OccupationCommentPerson {
+    .org.fenixedu.bennu.core.domain.User playsRole owner;
+    occupation.requests.OccupationComment playsRole occupationComment {
+        multiplicity *;
+    }
+}
+
+relation OccupationRequestOccupations {
+    occupation.requests.OccupationRequest playsRole request;
+    occupation.Occupation playsRole occupation {
+        multiplicity *;
+    }
+}
+
+relation OccupationRequestPerson {
+    .org.fenixedu.bennu.core.domain.User playsRole requestor;
+    occupation.requests.OccupationRequest playsRole occupationRequest {
+        multiplicity *;
+    }
+}
+
+relation OccupationRequestToProcessPerson {
+    .org.fenixedu.bennu.core.domain.User playsRole owner;
+    occupation.requests.OccupationRequest playsRole ocuppationRequestsToProcess {
+        multiplicity *;
+    }
+}
+
+relation OccupationRequestOccupationComment {
+    occupation.requests.OccupationRequest playsRole request;
+    occupation.requests.OccupationComment playsRole comment {
+        multiplicity *;
+    }
+}
+
+relation OccupationRequestOccupationStateInstant {
+    occupation.requests.OccupationRequest playsRole request;
+    occupation.requests.OccupationStateInstant playsRole stateInstants {
+        multiplicity *;
+    }
+}
+
+relation OccupationRequestCampus {
+    Space playsRole campus;
+    occupation.requests.OccupationRequest playsRole occupationRequest {
+        multiplicity *;
+    }
+}
+
+relation RootDomainObjectOccupationRequest {
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+    occupation.requests.OccupationRequest playsRole occupationRequest {
+        multiplicity *;
+    }
+}
+
+relation RootDomainObjectOccupationStateInstant {
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+    occupation.requests.OccupationStateInstant playsRole occupationStateInstant {
+        multiplicity *;
+    }
+}
+
+relation RootDomainObjectOccupationComment {
+    .org.fenixedu.bennu.core.domain.Bennu playsRole rootDomainObject;
+    occupation.requests.OccupationComment playsRole occupationComment {
+        multiplicity *;
+    }
+}
+
+relation InformationUser {
+	.org.fenixedu.bennu.core.domain.User playsRole user;
+	Information playsRole information {
+		multiplicity *;
+	}
+}
+
+relation BennuSpaceClassification {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
+	SpaceClassification playsRole rootClassification {
+		multiplicity *;
+	}
+}
+
+relation ContainedSpaceClassification {
+	SpaceClassification playsRole parent;
+	SpaceClassification playsRole children {
+		multiplicity *;
+	}
+}
+
+relation InformationBlueprint {
+	BlueprintFile playsRole blueprint;
+	Information playsRole information;
+}
+
+relation InformationClassification {
+	Information playsRole informations {
+		multiplicity *;
+	}
+	SpaceClassification playsRole classification {
+        multiplicity 1..1;
+	}
+}
+
+relation InformationInformation {
+	Information playsRole information {
+		multiplicity *;
+	}
+	Information playsRole previous;
+}
+
+
+relation SpaceOccupation {
+	protected Space playsRole space {
+		multiplicity *;
+	}
+	occupation.Occupation playsRole occupation {
+		multiplicity *;
+	}
+}
+
+relation SpaceContainedSpaces {
+	Space playsRole parent;
+	protected Space playsRole children {
+		multiplicity *;
+	}
+}
+
+relation SpaceInformation {
+	Space playsRole space {
+		multiplicity *;
+	}
+	protected Information playsRole current {
+		multiplicity 1..1;
+	}
+}
+
+relation SpaceInformationHistory {
+	Space playsRole spaceHistory;
+	Information playsRole history {
+		multiplicity *;
+	}
+}
+
+
+relation BennuSpaceOccupation {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
+	occupation.Occupation playsRole occupation {
+		multiplicity *;
+	}
+}
+relation BennuSpaces {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
+	Space playsRole space {
+		multiplicity *;
+	}
+}
+
+relation BennuDeletedSpaces {
+	.org.fenixedu.bennu.core.domain.Bennu playsRole deletedBennu;
+	Space playsRole deletedSpace {
+		multiplicity *;
+	}
+}

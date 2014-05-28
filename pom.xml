@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.fenixedu</groupId>
+		<artifactId>fenix-framework-project</artifactId>
+		<version>2.0.1</version>
+	</parent>
+
+	<artifactId>fenixedu-spaces</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+
+	<name>FenixEdu Spaces</name>
+	<url>http://fenixedu.org/spaces</url>
+	<inceptionYear>2014</inceptionYear>
+
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/FenixEdu/fenixedu-spaces/issues/</url>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License v3.0</name>
+			<url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/FenixEdu/fenixedu-spaces</url>
+	</ciManagement>
+
+	<properties>
+		<version.bennu>3.0.1</version.bennu>
+		<version.org.fenixedu.bennu-spring>1.0.1</version.org.fenixedu.bennu-spring>
+		<version.org.fenixedu.fenixedu.commons>1.0.1</version.org.fenixedu.fenixedu.commons>
+		<version.com.google.guava.guava>17.0</version.com.google.guava.guava>
+		<version.com.google.code.gson.gson>2.2.4</version.com.google.code.gson.gson>
+		<version.joda.time.joda.time>2.3</version.joda.time.joda.time>
+		<version.javax.ws.rs.javax.ws.rs.api>2.0</version.javax.ws.rs.javax.ws.rs.api>
+		<version.com.iver.cit.jdwglib>1.0.1</version.com.iver.cit.jdwglib>
+		<version.com.iver.cit.fmap>0.5</version.com.iver.cit.fmap>
+	</properties>
+
+	<scm>
+		<connection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</connection>
+		<developerConnection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</developerConnection>
+		<url>http://fenixedu.github.io/spaces</url>
+		<tag>v1.0.0</tag>
+	</scm>
+	
+	<build>
+		<plugins>
+			 <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/*.js</exclude>
+                        <exclude>**/*.css</exclude>
+                        <exclude>**/*.htm</exclude>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/*.dtd</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
+			<artifactId>bennu-core</artifactId>
+			<version>${version.bennu}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
+			<artifactId>bennu-scheduler</artifactId>
+			<version>${version.bennu}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
+			<artifactId>bennu-io</artifactId>
+			<version>${version.bennu}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
+			<artifactId>bennu-spring</artifactId>
+			<version>${version.org.fenixedu.bennu-spring}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
+			<artifactId>fenixedu-commons</artifactId>
+			<version>${version.org.fenixedu.fenixedu.commons}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${version.com.google.guava.guava}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${version.com.google.code.gson.gson}</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${version.joda.time.joda.time}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>${version.javax.ws.rs.javax.ws.rs.api}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.iver.cit</groupId>
+			<artifactId>jdwglib</artifactId>
+			<version>${version.com.iver.cit.jdwglib}</version>
+		</dependency>
+		<!-- This dependency is needed by jdwglib -->
+		<dependency>
+			<groupId>com.iver.cit</groupId>
+			<artifactId>fmap</artifactId>
+			<version>${version.com.iver.cit.fmap}</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>fenix-ashes-maven-repository</id>
+			<url>https://fenix-ashes.ist.utl.pt/nexus/content/groups/fenix-ashes-maven-repository</url>
+		</repository>
+	</repositories>
+</project>

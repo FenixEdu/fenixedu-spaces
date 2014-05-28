@@ -13,3 +13,5 @@
 target/
 bin/
 
+#bower
+src/main/webapp/static/bower_components/
