@@ -72,7 +72,7 @@
 </script>
 
 <div class="page-header">
-  <h1><fmt:message key="title.space.management"/><small><fmt:message key="title.create.space"/></small></h1>
+  <h1><fmt:message key="title.space.management"/><small><spring:message code="title.create.space" text="Criar/Editar Espaço"/></small></h1>
 </div>
 
 <%@include file="fragments/parent.jsp" %>
@@ -81,7 +81,7 @@
 <form:form modelAttribute="information" role="form" method="post" action="${formActionUrl}" enctype="multipart/form-data">
   <div class="form-group">
     <form:label for="validFromInput" path="validFrom"><spring:message code="label.spaces.validFrom" text="Valid From"/></form:label>
-    <form:input type="date" class="form-control" id="validFromInput" path="validFrom" placeholder="Valid From" required="required"/>
+    <form:input type="date" class="formtitle.create.space-control" id="validFromInput" path="validFrom" placeholder="Valid From" required="required"/>
   </div>
   <div class="form-group">
     <form:label for="validUntilInput" path="validUntil"><spring:message code="label.spaces.validUntil" text="Valid Until"/></form:label>
@@ -99,14 +99,14 @@
     <form:label for="classificationInput" path="classification"><spring:message code="label.spaces.classification" text="Classification"/></form:label>
     <form:select class="form-control" id="classificationInput" path="classification">
     	<c:forEach var="classification" items="${classifications}">
-    	<c:set var="classificationName" value="${classification.name.content}"/>
+    	<c:set var="classificationName" value="${classification.absoluteCode} - ${classification.name.content}"/>
     	<c:set var="classificationId" value="${classification.externalId}"/>
     		<c:choose>
-    			<c:when test="${classificationId == information.classification}">
-    				<form:option value="${classificationId}">${classificationName}</form:option>
+    			<c:when test="${classificationId == information.classification.externalId}">
+    				<form:option value="${classificationId}" selected="selected">${classificationName}</form:option>
     			</c:when>
 				<c:otherwise>
-					<form:option value="${classificationId}" selected="selected">${classificationName}</form:option>
+					<form:option value="${classificationId}">${classificationName}</form:option>
 				</c:otherwise>
 			</c:choose>
     	</c:forEach>

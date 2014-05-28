@@ -21,6 +21,7 @@ package org.fenixedu.spaces.ui;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -89,8 +90,13 @@ public class SpacesController {
             model.addAttribute("parentSpace", space.bean());
         }
         model.addAttribute("information", new InformationBean());
-        model.addAttribute("classifications", SpaceClassification.all());
+        model.addAttribute("classifications", allClassifications());
         return "spaces/create";
+    }
+
+    private List<SpaceClassification> allClassifications() {
+        return SpaceClassification.all().stream().sorted((c1, c2) -> c1.getAbsoluteCode().compareTo(c2.getAbsoluteCode()))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/create/{space}", method = RequestMethod.POST)
@@ -111,7 +117,7 @@ public class SpacesController {
     @RequestMapping(value = "/edit/{space}", method = RequestMethod.GET)
     public String edit(@PathVariable Space space, Model model) throws UnavailableException {
         model.addAttribute("information", space.bean());
-        model.addAttribute("classifications", SpaceClassification.all());
+        model.addAttribute("classifications", allClassifications());
         model.addAttribute("action", "/spaces/edit/" + space.getExternalId());
         return "spaces/create";
     }
@@ -167,7 +173,7 @@ public class SpacesController {
             defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, @RequestParam(defaultValue = "50") BigDecimal scale,
             HttpServletResponse response) throws IOException, UnavailableException {
         Boolean isSuroundingSpaceBlueprint = space.getParent() != null;
-        Boolean isToViewOriginalSpaceBlueprint = false;
+        Boolean isToViewOriginalSpaceBlueprint = true;
         Boolean viewBlueprintNumbers = true;
         Boolean isToViewIdentifications = true;
         Boolean isToViewDoorNumbers = false;
