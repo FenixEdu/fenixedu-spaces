@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
@@ -161,9 +162,15 @@ public class InformationBean {
         return metadata;
     }
 
-    @SuppressWarnings("unchecked")
     public void setMetadata(JsonElement metadata) {
-        this.metadata = gson.fromJson(metadata, HashMap.class);
+        final Map<String, String> meta = new HashMap<>();
+        if (metadata != null) {
+            JsonObject json = metadata.getAsJsonObject();
+            for (Entry<String, JsonElement> entry : json.entrySet()) {
+                meta.put(entry.getKey(), entry.getValue().isJsonNull() ? null : entry.getValue().getAsString());
+            }
+        }
+        setMetadata(meta);
     }
 
     public void setMetadata(Map<String, String> metadata) {
@@ -203,7 +210,7 @@ public class InformationBean {
         for (MetadataSpec spec : classification.getMetadataSpecs()) {
             final String name = spec.getName();
             if (metadata.containsKey(name)) {
-                json.add(name, convert(spec.getType(), metadata.get(name)));
+                json.add(name, convert(spec.getType(), getValue(name)));
             } else {
                 if (spec.isRequired()) {
                     json.add(name, convert(spec.getType(), spec.getDefaultValue()));
@@ -211,6 +218,11 @@ public class InformationBean {
             }
         }
         return json;
+    }
+
+    private String getValue(final String name) {
+        Object value = metadata.get(name);
+        return value == null ? null : value.toString();
     }
 
     public MultipartFile getBlueprintMultipartFile() {
