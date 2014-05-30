@@ -18,14 +18,22 @@
  */
 package org.fenixedu.spaces.ui;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.spring.I18NBean;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState;
 import org.fenixedu.spaces.ui.services.OccupationService;
+import org.fenixedu.spaces.ui.services.UserInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,12 +42,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
+import pt.utl.ist.fenix.tools.spreadsheet.SheetData;
+import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
+import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
+
 @SpringFunctionality(app = SpacesController.class, title = "title.space.occupations.requests")
 @RequestMapping("/spaces/occupations/requests")
 public class OccupationRequestsController {
 
     @Autowired
     OccupationService occupationService;
+
+    @Autowired
+    I18NBean bundle;
+
+    @Autowired(required = false)
+    UserInformationService userInformationService;
 
     @RequestMapping(value = "/search/{id}", method = RequestMethod.GET)
     public String search(@PathVariable String id, Model model, @RequestParam(required = false, defaultValue = "1") String p) {
@@ -92,6 +110,48 @@ public class OccupationRequestsController {
         return "occupations/requests/view";
     }
 
+    @RequestMapping(value = "/export/{campus}", method = RequestMethod.GET)
+    public void exportAnyCampusToExcel(@PathVariable Space campus, @RequestParam(required = false) OccupationRequestState state,
+            HttpServletResponse response) {
+        List<OccupationRequest> requests;
+
+        if (state != null) {
+            requests = occupationService.all(state, campus);
+        } else {
+            requests = occupationService.getRequestsToProcess(Authenticate.getUser(), campus);
+        }
+
+        final String filename = bundle.message("label.occupation.request.filename");
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xls");
+        try {
+            makeExcel(requests, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/export", method = RequestMethod.GET)
+    public void exportToExcel(@RequestParam(required = false) OccupationRequestState state, HttpServletResponse response) {
+        List<OccupationRequest> requests;
+
+        if (state != null) {
+            requests = occupationService.all(state, null);
+        } else {
+            requests = occupationService.getRequestsToProcess(Authenticate.getUser(), null);
+        }
+        final String filename = bundle.message("label.occupation.request.filename");
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xls");
+        try {
+            makeExcel(requests, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public String viewRequests(Model model, @RequestParam(defaultValue = "1") String p,
             @RequestParam(required = false) OccupationRequestState state) {
@@ -122,4 +182,31 @@ public class OccupationRequestsController {
         model.addAttribute("resolvedRequests", occupationService.getBook(resolvedRequests, resolvedRequestsPage));
     }
 
+    private void makeExcel(List<OccupationRequest> requests, OutputStream outputStream) throws IOException {
+        SheetData<OccupationRequest> data = new SheetData<OccupationRequest>(requests) {
+
+            @Override
+            protected void makeLine(OccupationRequest request) {
+                addCell(bundle.message("label.occupation.request.identification"), request.getIdentification());
+                addCell(bundle.message("label.occupation.request.instant"), request.getPresentationInstant());
+                addCell(bundle.message("label.occupation.request.subject"), request.getSubject());
+                final User requestor = request.getRequestor();
+                addCell(bundle.message("label.occupation.request.requestor"),
+                        String.format("%s (%s)", requestor.getPresentationName(), requestor.getUsername()));
+                if (userInformationService != null) {
+                    addCell(bundle.message("label.occupation.request.email"), userInformationService.getEmail(requestor));
+                    addCell(bundle.message("label.occupation.request.roles"), userInformationService.getGroups(requestor)
+                            .stream().map(g -> g.getPresentationName()).collect(Collectors.joining(",")).toString());
+                }
+                final User owner = request.getOwner();
+                addCell(bundle.message("label.occupation.request.owner"),
+                        String.format("%s (%s)", owner.getPresentationName(), owner.getUsername()));
+            }
+
+        };
+
+        new SpreadsheetBuilder().addSheet(bundle.message("label.occupation.request.filetitle"), data).build(
+                WorkbookExportFormat.EXCEL, outputStream);
+
+    }
 }

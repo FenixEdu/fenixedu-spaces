@@ -25,6 +25,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<spring:url var="exportExcelUrl" value="/spaces/occupations/requests/export"/>
 <spring:url var="filterUrl" value="/spaces/occupations/requests/filter"/>
 <spring:url var="withoutFilterUrl" value="/spaces/occupations/requests"/>
 <spring:url var="viewRequestsUrl" value="/spaces/occupations/requests/"/>
@@ -60,6 +61,7 @@ $(document).ready(function() {
 
 <c:if test="${not empty selectedCampi}">
 	<c:set var="viewRequestsUrl" value="${filterUrl}/${selectedCampi.externalId}"/>
+	<c:set var="exportExcelUrl" value="${exportExcelUrl}/${selectedCampi.externalId}"/>
 </c:if>
 
 
@@ -315,6 +317,7 @@ $(document).ready(function() {
   		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
   	</c:if>
   	<c:if test="${not empty resolvedRequests.pageList}">
+		<a href="${exportExcelUrl}?state=RESOLVED"><spring:message code="export.excel" text="identification" /><</a>
   		<ul class="pagination">
 	  		<li><a href="${viewRequestsUrl}?p=f&state=RESOLVED">&laquo;</a></li>
   			<c:forEach var="page" begin="${resolvedRequests.firstLinkedPage}" end="${resolvedRequests.lastLinkedPage}">
