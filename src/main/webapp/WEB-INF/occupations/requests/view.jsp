@@ -61,7 +61,6 @@ $(document).ready(function() {
 
 <c:if test="${not empty selectedCampi}">
 	<c:set var="viewRequestsUrl" value="${filterUrl}/${selectedCampi.externalId}"/>
-	<c:set var="exportExcelUrl" value="${exportExcelUrl}/${selectedCampi.externalId}"/>
 </c:if>
 
 
@@ -317,7 +316,6 @@ $(document).ready(function() {
   		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
   	</c:if>
   	<c:if test="${not empty resolvedRequests.pageList}">
-		<a href="${exportExcelUrl}?state=RESOLVED"><spring:message code="export.excel" text="identification" /><</a>
   		<ul class="pagination">
 	  		<li><a href="${viewRequestsUrl}?p=f&state=RESOLVED">&laquo;</a></li>
   			<c:forEach var="page" begin="${resolvedRequests.firstLinkedPage}" end="${resolvedRequests.lastLinkedPage}">
@@ -331,6 +329,12 @@ $(document).ready(function() {
   			</c:forEach>
 	  		<li><a href="${viewRequestsUrl}?p=l&state=RESOLVED">&raquo;</a></li>
 		</ul>
+		<br/>
+		<c:set var="exportExcelVars" value="state=RESOLVED" />
+		<c:if test="${not empty selectedCampi}">
+			<c:set var="exportExcelVars" value="${exportExcelVars}&campus=${selectedCampi.externalId}"/>
+		</c:if>
+		<a href="${exportExcelUrl}?${exportExcelVars}"><spring:message code="export.excel" text="identification" /></a>
 		<table class="table">
 	  		<thead>
 	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>

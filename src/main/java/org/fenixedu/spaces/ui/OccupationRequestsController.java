@@ -110,9 +110,9 @@ public class OccupationRequestsController {
         return "occupations/requests/view";
     }
 
-    @RequestMapping(value = "/export/{campus}", method = RequestMethod.GET)
-    public void exportAnyCampusToExcel(@PathVariable Space campus, @RequestParam(required = false) OccupationRequestState state,
-            HttpServletResponse response) {
+    @RequestMapping(value = "/export", method = RequestMethod.GET)
+    public void exportAnyCampusToExcel(@RequestParam(required = false) Space campus,
+            @RequestParam(required = false) OccupationRequestState state, HttpServletResponse response) {
         List<OccupationRequest> requests;
 
         if (state != null) {
@@ -121,27 +121,10 @@ public class OccupationRequestsController {
             requests = occupationService.getRequestsToProcess(Authenticate.getUser(), campus);
         }
 
-        final String filename = bundle.message("label.occupation.request.filename");
-        response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xls");
-        try {
-            makeExcel(requests, response.getOutputStream());
-            response.flushBuffer();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        String filename = bundle.message("label.occupation.request.filename");
+        if (campus != null) {
+            filename += "_" + campus.getPresentationName();
         }
-    }
-
-    @RequestMapping(value = "/export", method = RequestMethod.GET)
-    public void exportToExcel(@RequestParam(required = false) OccupationRequestState state, HttpServletResponse response) {
-        List<OccupationRequest> requests;
-
-        if (state != null) {
-            requests = occupationService.all(state, null);
-        } else {
-            requests = occupationService.getRequestsToProcess(Authenticate.getUser(), null);
-        }
-        final String filename = bundle.message("label.occupation.request.filename");
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xls");
         try {
