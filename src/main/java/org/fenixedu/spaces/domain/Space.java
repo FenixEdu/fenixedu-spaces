@@ -25,8 +25,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.servlet.UnavailableException;
-
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.Group;
@@ -265,7 +263,7 @@ public final class Space extends Space_Base {
         return getInformation(when).map(info -> info.getBlueprintNumber());
     }
 
-    public Optional<BlueprintFile> getBlueprintFile() throws UnavailableException {
+    public Optional<BlueprintFile> getBlueprintFile() {
         return getBlueprintFile(new DateTime());
     }
 
@@ -371,8 +369,8 @@ public final class Space extends Space_Base {
 
     public String getPresentationName() {
         final List<Space> path = Lists.reverse(getPath());
-        String others = path.subList(1, path.size()).stream().map(s -> s.getName()).collect(Collectors.joining(", "));
-        return String.format("%s (%s)", path.get(0).getName(), others);
+        String others = path.subList(1, path.size()).stream().map(Space::getName).collect(Collectors.joining(", "));
+        return String.format(Strings.isNullOrEmpty(others) ? "%s" : "%s (%s)", path.get(0).getName(), others);
     }
 
     public boolean isOccupationMember(final User user) {

@@ -51,6 +51,7 @@
 				<tr>
 					<th><spring:message code="label.spaces.type" text="Type"/></th>
 					<th><spring:message code="label.spaces.name" text="Name"/></th>
+					<th><spring:message code="label.spaces.blueprint.number" text="Número da Planta"/></th>
 					<th><spring:message code="label.spaces.number.sub.spaces" text="Number of Sub Spaces"/></th>
 					<th><spring:message code="label.spaces.operations" text="Operations"/></th>
 				</tr>
@@ -66,6 +67,7 @@
 					<tr>
 						<td>${space.classification.name.content}</td>
 						<td>${space.name}</td>
+						<td>${space.getBlueprintNumber().orElse("-")}</td>
 						<td>${fn:length(space.children)}</td>
 						<td>
 							<a href="${viewUrl}"  class="btn btn-default" title="View"><span class="glyphicon glyphicon-eye-open"></span></a>

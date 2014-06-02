@@ -18,9 +18,12 @@
  */
 package org.fenixedu.spaces.ui;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
+import org.fenixedu.spaces.domain.BlueprintFile;
+import org.fenixedu.spaces.domain.BlueprintFile.BlueprintTextRectangles;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
@@ -57,6 +62,28 @@ import com.google.common.base.Strings;
 @RequestMapping("/spaces")
 public class SpacesController {
 
+    private BlueprintTextRectangles getBlueprintTextRectangles(Space space, BigDecimal scale) {
+        DateTime now = new DateTime();
+
+        Space spaceWithBlueprint = SpaceBlueprintsDWGProcessor.getSuroundingSpaceMostRecentBlueprint(space);
+
+        BlueprintFile mostRecentBlueprint = spaceWithBlueprint.getBlueprintFile().get();
+
+        if (mostRecentBlueprint != null) {
+
+            final byte[] blueprintBytes = mostRecentBlueprint.getContent();
+            final InputStream inputStream = new ByteArrayInputStream(blueprintBytes);
+            try {
+                return SpaceBlueprintsDWGProcessor.getBlueprintTextRectangles(inputStream, spaceWithBlueprint, now, false, false,
+                        true, false, scale);
+            } catch (IOException e) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
     private Set<Space> getTopLevelSpaces() {
         return Space.getSpaces().filter(space -> space.getParent() == null).collect(Collectors.toSet());
     }
@@ -68,9 +95,32 @@ public class SpacesController {
 
     @RequestMapping(value = "{space}", method = RequestMethod.GET)
     public String home(@PathVariable Space space, Model model) {
-        model.addAttribute("spaces", space == null ? getTopLevelSpaces() : space.getChildren());
+        model.addAttribute("spaces", space == null ? getTopLevelSpaces() : getChildrenOrderedByName(space));
         model.addAttribute("currentUser", Authenticate.getUser());
         return "spaces/home";
+    }
+
+    Comparator<Space> BY_NAME_COMPARATOR = new Comparator<Space>() {
+
+        @Override
+        public int compare(Space o1, Space o2) {
+            String o1Name = o1.getName();
+            String o2Name = o2.getName();
+
+            try {
+                Integer o1Number = Integer.parseInt(o1Name);
+                Integer o2Number = Integer.parseInt(o2Name);
+                return o1Number.compareTo(o2Number);
+            } catch (NumberFormatException fe) {
+            }
+
+            return o1Name.compareTo(o2Name);
+        }
+
+    };
+
+    private List<Space> getChildrenOrderedByName(Space space) {
+        return space.getChildren().stream().sorted(BY_NAME_COMPARATOR).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
@@ -146,9 +196,12 @@ public class SpacesController {
     }
 
     @RequestMapping(value = "/view/{space}", method = RequestMethod.GET)
-    public String view(@PathVariable Space space, Model model) throws UnavailableException {
+    public String view(@PathVariable Space space, Model model, @RequestParam(defaultValue = "50") BigDecimal scale)
+            throws UnavailableException {
+        model.addAttribute("scale", scale);
         model.addAttribute("information", space.bean());
-        model.addAttribute("spaces", space.getChildren());
+        model.addAttribute("blueprintTextRectangles", getBlueprintTextRectangles(space, scale));
+        model.addAttribute("spaces", getChildrenOrderedByName(space));
         model.addAttribute("parentSpace", space.getParent());
         model.addAttribute("currentUser", Authenticate.getUser());
         return "spaces/view";
@@ -190,15 +243,14 @@ public class SpacesController {
     public void blueprint(@PathVariable Space space, @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
             defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, @RequestParam(defaultValue = "50") BigDecimal scale,
             HttpServletResponse response) throws IOException, UnavailableException {
-        Boolean isSuroundingSpaceBlueprint = space.getParent() != null;
-        Boolean isToViewOriginalSpaceBlueprint = true;
+        Boolean isToViewOriginalSpaceBlueprint = false;
         Boolean viewBlueprintNumbers = true;
         Boolean isToViewIdentifications = true;
         Boolean isToViewDoorNumbers = false;
         BigDecimal scalePercentage = scale;
         try (OutputStream outputStream = response.getOutputStream()) {
-            SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isSuroundingSpaceBlueprint, isToViewOriginalSpaceBlueprint,
-                    viewBlueprintNumbers, isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
+            SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isToViewOriginalSpaceBlueprint, viewBlueprintNumbers,
+                    isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
         }
     }
 

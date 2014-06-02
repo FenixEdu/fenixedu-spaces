@@ -69,9 +69,44 @@
 				<td>${information.blueprintNumber}</td>
 			</tr>
 			<tr>
-				<th scope="row"><spring:message code="label.spaces.blueprint" text="Blueprint" /></th>
-				<c:url var="blueprintUrl" value="/spaces/blueprint/${space.externalId}" />
-				<td><img src="${blueprintUrl}" /></td>
+				<spring:url var="viewUrl" value="/spaces/view"/>
+				<th scope="row">
+					<spring:message code="label.spaces.blueprint" text="Blueprint" />
+					<c:if test="${scale < 100 }">
+						<a href="${viewUrl}/${space.externalId}?scale=100"><span class="glyphicon glyphicon-zoom-in"/></a>					
+					</c:if>
+					
+					<c:if test="${scale >= 100 }">
+						<a href="${viewUrl}/${space.externalId}"><span class="glyphicon glyphicon-zoom-out"/></a>					
+					</c:if>	
+				</th>
+				
+				<spring:url var="blueprintUrl" value="/spaces/blueprint/${space.externalId}" />
+				<c:if test="${not empty scale}">
+					<c:set var="blueprintUrl" value="${blueprintUrl}?scale=${scale}"/>
+				</c:if>
+				<td>
+					<img src="${blueprintUrl}" usemap="#roomLinksMap"/>
+					<c:if test="${not empty blueprintTextRectangles}">
+						<map id ="roomLinksMap" name="roomLinksMap">
+							<c:forEach var="blueprintTextRectanglesEntry" items="${blueprintTextRectangles}">
+								<c:set var="blueprintSpace" value="${blueprintTextRectanglesEntry.key}"/>
+								<c:forEach var="blueprintTextRectangle" items="${blueprintTextRectanglesEntry.value}">
+									<c:set var="p1" value="${blueprintTextRectangle.p1}"/>				
+									<c:set var="p2" value="${blueprintTextRectangle.p2}" />				
+									<c:set var="p3" value="${blueprintTextRectangle.p3}" />				
+									<c:set var="p4" value="${blueprintTextRectangle.p4}" />
+									<c:set var="coords" value="${p1.x},${p1.y},${p2.x},${p2.y},${p3.x},${p3.y},${p4.x},${p4.y}"/>
+									<c:set var="urlToCoords" value="${viewUrl}/${blueprintSpace.externalId}"/>
+									<c:if test="${not empty scale}">
+										<c:set var="urlToCoords" value="${urlToCoords}?scale=${scale}"/>				
+									</c:if>
+									<area shape="poly" coords="${coords}" href="${urlToCoords}"/>
+								</c:forEach>
+							</c:forEach>
+						</map>
+					</c:if>
+				</td>
 			</tr>
 			<tr>
 				<th scope="row"><spring:message code="label.spaces.area" text="Area" /></th>
