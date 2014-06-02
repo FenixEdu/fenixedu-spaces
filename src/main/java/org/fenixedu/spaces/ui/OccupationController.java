@@ -83,7 +83,8 @@ public class OccupationController {
             @RequestParam String description, @RequestParam String selectedSpaces, @RequestParam String config,
             @RequestParam String events, @RequestParam(required = false) OccupationRequest request) {
         try {
-            occupationService.createOccupation(emails, subject, description, selectedSpaces, config, events, request);
+            occupationService.createOccupation(emails, subject, description, selectedSpaces, config, events, request,
+                    Authenticate.getUser());
             if (request != null) {
                 return "redirect:/spaces/occupations/requests/" + request.getExternalId();
             }
@@ -96,6 +97,9 @@ public class OccupationController {
 
     @RequestMapping("view/{occupation}")
     public String view(Model model, @PathVariable Occupation occupation) {
+        if (!occupationService.canManageOccupation(occupation, Authenticate.getUser())) {
+            return "redirect:/";
+        }
         model.addAttribute("occupation", occupation);
         model.addAttribute("events", occupationService.exportEvents(occupation));
         model.addAttribute("config", occupationService.exportConfig(occupation));
@@ -107,7 +111,7 @@ public class OccupationController {
     public String edit(Model model, @RequestParam Occupation occupation, @RequestParam String emails,
             @RequestParam String subject, @RequestParam String description, @RequestParam String selectedSpaces) {
         try {
-            occupationService.editOccupation(occupation, emails, subject, description, selectedSpaces);
+            occupationService.editOccupation(occupation, emails, subject, description, selectedSpaces, Authenticate.getUser());
             return "redirect:/spaces/occupations";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -117,7 +121,7 @@ public class OccupationController {
 
     @RequestMapping(value = "{occupation}", method = RequestMethod.DELETE)
     public String delete(@PathVariable Occupation occupation) {
-        occupationService.delete(occupation);
+        occupationService.delete(occupation, Authenticate.getUser());
         return "redirect:/spaces/occupations/list";
     }
 

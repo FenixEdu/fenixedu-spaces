@@ -51,13 +51,16 @@
 				<tbody>
 					<c:forEach var="space" items="${foundSpaces}">
 						<spring:url value="/spaces/view/${space.externalId}" var="viewUrl" />
-						
+						<spring:url value="/spaces/schedule/${space.externalId}" var="scheduleUrl" />
 						<tr>
 							<td>${space.classification.name.content}</td>
 							<td>${space.name}</td>
 							<td>${fn:length(space.children)}</td>
 							<td>
 								<a href="${viewUrl}" class="btn btn-default" title="View"><span class="glyphicon glyphicon-eye-open"></span></a>
+								<c:if test="${not empty space.occupationSet}">
+									<a href="${scheduleUrl}" class="btn btn-default" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span></a>
+								</c:if>
 							</td>
 						</tr>
 					</c:forEach>

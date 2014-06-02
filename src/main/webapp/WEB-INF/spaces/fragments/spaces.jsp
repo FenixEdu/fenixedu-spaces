@@ -51,6 +51,7 @@
 				<tr>
 					<th><spring:message code="label.spaces.type" text="Type"/></th>
 					<th><spring:message code="label.spaces.name" text="Name"/></th>
+					<th><spring:message code="label.spaces.blueprint.number" text="Número da Planta"/></th>
 					<th><spring:message code="label.spaces.number.sub.spaces" text="Number of Sub Spaces"/></th>
 					<th><spring:message code="label.spaces.operations" text="Operations"/></th>
 				</tr>
@@ -60,12 +61,14 @@
 					<spring:url value="/spaces/edit/${space.externalId}" var="editUrl" />
 					<spring:url value="/spaces/timeline/${space.externalId}" var="timelineUrl" />
 					<spring:url value="/spaces/view/${space.externalId}" var="viewUrl" />
+					<spring:url value="/spaces/schedule/${space.externalId}" var="scheduleUrl" />
 					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
 					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
 					
 					<tr>
 						<td>${space.classification.name.content}</td>
 						<td>${space.name}</td>
+						<td>${space.getBlueprintNumber().orElse("-")}</td>
 						<td>${fn:length(space.children)}</td>
 						<td>
 							<a href="${viewUrl}"  class="btn btn-default" title="View"><span class="glyphicon glyphicon-eye-open"></span></a>
@@ -73,6 +76,9 @@
 								<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a>
 								<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
 								<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
+							</c:if>
+							<c:if test="${not empty space.occupationSet}">
+								<a href="${scheduleUrl}" class="btn btn-default" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span></a>
 							</c:if>
 							<%-- <a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a> --%>
 						</td>

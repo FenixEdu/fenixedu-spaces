@@ -25,6 +25,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<spring:url var="exportExcelUrl" value="/spaces/occupations/requests/export"/>
 <spring:url var="filterUrl" value="/spaces/occupations/requests/filter"/>
 <spring:url var="withoutFilterUrl" value="/spaces/occupations/requests"/>
 <spring:url var="viewRequestsUrl" value="/spaces/occupations/requests/"/>
@@ -328,6 +329,12 @@ $(document).ready(function() {
   			</c:forEach>
 	  		<li><a href="${viewRequestsUrl}?p=l&state=RESOLVED">&raquo;</a></li>
 		</ul>
+		<br/>
+		<c:set var="exportExcelVars" value="state=RESOLVED" />
+		<c:if test="${not empty selectedCampi}">
+			<c:set var="exportExcelVars" value="${exportExcelVars}&campus=${selectedCampi.externalId}"/>
+		</c:if>
+		<a href="${exportExcelUrl}?${exportExcelVars}"><spring:message code="export.excel" text="identification" /></a>
 		<table class="table">
 	  		<thead>
 	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>

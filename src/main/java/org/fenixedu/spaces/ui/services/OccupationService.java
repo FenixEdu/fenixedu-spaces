@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,7 +30,9 @@ import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.commons.i18n.I18N;
+import org.fenixedu.spaces.core.service.NotificationService;
 import org.fenixedu.spaces.domain.Space;
+import org.fenixedu.spaces.domain.SpaceDomainException;
 import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings;
 import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings.Frequency;
@@ -66,6 +69,9 @@ public class OccupationService {
 
     @Autowired
     MessageSource messageSource;
+
+    @Autowired(required = false)
+    NotificationService notificationService;
 
     public OccupationService() {
         jsonParser = new JsonParser();
@@ -134,6 +140,9 @@ public class OccupationService {
             request.createNewTeacherCommentAndOpenRequest(description, requestor, now);
         } else if (resolveRequest) {
             request.createNewEmployeeCommentAndCloseRequest(description, requestor, now);
+            if (notificationService != null) {
+                notificationService.notify(request);
+            }
         } else {
             request.createNewTeacherOrEmployeeComment(description, requestor, now);
         }
@@ -147,6 +156,9 @@ public class OccupationService {
     @Atomic
     public void closeRequest(OccupationRequest request, User owner) {
         request.closeRequestAndAssociateOwnerOnlyForEmployees(new DateTime(), owner);
+        if (notificationService != null) {
+            notificationService.notify(request);
+        }
     }
 
     public List<Space> searchFreeSpaces(List<Interval> intervals, User user) {
@@ -156,8 +168,8 @@ public class OccupationService {
 
     @Atomic
     public void createOccupation(String emails, String subject, String description, String selectedSpaces, String config,
-            String events, OccupationRequest request) throws Exception {
-        final Set<Space> selectedSpaceSet = selectSpaces(selectedSpaces);
+            String events, OccupationRequest request, User user) throws Exception {
+        final Set<Space> selectedSpaceSet = selectSpaces(selectedSpaces, user);
         final List<Interval> intervals = selectEvents(events);
         final Occupation occupation = new Occupation(emails, subject, description, parseConfig(config, intervals));
         for (Space space : selectedSpaceSet) {
@@ -169,6 +181,9 @@ public class OccupationService {
         }
         if (request != null) {
             request.addOccupation(occupation);
+        }
+        if (notificationService != null) {
+            notificationService.sendEmail(emails, subject, description);
         }
     }
 
@@ -231,25 +246,30 @@ public class OccupationService {
         return intervals;
     }
 
-    private Set<Space> selectSpaces(String selectedSpaces) {
+    private Set<Space> selectSpaces(String selectedSpaces, User user) {
         final Set<Space> selectedSpaceSet = new HashSet<>();
         final JsonArray spacesJson = jsonParser.parse(selectedSpaces).getAsJsonArray();
         for (JsonElement spaceJson : spacesJson) {
             String spaceId = spaceJson.getAsString();
             final Space space = FenixFramework.getDomainObject(spaceId);
             if (FenixFramework.isDomainObjectValid(space)) {
+                if (!space.isOccupationMember(user)) {
+                    throw new SpaceDomainException("unauthorized.selected.space", space.getName());
+                }
                 selectedSpaceSet.add(space);
             }
         }
         return selectedSpaceSet;
     }
 
-    public List<Occupation> getOccupations(Integer month, Integer year) {
+    public List<Occupation> getOccupations(Integer month, Integer year, User user) {
         DateTime start = new DateTime(year, month, 1, 0, 0);
         Interval interval = new Interval(start, start.plusMonths(1));
+        Predicate<Occupation> userPredicate =
+                o -> o.getSpaces().stream().filter(s -> s.isOccupationMember(user)).findAny().isPresent();
         return Bennu.getInstance().getOccupationSet().stream().filter(o -> o.getClass().equals(Occupation.class))
-                .filter(o -> o.overlaps(interval)).sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                .collect(Collectors.toList());
+                .filter(userPredicate).filter(o -> o.overlaps(interval))
+                .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart())).collect(Collectors.toList());
     }
 
     public String exportConfig(Occupation occupation) {
@@ -300,12 +320,15 @@ public class OccupationService {
     }
 
     @Atomic
-    public void editOccupation(Occupation occupation, String emails, String subject, String description, String selectedSpaces)
-            throws Exception {
+    public void editOccupation(Occupation occupation, String emails, String subject, String description, String selectedSpaces,
+            User user) throws Exception {
+        if (!canManageOccupation(occupation, user)) {
+            throw new SpaceDomainException("unauthorized.edit.occupation");
+        }
         occupation.setEmails(emails);
         occupation.setSubject(subject);
         occupation.setDescription(description);
-        final Set<Space> selectedSpaceSet = selectSpaces(selectedSpaces);
+        final Set<Space> selectedSpaceSet = selectSpaces(selectedSpaces, user);
         occupation.getSpaces().stream().forEach(s -> occupation.removeSpace(s));
         for (Space space : selectedSpaceSet) {
             if (!space.isFree(occupation.getIntervals())) {
@@ -316,8 +339,20 @@ public class OccupationService {
         }
     }
 
+    public boolean canManageOccupation(Occupation occupation, User user) {
+        for (Space space : occupation.getSpaces()) {
+            if (!space.isOccupationMember(user)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Atomic
-    public void delete(Occupation occupation) {
+    public void delete(Occupation occupation, User user) {
+        if (!canManageOccupation(occupation, user)) {
+            throw new SpaceDomainException("unauthorized.delete.occupation");
+        }
         occupation.delete();
     }
 
@@ -341,5 +376,36 @@ public class OccupationService {
         }
         book.setPage(page == 0 ? 0 : page - 1);
         return book;
+    }
+
+    public String[] colors = new String[] { "#FF9999", "#FFCC99", "#FFFF99", "#CCFF99", "#99FF99", "#99FFFF" };
+
+    public String getOccupations(Space space, Interval search) {
+        JsonArray events = new JsonArray();
+        int id = 1;
+        for (Occupation occupation : space.getOccupationSet()) {
+            boolean hasEvents = false;
+            for (Interval interval : occupation.getIntervals()) {
+                if (interval.overlaps(search)) {
+                    JsonObject event = new JsonObject();
+                    String start = new Long(interval.getStart().getMillis() / 1000).toString();
+                    String end = new Long(interval.getEnd().getMillis() / 1000).toString();
+                    event.addProperty("id", id);
+                    event.addProperty("start", start);
+                    event.addProperty("end", end);
+                    event.addProperty("title", occupation.getSubject());
+                    event.addProperty("allDay", false);
+                    event.addProperty("backgroundColor", colors[id % colors.length]);
+                    events.add(event);
+                    if (!hasEvents) {
+                        hasEvents = true;
+                    }
+                }
+            }
+            if (hasEvents) {
+                id++;
+            }
+        }
+        return events.toString();
     }
 }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.ui.services.OccupationService;
 import org.joda.time.DateTime;
@@ -55,7 +56,7 @@ public class ListOccupationsController {
         model.addAttribute("months", months);
         model.addAttribute("currentMonth", month);
         model.addAttribute("currentYear", year);
-        model.addAttribute("occupations", occupationService.getOccupations(month, year));
+        model.addAttribute("occupations", occupationService.getOccupations(month, year, Authenticate.getUser()));
         return "occupations/list";
     }
 }
