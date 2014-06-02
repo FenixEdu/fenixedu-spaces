@@ -29,6 +29,7 @@ import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.commons.i18n.I18N;
+import org.fenixedu.spaces.core.service.NotificationService;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings;
@@ -66,6 +67,9 @@ public class OccupationService {
 
     @Autowired
     MessageSource messageSource;
+
+    @Autowired(required = false)
+    NotificationService notificationService;
 
     public OccupationService() {
         jsonParser = new JsonParser();
@@ -134,6 +138,9 @@ public class OccupationService {
             request.createNewTeacherCommentAndOpenRequest(description, requestor, now);
         } else if (resolveRequest) {
             request.createNewEmployeeCommentAndCloseRequest(description, requestor, now);
+            if (notificationService != null) {
+                notificationService.notify(request);
+            }
         } else {
             request.createNewTeacherOrEmployeeComment(description, requestor, now);
         }
@@ -147,6 +154,9 @@ public class OccupationService {
     @Atomic
     public void closeRequest(OccupationRequest request, User owner) {
         request.closeRequestAndAssociateOwnerOnlyForEmployees(new DateTime(), owner);
+        if (notificationService != null) {
+            notificationService.notify(request);
+        }
     }
 
     public List<Space> searchFreeSpaces(List<Interval> intervals, User user) {
@@ -169,6 +179,9 @@ public class OccupationService {
         }
         if (request != null) {
             request.addOccupation(occupation);
+        }
+        if (notificationService != null) {
+            notificationService.sendEmail(emails, subject, description);
         }
     }
 
