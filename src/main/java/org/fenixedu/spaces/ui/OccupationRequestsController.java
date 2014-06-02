@@ -30,6 +30,7 @@ import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.I18NBean;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Space;
+import org.fenixedu.spaces.domain.SpaceDomainException;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState;
 import org.fenixedu.spaces.ui.services.OccupationService;
@@ -79,10 +80,15 @@ public class OccupationRequestsController {
     }
 
     @RequestMapping(value = "/{occupationRequest}/comments", method = RequestMethod.POST)
-    public RedirectView addComment(@PathVariable OccupationRequest occupationRequest, @RequestParam String description,
-            Model model, @RequestParam OccupationRequestState state) {
-        occupationService.addComment(occupationRequest, description, state);
-        return new RedirectView("/spaces/occupations/requests/" + occupationRequest.getExternalId(), true);
+    public String addComment(@PathVariable OccupationRequest occupationRequest, @RequestParam String description,
+            @RequestParam OccupationRequestState state, Model model) {
+        try {
+            occupationService.addComment(occupationRequest, description, state);
+        } catch (SpaceDomainException sde) {
+            model.addAttribute("errors", sde.getLocalizedMessage());
+            return view(occupationRequest, model);
+        }
+        return "redirect:/spaces/occupations/requests/" + occupationRequest.getExternalId();
     }
 
     @RequestMapping(value = "/{occupationRequest}/{state}", method = RequestMethod.GET)
@@ -94,11 +100,12 @@ public class OccupationRequestsController {
         switch (state) {
         case OPEN:
             occupationService.openRequest(occupationRequest, Authenticate.getUser());
+            break;
         case RESOLVED:
             occupationService.closeRequest(occupationRequest, Authenticate.getUser());
             break;
         }
-        return new RedirectView("/spaces/occupations/requests/", true);
+        return new RedirectView("/spaces/occupations/requests/" + occupationRequest.getExternalId(), true);
     }
 
     @RequestMapping(value = "/filter/{campus}", method = RequestMethod.GET)

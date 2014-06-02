@@ -111,10 +111,14 @@ public class OccupationComment extends OccupationComment_Base {
     }
 
     private void checkIfCommentAlreadyExists(User owner, String subject, String description) {
-        Collection<OccupationComment> comments = owner.getOccupationCommentSet();
-        for (OccupationComment comment : comments) {
-            if (comment.getDescription().compareTo(description) == 0) {
-                throw new SpaceDomainException("error.OccupationComment.comment.already.exists");
+        OccupationRequest request = getRequest();
+        if (request != null) {
+            Collection<OccupationComment> comments = request.getCommentSet();
+            for (OccupationComment comment : comments) {
+                if (comment.getOwner() != null && comment.getOwner().equals(owner)
+                        && comment.getDescription().compareTo(description) == 0) {
+                    throw new SpaceDomainException("error.OccupationComment.comment.already.exists");
+                }
             }
         }
     }

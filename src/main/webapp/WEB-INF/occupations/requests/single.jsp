@@ -37,6 +37,13 @@ $(document).ready(function() {
 </div>
 <main>
 	<em><a href="${listUrl}"><spring:message code="label.back" text="Voltar"/></a></em>
+	
+	<c:if test="${not empty errors}">	
+		<h4 class="bg-danger">
+			${errors}
+		</h4>
+	</c:if>
+	
 	<h3><spring:message code="occupation.request.details" text="Detalhes do Pedido"/></h3>
   	<c:if test="${not empty occupationRequest}">
 	  	<table class="table">
@@ -133,7 +140,7 @@ $(document).ready(function() {
 	   	<form class="form" role="form" action="${commentUrl}" method="post">
 	  		<div class="form-group">
 	   		  <label class="sr-only" for="descriptionInput"><spring:message code="occupation.request.comments.add" text="Add comment"/></label>
-	    	  <textarea rows="10" cols="60" class="form-control" id="descriptionInput" name="description" required="required"></textarea>
+	    	  <textarea rows="10" cols="60" class="form-control" id="descriptionInput" name="description"></textarea>
 	  		</div>
 	  		<div class="form-group">
 	  			<label class="radio-inline">
