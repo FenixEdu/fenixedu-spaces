@@ -11,4 +11,6 @@ public interface UserInformationService {
 
     public String getEmail(User user);
 
+    public String getContacts(User user);
+
 }

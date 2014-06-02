@@ -65,8 +65,7 @@ public class OccupationRequestsController {
         List<OccupationRequest> result = occupationService.search(id);
 
         if (result.size() < 2) {
-            model.addAttribute("occupationRequest", result.isEmpty() ? null : result.iterator().next());
-            return "occupations/requests/single";
+            return view(result.isEmpty() ? null : result.iterator().next(), model);
         }
         model.addAttribute("searchId", id);
         model.addAttribute("userRequestSearchResult", occupationService.getBook(result, p));
@@ -76,6 +75,11 @@ public class OccupationRequestsController {
     @RequestMapping(value = "/{occupationRequest}", method = RequestMethod.GET)
     public String view(@PathVariable OccupationRequest occupationRequest, Model model) {
         model.addAttribute("occupationRequest", occupationRequest);
+        if (userInformationService != null) {
+            model.addAttribute("email", userInformationService.getEmail(occupationRequest.getRequestor()));
+            model.addAttribute("contacts", userInformationService.getContacts(occupationRequest.getRequestor()));
+            model.addAttribute("groups", getUserGroups(occupationRequest.getRequestor()));
+        }
         return "occupations/requests/single";
     }
 
@@ -172,6 +176,11 @@ public class OccupationRequestsController {
         model.addAttribute("resolvedRequests", occupationService.getBook(resolvedRequests, resolvedRequestsPage));
     }
 
+    private String getUserGroups(final User requestor) {
+        return userInformationService.getGroups(requestor).stream().map(g -> g.getPresentationName().trim())
+                .collect(Collectors.joining(","));
+    }
+
     private void makeExcel(List<OccupationRequest> requests, OutputStream outputStream) throws IOException {
         SheetData<OccupationRequest> data = new SheetData<OccupationRequest>(requests) {
 
@@ -185,8 +194,7 @@ public class OccupationRequestsController {
                         String.format("%s (%s)", requestor.getPresentationName(), requestor.getUsername()));
                 if (userInformationService != null) {
                     addCell(bundle.message("label.occupation.request.email"), userInformationService.getEmail(requestor));
-                    addCell(bundle.message("label.occupation.request.roles"), userInformationService.getGroups(requestor)
-                            .stream().map(g -> g.getPresentationName()).collect(Collectors.joining(",")).toString());
+                    addCell(bundle.message("label.occupation.request.roles"), getUserGroups(requestor).toString());
                 }
                 final User owner = request.getOwner();
                 addCell(bundle.message("label.occupation.request.owner"),

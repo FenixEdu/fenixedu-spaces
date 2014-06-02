@@ -73,7 +73,7 @@
 	
 	<c:forEach var="space" items="${freeSpaces}">
 		<c:if test="${not empty space.name}">
-			freeSpaces["${space.externalId}"] = {name : "${space.presentationName}", allocatableCapacity : "${space.allocatableCapacity}"};
+			freeSpaces["${space.externalId}"] = {name : "${space.presentationName}", allocatableCapacity : "${space.allocatableCapacity}", examCapacity : "${space.getMetadata('examCapacity').orElse(0)}"};
 		</c:if>
 	</c:forEach>
 	
@@ -192,9 +192,9 @@
 					return;
 				}
 				selectedSpaces.push(spaceId);
-				var template = "<tr class='selected-space' data-id='${space.id}'><td>%s</td><td>%s</td><td><button class='btn btn-default btn-remove-space' id='%s'><span class='glyphicon glyphicon-remove'></span></button></td></tr>"
+				var template = "<tr class='selected-space' data-id='${space.id}'><td>%s</td><td>%s</td><td>%s</td><td><button class='btn btn-default btn-remove-space' id='%s'><span class='glyphicon glyphicon-remove'></span></button></td></tr>"
 				var freeSpace = freeSpaces[spaceId]
-				$("#selected-spaces tbody").append(sprintf(template, freeSpace.name, freeSpace.allocatableCapacity, spaceId))
+				$("#selected-spaces tbody").append(sprintf(template, freeSpace.name, freeSpace.allocatableCapacity, freeSpace.examCapacity, spaceId))
 				reloadBtnRemoveSpace(spaceId)
 				$("#selected-spaces").show();
 			}
@@ -286,7 +286,7 @@
 	<select id="choose-space">
 		<c:forEach var="space" items="${freeSpaces}">
 			<c:if test="${not empty space.name}">
-				<option value="${space.externalId}">${space.presentationName}</option>
+				<option value="${space.externalId}">${space.presentationName} [${space.allocatableCapacity},${space.getMetadata('examCapacity').orElse(0)}]</option>
 			</c:if>
 		</c:forEach>
 	</select>
@@ -300,6 +300,7 @@
 	<thead>
 		<th><spring:message code="label.create.occupation.selected.space.name" text="Nome"/></th>
 		<th><spring:message code="label.create.occupation.selected.space.normal.capacity" text="Capacidade Normal"/></th>
+		<th><spring:message code="label.create.occupation.selected.space.exam.capacity" text="Capacidade Exame"/></th>
 		<th><spring:message code="label.create.occupation.selected.space.operations" text="Ações"/>
 	</thead>
 	<tbody>

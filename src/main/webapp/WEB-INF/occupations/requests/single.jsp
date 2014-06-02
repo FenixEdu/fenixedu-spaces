@@ -72,6 +72,24 @@ $(document).ready(function() {
 					<th class="row"><spring:message code="label.occupation.request.requestor" text="Requestor" /></th>
 					<td>${requestor.presentationName} (${requestor.username})</td>
 				</tr>
+				<c:if test="${not empty email}">
+					<tr>
+						<th class="row"><spring:message code="label.occupation.request.requestor.email" text="Email" /></th>
+						<td>${email}</td>
+					</tr>
+				</c:if>
+				<c:if test="${not empty contacts}">
+					<tr>
+						<th class="row"><spring:message code="label.occupation.request.requestor.contacts" text="Contactos" /></th>
+						<td>${contacts}</td>
+					</tr>
+				</c:if>
+				<c:if test="${not empty groups}">
+					<tr>
+						<th class="row"><spring:message code="label.occupation.request.requestor.groups" text="Papeis" /></th>
+						<td>${groups}</td>
+					</tr>
+				</c:if>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.instant" text="Instant" /></th>
 					<td>${instant}</td>
