@@ -76,7 +76,6 @@
 		maxTime : "24:00",
 		axisFormat: 'H:mm',
 		allDaySlot : false,
-		editable: true,
 		defaultView: "agendaWeek",
 		firstDay: 1,
 		editable: false,
@@ -380,11 +379,13 @@
 			},
 			processIntervals: function() {
 				var occupation = this.getOccupation();
-				var start = occupation.start
-				var end = occupation.end
 				var intervals = [];
 				var start = occupation.start
 				var end = occupation.end
+				if (occupation.isAllDay) {
+					end = occupation.end.clone();
+					end.add('days', 1);
+				}
 				intervals.push({ start : start, end: end})
 				return intervals;
 			}

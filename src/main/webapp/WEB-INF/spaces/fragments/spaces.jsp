@@ -61,6 +61,7 @@
 					<spring:url value="/spaces/edit/${space.externalId}" var="editUrl" />
 					<spring:url value="/spaces/timeline/${space.externalId}" var="timelineUrl" />
 					<spring:url value="/spaces/view/${space.externalId}" var="viewUrl" />
+					<spring:url value="/spaces/schedule/${space.externalId}" var="scheduleUrl" />
 					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
 					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
 					
@@ -75,6 +76,9 @@
 								<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a>
 								<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
 								<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
+							</c:if>
+							<c:if test="${not empty space.occupationSet}">
+								<a href="${scheduleUrl}" class="btn btn-default" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span></a>
 							</c:if>
 							<%-- <a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a> --%>
 						</td>

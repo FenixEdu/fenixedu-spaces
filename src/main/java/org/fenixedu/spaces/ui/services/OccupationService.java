@@ -377,4 +377,35 @@ public class OccupationService {
         book.setPage(page == 0 ? 0 : page - 1);
         return book;
     }
+
+    public String[] colors = new String[] { "#FF9999", "#FFCC99", "#FFFF99", "#CCFF99", "#99FF99", "#99FFFF" };
+
+    public String getOccupations(Space space, Interval search) {
+        JsonArray events = new JsonArray();
+        int id = 1;
+        for (Occupation occupation : space.getOccupationSet()) {
+            boolean hasEvents = false;
+            for (Interval interval : occupation.getIntervals()) {
+                if (interval.overlaps(search)) {
+                    JsonObject event = new JsonObject();
+                    String start = new Long(interval.getStart().getMillis() / 1000).toString();
+                    String end = new Long(interval.getEnd().getMillis() / 1000).toString();
+                    event.addProperty("id", id);
+                    event.addProperty("start", start);
+                    event.addProperty("end", end);
+                    event.addProperty("title", occupation.getSubject());
+                    event.addProperty("allDay", false);
+                    event.addProperty("backgroundColor", colors[id % colors.length]);
+                    events.add(event);
+                    if (!hasEvents) {
+                        hasEvents = true;
+                    }
+                }
+            }
+            if (hasEvents) {
+                id++;
+            }
+        }
+        return events.toString();
+    }
 }

@@ -40,7 +40,11 @@ import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
 import org.fenixedu.spaces.services.SpaceBlueprintsDWGProcessor;
+import org.fenixedu.spaces.ui.services.OccupationService;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.Interval;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,6 +65,9 @@ import com.google.common.base.Strings;
 @SpringFunctionality(app = SpacesController.class, title = "title.space.management")
 @RequestMapping("/spaces")
 public class SpacesController {
+
+    @Autowired
+    private OccupationService occupationService;
 
     private BlueprintTextRectangles getBlueprintTextRectangles(Space space, BigDecimal scale) {
         DateTime now = new DateTime();
@@ -261,6 +268,30 @@ public class SpacesController {
             model.addAttribute("foundSpaces", findSpace(name));
         }
         return "spaces/search";
+    }
+
+    @RequestMapping(value = "/schedule/{space}")
+    public String schedule(@PathVariable Space space, Model model) {
+        model.addAttribute("space", space);
+        return "spaces/schedule";
+    }
+
+    @RequestMapping(value = "/schedule/{space}/events", produces = "application/json; charset=utf-8")
+    public @ResponseBody String schedule(@PathVariable Space space, @RequestParam(required = false) String start, @RequestParam(
+            required = false) String end, Model model) {
+        DateTime beginDate;
+        DateTime endDate;
+
+        if (Strings.isNullOrEmpty(start)) {
+            DateTime now = new DateTime();
+            beginDate = now.withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0);
+            endDate = now.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withHourOfDay(0).withMinuteOfHour(0);
+        } else {
+            beginDate = new DateTime(Long.parseLong(start) * 1000);
+            endDate = new DateTime(Long.parseLong(end) * 1000);
+        }
+
+        return occupationService.getOccupations(space, new Interval(beginDate, endDate));
     }
 
     private Set<Space> findSpace(String text) {
