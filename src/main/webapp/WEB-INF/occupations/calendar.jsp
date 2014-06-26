@@ -628,13 +628,13 @@
 
 
 <body>
-	<div id="calendar"></div>
 	<span>
 		<!-- Button trigger modal -->
 		<button class="btn btn-primary" id="add-event">
 			<spring:message code="calendar.add.event" text="Seleccionar Período"/>
 		</button>
 	</span>
+	<div id="calendar"></div>
 
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
