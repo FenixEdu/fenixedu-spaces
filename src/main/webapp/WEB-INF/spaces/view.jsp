@@ -69,7 +69,7 @@
 				<td>${information.blueprintNumber}</td>
 			</tr>
 			<tr>
-				<spring:url var="viewUrl" value="/spaces/view"/>
+				<spring:url var="viewUrl" value="/spaces-view/view"/>
 				<th scope="row">
 					<spring:message code="label.spaces.blueprint" text="Blueprint" />
 					<c:if test="${scale < 100 }">

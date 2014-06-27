@@ -23,7 +23,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<spring:url var="searchUrl" value="/spaces/search/"/>
+<spring:url var="searchUrl" value="/spaces-view/search/"/>
 
 <div class="page-header">
   <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.spaces.search" text="Pesquisa de Espaços"/></small></h1>
@@ -50,8 +50,8 @@
 				</thead>
 				<tbody>
 					<c:forEach var="space" items="${foundSpaces}">
-						<spring:url value="/spaces/view/${space.externalId}" var="viewUrl" />
-						<spring:url value="/spaces/schedule/${space.externalId}" var="scheduleUrl" />
+						<spring:url value="/spaces-view/view/${space.externalId}" var="viewUrl" />
+						<spring:url value="/spaces-view/schedule/${space.externalId}" var="scheduleUrl" />
 						<tr>
 							<td>${space.classification.name.content}</td>
 							<td>${space.name}</td>

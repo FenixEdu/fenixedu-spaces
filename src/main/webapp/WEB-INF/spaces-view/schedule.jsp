@@ -36,7 +36,7 @@
 <script src="${staticUrl}/js/jquery.datetimepicker.js"></script>
 <script src="${staticUrl}/js/sprintf.min.js"></script>
 
-<spring:url var="eventsUrl" value="/spaces/schedule/${space.externalId}/events"/>
+<spring:url var="eventsUrl" value="/spaces-view/schedule/${space.externalId}/events"/>
 
 <script type="text/javascript">
 	$(document).ready(function() {

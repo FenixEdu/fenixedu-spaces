@@ -66,31 +66,6 @@ import com.google.common.base.Strings;
 @RequestMapping("/spaces")
 public class SpacesController {
 
-    @Autowired
-    private OccupationService occupationService;
-
-    private BlueprintTextRectangles getBlueprintTextRectangles(Space space, BigDecimal scale) {
-        DateTime now = new DateTime();
-
-        Space spaceWithBlueprint = SpaceBlueprintsDWGProcessor.getSuroundingSpaceMostRecentBlueprint(space);
-
-        BlueprintFile mostRecentBlueprint = spaceWithBlueprint.getBlueprintFile().get();
-
-        if (mostRecentBlueprint != null) {
-
-            final byte[] blueprintBytes = mostRecentBlueprint.getContent();
-            final InputStream inputStream = new ByteArrayInputStream(blueprintBytes);
-            try {
-                return SpaceBlueprintsDWGProcessor.getBlueprintTextRectangles(inputStream, spaceWithBlueprint, now, false, false,
-                        true, false, scale);
-            } catch (IOException e) {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
     private Set<Space> getTopLevelSpaces() {
         return Space.getSpaces().filter(space -> space.getParent() == null).collect(Collectors.toSet());
     }
@@ -107,7 +82,7 @@ public class SpacesController {
         return "spaces/home";
     }
 
-    Comparator<Space> BY_NAME_COMPARATOR = new Comparator<Space>() {
+    static Comparator<Space> BY_NAME_COMPARATOR = new Comparator<Space>() {
 
         @Override
         public int compare(Space o1, Space o2) {
@@ -202,18 +177,6 @@ public class SpacesController {
         return "redirect:/spaces/view/" + space.getExternalId();
     }
 
-    @RequestMapping(value = "/view/{space}", method = RequestMethod.GET)
-    public String view(@PathVariable Space space, Model model, @RequestParam(defaultValue = "50") BigDecimal scale)
-            throws UnavailableException {
-        model.addAttribute("scale", scale);
-        model.addAttribute("information", space.bean());
-        model.addAttribute("blueprintTextRectangles", getBlueprintTextRectangles(space, scale));
-        model.addAttribute("spaces", getChildrenOrderedByName(space));
-        model.addAttribute("parentSpace", space.getParent());
-        model.addAttribute("currentUser", Authenticate.getUser());
-        return "spaces/view";
-    }
-
     @RequestMapping(value = "/timeline/{space}", method = RequestMethod.GET)
     public String timeline(@PathVariable Space space, Model model) throws UnavailableException {
         model.addAttribute("currentUser", Authenticate.getUser());
@@ -261,40 +224,4 @@ public class SpacesController {
         }
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String search(@RequestParam(required = false) String name, Model model) {
-        model.addAttribute("name", name);
-        if (!Strings.isNullOrEmpty(name)) {
-            model.addAttribute("foundSpaces", findSpace(name));
-        }
-        return "spaces/search";
-    }
-
-    @RequestMapping(value = "/schedule/{space}")
-    public String schedule(@PathVariable Space space, Model model) {
-        model.addAttribute("space", space);
-        return "spaces/schedule";
-    }
-
-    @RequestMapping(value = "/schedule/{space}/events", produces = "application/json; charset=utf-8")
-    public @ResponseBody String schedule(@PathVariable Space space, @RequestParam(required = false) String start, @RequestParam(
-            required = false) String end, Model model) {
-        DateTime beginDate;
-        DateTime endDate;
-
-        if (Strings.isNullOrEmpty(start)) {
-            DateTime now = new DateTime();
-            beginDate = now.withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0);
-            endDate = now.withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(1).withHourOfDay(0).withMinuteOfHour(0);
-        } else {
-            beginDate = new DateTime(Long.parseLong(start) * 1000);
-            endDate = new DateTime(Long.parseLong(end) * 1000);
-        }
-
-        return occupationService.getOccupations(space, new Interval(beginDate, endDate));
-    }
-
-    private Set<Space> findSpace(String text) {
-        return Space.getSpaces().filter(s -> s.getName().toLowerCase().contains(text.toLowerCase())).collect(Collectors.toSet());
-    }
 }

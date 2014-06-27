@@ -60,7 +60,7 @@
 				<c:forEach var="space" items="${spaces}">
 					<spring:url value="/spaces/edit/${space.externalId}" var="editUrl" />
 					<spring:url value="/spaces/timeline/${space.externalId}" var="timelineUrl" />
-					<spring:url value="/spaces/view/${space.externalId}" var="viewUrl" />
+					<spring:url value="/spaces-view/view/${space.externalId}" var="viewUrl" />
 					<spring:url value="/spaces/schedule/${space.externalId}" var="scheduleUrl" />
 					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
 					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
