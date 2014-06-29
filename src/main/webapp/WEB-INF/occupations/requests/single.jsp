@@ -188,6 +188,8 @@ $(document).ready(function() {
 	margin: 0px;
 	background-color: #ffffff;
 	border: 0px;
+	width: 610px;
+	word-wrap: break-word;
 }
 
 th.row {

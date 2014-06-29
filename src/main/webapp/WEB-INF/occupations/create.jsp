@@ -82,9 +82,10 @@
 
 <h2><spring:message code="title.create.occupation.select.period" text="Seleccionar Periodo"/></h2>
 
+<button class="btn btn-success" id="search-spaces"><spring:message code="title.create.occupation.search.periods" text="Procurar Espaços"/></button>
+
 <%@include file="calendar.jsp" %>
 
-<button class="btn btn-success" id="search-spaces"><spring:message code="title.create.occupation.search.periods" text="Procurar Espaços"/></button>
 
 <form action="${searchUrl}" id="form-search-spaces" method="post">
 	<input type="hidden" name="events" id="events"/>
