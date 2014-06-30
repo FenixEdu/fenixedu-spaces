@@ -113,6 +113,8 @@ public class SpaceSearchController {
             try {
                 return SpaceBlueprintsDWGProcessor.getBlueprintTextRectangles(inputStream, spaceWithBlueprint, now, false, false,
                         true, false, scale);
+            } catch (IndexOutOfBoundsException e) {
+                return null;
             } catch (IOException e) {
                 return null;
             }
