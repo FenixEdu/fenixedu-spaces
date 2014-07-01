@@ -104,17 +104,21 @@ public class SpaceSearchController {
 
         Space spaceWithBlueprint = SpaceBlueprintsDWGProcessor.getSuroundingSpaceMostRecentBlueprint(space);
 
-        BlueprintFile mostRecentBlueprint = spaceWithBlueprint.getBlueprintFile().get();
+        if (spaceWithBlueprint != null) {
+            BlueprintFile mostRecentBlueprint = spaceWithBlueprint.getBlueprintFile().get();
 
-        if (mostRecentBlueprint != null) {
+            if (mostRecentBlueprint != null) {
 
-            final byte[] blueprintBytes = mostRecentBlueprint.getContent();
-            final InputStream inputStream = new ByteArrayInputStream(blueprintBytes);
-            try {
-                return SpaceBlueprintsDWGProcessor.getBlueprintTextRectangles(inputStream, spaceWithBlueprint, now, false, false,
-                        true, false, scale);
-            } catch (IOException e) {
-                return null;
+                final byte[] blueprintBytes = mostRecentBlueprint.getContent();
+                final InputStream inputStream = new ByteArrayInputStream(blueprintBytes);
+                try {
+                    return SpaceBlueprintsDWGProcessor.getBlueprintTextRectangles(inputStream, spaceWithBlueprint, now, false,
+                            false, true, false, scale);
+                } catch (IndexOutOfBoundsException e) {
+                    return null;
+                } catch (IOException e) {
+                    return null;
+                }
             }
         }
 

@@ -75,7 +75,7 @@ public class OccupationRequestsController {
     @RequestMapping(value = "/{occupationRequest}", method = RequestMethod.GET)
     public String view(@PathVariable OccupationRequest occupationRequest, Model model) {
         model.addAttribute("occupationRequest", occupationRequest);
-        if (userInformationService != null) {
+        if (userInformationService != null && occupationRequest != null) {
             model.addAttribute("email", userInformationService.getEmail(occupationRequest.getRequestor()));
             model.addAttribute("contacts", userInformationService.getContacts(occupationRequest.getRequestor()));
             model.addAttribute("groups", getUserGroups(occupationRequest.getRequestor()));
