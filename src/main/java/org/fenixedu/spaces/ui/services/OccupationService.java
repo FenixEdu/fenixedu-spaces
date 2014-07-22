@@ -262,14 +262,20 @@ public class OccupationService {
         return selectedSpaceSet;
     }
 
-    public List<Occupation> getOccupations(Integer month, Integer year, User user) {
+    public List<Occupation> getOccupations(Integer month, Integer year, User user, String spaceName) {
+        String spaceNameForSearch = spaceName == null ? null : spaceName.toLowerCase();
         DateTime start = new DateTime(year, month, 1, 0, 0);
         Interval interval = new Interval(start, start.plusMonths(1));
-        Predicate<Occupation> userPredicate =
-                o -> o.getSpaces().stream().filter(s -> s.isOccupationMember(user)).findAny().isPresent();
+        Predicate<Occupation> userAndSpaceNamePredicate =
+                o -> o.getSpaces().stream().filter(s -> s.isOccupationMember(user)).filter(s -> matches(s, spaceNameForSearch)).findAny()
+                        .isPresent();
         return Bennu.getInstance().getOccupationSet().stream().filter(o -> o.getClass().equals(Occupation.class))
-                .filter(userPredicate).filter(o -> o.overlaps(interval))
+                .filter(userAndSpaceNamePredicate).filter(o -> o.overlaps(interval))
                 .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart())).collect(Collectors.toList());
+    }
+
+    private boolean matches(final Space space, final String spaceName) {
+        return spaceName == null || spaceName.isEmpty() || space.getName().toLowerCase().indexOf(spaceName) >= 0;
     }
 
     public String exportConfig(Occupation occupation) {
