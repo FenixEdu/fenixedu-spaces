@@ -112,7 +112,7 @@ public class OccupationController {
             @RequestParam String subject, @RequestParam String description, @RequestParam String selectedSpaces) {
         try {
             occupationService.editOccupation(occupation, emails, subject, description, selectedSpaces, Authenticate.getUser());
-            return "redirect:/spaces/occupations";
+            return "redirect:/spaces/occupations/list";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return view(model, occupation);
