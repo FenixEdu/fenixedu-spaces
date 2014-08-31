@@ -153,15 +153,32 @@ public class SpaceClassification extends SpaceClassification_Base {
         return byName;
     }
 
-    public static SpaceClassification getByName(String needle) {
-        for (SpaceClassification classification : all()) {
-            final LocalizedString name = classification.getName();
-            for (Locale locale : name.getLocales()) {
-                if (needle.equals(name.getContent(locale))) {
-                    return classification;
-                }
+    private boolean hasMatchByName(final String needle) {
+        final LocalizedString name = getName();
+        for (final Locale locale : name.getLocales()) {
+            if (needle.equals(name.getContent(locale))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private SpaceClassification findByName(final String needle) {
+        return hasMatchByName(needle) ? this : findByName(needle, getChildrenSet());
+    }
+
+    private static SpaceClassification findByName(final String needle, Collection<SpaceClassification> classifications) {
+        for (final SpaceClassification classification : classifications) {
+            final SpaceClassification result = classification.findByName(needle);
+            if (result != null) {
+                return result;
             }
         }
         return null;
     }
+
+    public static SpaceClassification getByName(String needle) {
+        return findByName(needle, Bennu.getInstance().getRootClassificationSet());
+    }
+
 }

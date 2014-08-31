@@ -42,7 +42,8 @@ public class ListOccupationsController {
 
     @RequestMapping
     public String list(Model model, @RequestParam(defaultValue = "#{new org.joda.time.DateTime().getMonthOfYear()}") int month,
-            @RequestParam(defaultValue = "#{new org.joda.time.DateTime().getYear()}") int year) {
+            @RequestParam(defaultValue = "#{new org.joda.time.DateTime().getYear()}") int year,
+            @RequestParam(defaultValue = "") String name) {
         DateTime now = new DateTime();
         int currentYear = now.getYear();
         model.addAttribute(
@@ -56,7 +57,8 @@ public class ListOccupationsController {
         model.addAttribute("months", months);
         model.addAttribute("currentMonth", month);
         model.addAttribute("currentYear", year);
-        model.addAttribute("occupations", occupationService.getOccupations(month, year, Authenticate.getUser()));
+        model.addAttribute("occupations", occupationService.getOccupations(month, year, Authenticate.getUser(), name));
+        model.addAttribute("name", name);
         return "occupations/list";
     }
 }

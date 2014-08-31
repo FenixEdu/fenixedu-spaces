@@ -70,6 +70,10 @@
     	</c:forEach>
     </select>
   </div>
+  <div class="form-group">
+    <label for="searchSpace"><spring:message code="label.space" text="Nome"/></label>
+    <input name="name" type="text" id="searchSpace" value="${name}" placeholder="<spring:message code="label.space.search.name" text="Nome do espaço"/>"></input>
+  </div>
   <button type="submit" class="btn btn-default"><spring:message code="label.select" text="Seleccionar"/></button>
 </form>
 
