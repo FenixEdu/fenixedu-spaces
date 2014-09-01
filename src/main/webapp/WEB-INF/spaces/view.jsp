@@ -81,7 +81,7 @@
 					</c:if>	
 				</th>
 				
-				<spring:url var="blueprintUrl" value="/spaces/blueprint/${space.externalId}" />
+				<spring:url var="blueprintUrl" value="/spaces-view/blueprint/${space.externalId}" />
 				<c:if test="${not empty scale}">
 					<c:set var="blueprintUrl" value="${blueprintUrl}?scale=${scale}"/>
 				</c:if>

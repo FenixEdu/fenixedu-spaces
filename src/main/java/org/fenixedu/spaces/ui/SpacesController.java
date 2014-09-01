@@ -209,19 +209,4 @@ public class SpacesController {
         return "ok";
     }
 
-    @RequestMapping(value = "/blueprint/{space}", method = RequestMethod.GET)
-    public void blueprint(@PathVariable Space space, @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
-            defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, @RequestParam(defaultValue = "50") BigDecimal scale,
-            HttpServletResponse response) throws IOException, UnavailableException {
-        Boolean isToViewOriginalSpaceBlueprint = false;
-        Boolean viewBlueprintNumbers = true;
-        Boolean isToViewIdentifications = true;
-        Boolean isToViewDoorNumbers = false;
-        BigDecimal scalePercentage = scale;
-        try (OutputStream outputStream = response.getOutputStream()) {
-            SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isToViewOriginalSpaceBlueprint, viewBlueprintNumbers,
-                    isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
-        }
-    }
-
 }
