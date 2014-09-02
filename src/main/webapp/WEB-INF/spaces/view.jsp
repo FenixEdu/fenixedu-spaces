@@ -72,6 +72,10 @@
 				<spring:url var="viewUrl" value="/spaces-view/view"/>
 				<th scope="row">
 					<spring:message code="label.spaces.blueprint" text="Blueprint" />
+					<a href="${viewUrl}/${space.externalId}?viewIdentifications=true">Identificações</a> |
+					<a href="${viewUrl}/${space.externalId}?viewDoorNumbers=true">Nºs de Porta</a> |
+					<a href="${viewUrl}/${space.externalId}?viewBlueprintNumbers=true">Nºs de Planta</a> |
+					<a href="${viewUrl}/${space.externalId}?viewOriginalSpaceBlueprint=true">Planta Original</a> |
 					<c:if test="${scale < 100 }">
 						<a href="${viewUrl}/${space.externalId}?scale=100"><span class="glyphicon glyphicon-zoom-in"/></a>					
 					</c:if>
@@ -82,8 +86,31 @@
 				</th>
 				
 				<spring:url var="blueprintUrl" value="/spaces-view/blueprint/${space.externalId}" />
+				<spring:url var="vDoorNum" value="false" />
+				<spring:url var="vBlueprintNum" value="false" />
+				<spring:url var="vIds" value="false" />
+				<spring:url var="vOrigSpaceBP" value="false" />
+				<c:if test="${(empty viewOriginalSpaceBlueprint) and (empty viewBlueprintNumbers) and (empty viewIdentifications) and (empty viewDoorNumbers)}">
+					<c:set var="vIds" value="true"/>
+				</c:if>
+				<c:if test="${not empty viewOriginalSpaceBlueprint}">
+					<c:set var="vOrigSpaceBP" value="${viewOriginalSpaceBlueprint}"/>
+				</c:if>
+				<c:if test="${not empty viewBlueprintNumbers}">
+					<c:set var="vBlueprintNum" value="${viewBlueprintNumbers}"/>
+				</c:if>
+				<c:if test="${not empty viewIdentifications}">
+					<c:set var="vIds" value="${viewIdentifications}"/>
+				</c:if>
+				<c:if test="${not empty viewDoorNumbers}">
+					<c:set var="vDoorNum" value="${viewDoorNumbers}"/>
+				</c:if>
+				<c:set var="blueprintUrl" value="${blueprintUrl}?viewDoorNumbers=${vDoorNum}"/>
+				<c:set var="blueprintUrl" value="${blueprintUrl}&viewBlueprintNumbers=${vBlueprintNum}"/>
+				<c:set var="blueprintUrl" value="${blueprintUrl}&viewIdentifications=${vIds}"/>
+				<c:set var="blueprintUrl" value="${blueprintUrl}&viewOriginalSpaceBlueprint=${vOrigSpaceBP}"/>
 				<c:if test="${not empty scale}">
-					<c:set var="blueprintUrl" value="${blueprintUrl}?scale=${scale}"/>
+					<c:set var="blueprintUrl" value="${blueprintUrl}&scale=100"/>
 				</c:if>
 				<td>
 					<img src="${blueprintUrl}" usemap="#roomLinksMap"/>

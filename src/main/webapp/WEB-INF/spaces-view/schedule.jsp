@@ -76,7 +76,7 @@
 				event.backgroundColor = colors[event.id % colors.length];
 				return event;
     		},
-    		eventClick: function(event){
+    		eventMouseover: function(event){
     			
     		}
 		};

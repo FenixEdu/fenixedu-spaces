@@ -133,9 +133,16 @@ public class SpaceSearchController {
     }
 
     @RequestMapping(value = "/view/{space}", method = RequestMethod.GET)
-    public String view(@PathVariable Space space, Model model, @RequestParam(defaultValue = "50") BigDecimal scale)
+    public String view(@PathVariable Space space, Model model, @RequestParam(defaultValue = "50") BigDecimal scale,
+            @RequestParam(defaultValue = "") Boolean viewOriginalSpaceBlueprint,
+            @RequestParam(defaultValue = "") Boolean viewBlueprintNumbers,
+            @RequestParam(defaultValue = "") Boolean viewIdentifications, @RequestParam(defaultValue = "") Boolean viewDoorNumbers)
             throws UnavailableException {
         model.addAttribute("scale", scale);
+        model.addAttribute("viewOriginalSpaceBlueprint", viewOriginalSpaceBlueprint);
+        model.addAttribute("viewBlueprintNumbers", viewBlueprintNumbers);
+        model.addAttribute("viewIdentifications", viewIdentifications);
+        model.addAttribute("viewDoorNumbers", viewDoorNumbers);
         model.addAttribute("information", space.bean());
         model.addAttribute("blueprintTextRectangles", getBlueprintTextRectangles(space, scale));
         model.addAttribute("spaces", getChildrenOrderedByName(space));
@@ -147,14 +154,18 @@ public class SpaceSearchController {
     @RequestMapping(value = "/blueprint/{space}", method = RequestMethod.GET)
     public void blueprint(@PathVariable Space space, @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
             defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, @RequestParam(defaultValue = "50") BigDecimal scale,
-            HttpServletResponse response) throws IOException, UnavailableException {
-        Boolean isToViewOriginalSpaceBlueprint = false;
-        Boolean viewBlueprintNumbers = true;
-        Boolean isToViewIdentifications = true;
-        Boolean isToViewDoorNumbers = false;
+            @RequestParam(defaultValue = "false") Boolean viewOriginalSpaceBlueprint,
+            @RequestParam(defaultValue = "true") Boolean viewBlueprintNumbers,
+            @RequestParam(defaultValue = "true") Boolean viewIdentifications,
+            @RequestParam(defaultValue = "false") Boolean viewDoorNumbers, HttpServletResponse response) throws IOException,
+            UnavailableException {
+        Boolean isToViewOriginalSpaceBlueprint = viewOriginalSpaceBlueprint;
+        Boolean isToViewBlueprintNumbers = viewBlueprintNumbers;
+        Boolean isToViewIdentifications = viewIdentifications;
+        Boolean isToViewDoorNumbers = viewDoorNumbers;
         BigDecimal scalePercentage = scale;
         try (OutputStream outputStream = response.getOutputStream()) {
-            SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isToViewOriginalSpaceBlueprint, viewBlueprintNumbers,
+            SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isToViewOriginalSpaceBlueprint, isToViewBlueprintNumbers,
                     isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
         }
     }
