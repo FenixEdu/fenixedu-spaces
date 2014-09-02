@@ -22,7 +22,6 @@
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-
 <spring:url var="staticUrl" value="/static/fenix-spaces"/>
 
 <link href="${staticUrl}/css/fullcalendar.css" rel="stylesheet">
@@ -76,6 +75,9 @@
 				event.textColor = "black";
 				event.backgroundColor = colors[event.id % colors.length];
 				return event;
+    		},
+    		eventClick: function(event){
+    			
     		}
 		};
 		$('#calendar').fullCalendar(calendar);
