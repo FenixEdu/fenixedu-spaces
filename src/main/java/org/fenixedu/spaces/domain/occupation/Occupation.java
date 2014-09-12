@@ -130,6 +130,10 @@ public class Occupation extends Occupation_Base {
         return true;
     }
 
+    public String getInfo() {
+        return "";
+    }
+
     public String getUrl() {
         if (!getClass().equals(Occupation.class)) {
             return "";

@@ -401,6 +401,7 @@ public class OccupationService {
                     }
                     event.addProperty("allDay", false);
                     event.addProperty("backgroundColor", colors[id % colors.length]);
+                    event.addProperty("info", occupation.getInfo());
                     events.add(event);
                     if (!hasEvents) {
                         hasEvents = true;
