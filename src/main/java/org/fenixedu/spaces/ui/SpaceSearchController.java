@@ -159,6 +159,7 @@ public class SpaceSearchController {
             @RequestParam(defaultValue = "true") Boolean viewIdentifications,
             @RequestParam(defaultValue = "false") Boolean viewDoorNumbers, HttpServletResponse response) throws IOException,
             UnavailableException {
+
         Boolean isToViewOriginalSpaceBlueprint = viewOriginalSpaceBlueprint;
         Boolean isToViewBlueprintNumbers = viewBlueprintNumbers;
         Boolean isToViewIdentifications = viewIdentifications;

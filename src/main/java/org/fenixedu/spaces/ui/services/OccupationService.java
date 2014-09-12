@@ -63,9 +63,9 @@ import com.google.gson.JsonParser;
 @Service
 public class OccupationService {
 
-    private JsonParser jsonParser;
+    private final JsonParser jsonParser;
 
-    private DateTimeFormatter datetimeFormatter;
+    private final DateTimeFormatter datetimeFormatter;
 
     @Autowired
     MessageSource messageSource;
@@ -267,8 +267,8 @@ public class OccupationService {
         DateTime start = new DateTime(year, month, 1, 0, 0);
         Interval interval = new Interval(start, start.plusMonths(1));
         Predicate<Occupation> userAndSpaceNamePredicate =
-                o -> o.getSpaces().stream().filter(s -> s.isOccupationMember(user)).filter(s -> matches(s, spaceNameForSearch)).findAny()
-                        .isPresent();
+                o -> o.getSpaces().stream().filter(s -> s.isOccupationMember(user)).filter(s -> matches(s, spaceNameForSearch))
+                        .findAny().isPresent();
         return Bennu.getInstance().getOccupationSet().stream().filter(o -> o.getClass().equals(Occupation.class))
                 .filter(userAndSpaceNamePredicate).filter(o -> o.overlaps(interval))
                 .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart())).collect(Collectors.toList());
@@ -346,12 +346,7 @@ public class OccupationService {
     }
 
     public boolean canManageOccupation(Occupation occupation, User user) {
-        for (Space space : occupation.getSpaces()) {
-            if (!space.isOccupationMember(user)) {
-                return false;
-            }
-        }
-        return true;
+        return occupation.canManageOccupation(user);
     }
 
     @Atomic
@@ -400,6 +395,10 @@ public class OccupationService {
                     event.addProperty("start", start);
                     event.addProperty("end", end);
                     event.addProperty("title", occupation.getSubject());
+                    String url = occupation.getUrl();
+                    if (!url.isEmpty()) {
+                        event.addProperty("url", url);
+                    }
                     event.addProperty("allDay", false);
                     event.addProperty("backgroundColor", colors[id % colors.length]);
                     events.add(event);

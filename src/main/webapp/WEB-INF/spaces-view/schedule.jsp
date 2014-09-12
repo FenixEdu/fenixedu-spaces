@@ -72,13 +72,17 @@
 			editable: false,
 			events : "${eventsUrl}",
 			eventDataTransform: function(event) {
+				asd : "${eventsUrl}";
 				event.textColor = "black";
 				event.backgroundColor = colors[event.id % colors.length];
 				return event;
     		},
-    		eventMouseover: function(event){
-    			
-    		}
+    	    eventClick: function(event) {
+    	        if (event.url) {
+    	            window.open(event.url);
+    	            return false;
+    	        }
+    	    }
 		};
 		$('#calendar').fullCalendar(calendar);
 	});
