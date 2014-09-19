@@ -69,23 +69,76 @@
 				<td>${information.blueprintNumber}</td>
 			</tr>
 			<tr>
-				<spring:url var="viewUrl" value="/spaces-view/view"/>
 				<th scope="row">
 					<spring:message code="label.spaces.blueprint" text="Blueprint" />
-					<c:if test="${scale < 100 }">
-						<a href="${viewUrl}/${space.externalId}?scale=100"><span class="glyphicon glyphicon-zoom-in"/></a>					
-					</c:if>
-					
-					<c:if test="${scale >= 100 }">
-						<a href="${viewUrl}/${space.externalId}"><span class="glyphicon glyphicon-zoom-out"/></a>					
-					</c:if>	
 				</th>
-				
-				<spring:url var="blueprintUrl" value="/spaces/blueprint/${space.externalId}" />
+				<spring:url var="viewUrl" value="/spaces-view/view"/>
+				<spring:url var="scaleOpts" value=""/>
+				<spring:url var="keepScale" value=""/>
 				<c:if test="${not empty scale}">
-					<c:set var="blueprintUrl" value="${blueprintUrl}?scale=${scale}"/>
+					<c:set var="keepScale" value="&scale=${scale}"/>
 				</c:if>
+				<c:if test="${(empty viewOriginalSpaceBlueprint) and (empty viewBlueprintNumbers) and (empty viewIdentifications) and (empty viewDoorNumbers)}">
+					<c:set var="scaleOpts" value="viewIdentifications=true"/>
+				</c:if>
+				<c:if test="${not empty viewOriginalSpaceBlueprint}">
+					<c:set var="scaleOpts" value="viewOriginalSpaceBlueprint=${viewOriginalSpaceBlueprint}"/>
+				</c:if>
+				<c:if test="${not empty viewBlueprintNumbers}">
+					<c:set var="scaleOpts" value="viewBlueprintNumbers=${viewBlueprintNumbers}"/>
+				</c:if>
+				<c:if test="${not empty viewIdentifications}">
+					<c:set var="scaleOpts" value="viewIdentifications=${viewIdentifications}"/>
+				</c:if>
+				<c:if test="${not empty viewDoorNumbers}">
+					<c:set var="scaleOpts" value="viewDoorNumbers=${viewDoorNumbers}"/>
+				</c:if>
+				
 				<td>
+					<a href="${viewUrl}/${space.externalId}?viewIdentifications=true${keepScale}"><spring:message code="label.spaces.viewBlueprintIds" text="Identifications" /></a> |
+					<a href="${viewUrl}/${space.externalId}?viewDoorNumbers=true${keepScale}"><spring:message code="label.spaces.viewDoorNumbers" text="Door Numbers" /></a> |
+					<a href="${viewUrl}/${space.externalId}?viewBlueprintNumbers=true${keepScale}"><spring:message code="label.spaces.viewBlueprintNumbers" text="Blueprint Numbers" /></a> |
+					<a href="${viewUrl}/${space.externalId}?viewOriginalSpaceBlueprint=true${keepScale}"><spring:message code="label.spaces.viewOriginalBlueprint" text="Original Blueprint" /></a> |
+					<c:if test="${scale < 100 }">
+						<a href="${viewUrl}/${space.externalId}?${scaleOpts}&scale=100"><span class="glyphicon glyphicon-zoom-in"/></a>					
+					</c:if>
+					<c:if test="${scale >= 100 }">
+						<a href="${viewUrl}/${space.externalId}?${scaleOpts}"><span class="glyphicon glyphicon-zoom-out"/></a>					
+					</c:if>	
+				</td>
+				
+				<spring:url var="blueprintUrl" value="/spaces-view/blueprint/${space.externalId}" />
+				<spring:url var="vDoorNum" value="false" />
+				<spring:url var="vBlueprintNum" value="false" />
+				<spring:url var="vIds" value="false" />
+				<spring:url var="vOrigSpaceBP" value="false" />
+				<spring:url var="theScale" value="50" />
+				<c:if test="${(empty viewOriginalSpaceBlueprint) and (empty viewBlueprintNumbers) and (empty viewIdentifications) and (empty viewDoorNumbers)}">
+					<c:set var="vIds" value="true"/>
+				</c:if>
+				<c:if test="${not empty viewOriginalSpaceBlueprint}">
+					<c:set var="vOrigSpaceBP" value="${viewOriginalSpaceBlueprint}"/>
+				</c:if>
+				<c:if test="${not empty viewBlueprintNumbers}">
+					<c:set var="vBlueprintNum" value="${viewBlueprintNumbers}"/>
+				</c:if>
+				<c:if test="${not empty viewIdentifications}">
+					<c:set var="vIds" value="${viewIdentifications}"/>
+				</c:if>
+				<c:if test="${not empty viewDoorNumbers}">
+					<c:set var="vDoorNum" value="${viewDoorNumbers}"/>
+				</c:if>
+				<c:if test="${not empty scale}">
+					<c:set var="theScale" value="${scale}"/>
+				</c:if>
+				<c:set var="blueprintUrl" value="${blueprintUrl}?viewDoorNumbers=${vDoorNum}"/>
+				<c:set var="blueprintUrl" value="${blueprintUrl}&viewBlueprintNumbers=${vBlueprintNum}"/>
+				<c:set var="blueprintUrl" value="${blueprintUrl}&viewIdentifications=${vIds}"/>
+				<c:set var="blueprintUrl" value="${blueprintUrl}&viewOriginalSpaceBlueprint=${vOrigSpaceBP}"/>
+				<c:set var="blueprintUrl" value="${blueprintUrl}&scale=${theScale}"/>
+				</tr>
+				<tr>
+				<td colspan="100%">
 					<img src="${blueprintUrl}" usemap="#roomLinksMap"/>
 					<c:if test="${not empty blueprintTextRectangles}">
 						<map id ="roomLinksMap" name="roomLinksMap">
@@ -106,34 +159,34 @@
 							</c:forEach>
 						</map>
 					</c:if>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><spring:message code="label.spaces.area" text="Area" /></th>
-				<td>${information.area}</td>
-			</tr>
-			<c:forEach var="metadata" items="${information.metadata}">
-				<c:set var="field" value="${metadata.key}" />
-				<c:set var="metadataSpec" value="${information.classification.getMetadataSpec(field).get()}" />
-				<c:set var="value" value="${metadata.value}" />
-				<tr>
-					<th scope="row">${metadataSpec.description.content}</th>
-					<td>
-						<c:if test='${metadataSpec.type.simpleName.equals("Boolean")}'>
-							<c:choose>
-								<c:when test="${value == true}">
-									<i class="glyphicon glyphicon-ok"></i>
-								</c:when>
-								<c:when test="${value == false }">
-									<i class="glyphicon glyphicon-remove"></i>
-								</c:when>
-							</c:choose>
-						</c:if>
-						<c:if test='${!metadataSpec.type.simpleName.equals("Boolean")}'>
-							${value}
-						</c:if>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row"><spring:message code="label.spaces.area" text="Area" /></th>
+					<td>${information.area}</td>
+				</tr>
+				<c:forEach var="metadata" items="${information.metadata}">
+					<c:set var="field" value="${metadata.key}" />
+					<c:set var="metadataSpec" value="${information.classification.getMetadataSpec(field).get()}" />
+					<c:set var="value" value="${metadata.value}" />
+					<tr>
+						<th scope="row">${metadataSpec.description.content}</th>
+						<td>
+							<c:if test='${metadataSpec.type.simpleName.equals("Boolean")}'>
+								<c:choose>
+									<c:when test="${value == true}">
+										<i class="glyphicon glyphicon-ok"></i>
+									</c:when>
+									<c:when test="${value == false }">
+										<i class="glyphicon glyphicon-remove"></i>
+									</c:when>
+								</c:choose>
+							</c:if>
+							<c:if test='${!metadataSpec.type.simpleName.equals("Boolean")}'>
+								${value}
+							</c:if>
+						</td>
+					</tr>
 			</c:forEach>
 		</table>
 	</div>

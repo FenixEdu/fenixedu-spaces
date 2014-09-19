@@ -23,6 +23,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.core.util.CoreConfiguration;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.occupation.config.OccupationConfig;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
@@ -116,6 +119,29 @@ public class Occupation extends Occupation_Base {
         setBennu(null);
         getSpaceSet().clear();
         super.deleteDomainObject();
+    }
+
+    public boolean canManageOccupation(User user) {
+        for (Space space : getSpaces()) {
+            if (!space.isOccupationMember(user)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String getInfo() {
+        return "";
+    }
+
+    public String getUrl() {
+        if (!getClass().equals(Occupation.class)) {
+            return "";
+        }
+        if (canManageOccupation(Authenticate.getUser())) {
+            return CoreConfiguration.getConfiguration().applicationUrl() + "/spaces/occupations/view/" + getOid().toString();
+        }
+        return "";
     }
 
 }

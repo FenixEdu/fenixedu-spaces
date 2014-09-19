@@ -75,6 +75,7 @@
 							<c:if test="${space.isSpaceManagementMember(currentUser)}">
 								<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a>
 								<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+								<a href="${createSubSpaceUrl}" class="btn btn-default" title="Create"><span class="glyphicon glyphicon-plus-sign"></span></a>
 								<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
 							</c:if>
 							<c:if test="${not empty space.occupationSet}">
