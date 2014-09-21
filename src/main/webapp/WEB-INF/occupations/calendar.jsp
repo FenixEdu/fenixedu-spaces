@@ -643,7 +643,11 @@
 	text-align: center;
 }
 </style>
-
+<style>
+.xdsoft_datetimepicker {
+	z-index:20000 !important;
+}
+</style>
 
 <body>
 	<span>
