@@ -248,13 +248,13 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
                 return space.getName();
 
             } else if (isToViewDoorNumbers != null && isToViewDoorNumbers) {
-
-//                SpaceInformation spaceInformation = space.getSpaceInformation();
+                String name = (String) space.getMetadata("doorNumber").orElse("-");
+//                Information spaceInformation = space.getSpaceInformation();
 //                if (spaceInformation instanceof RoomInformation) {
 //                    textToInsert = ((RoomInformation) spaceInformation).getDoorNumber();
 //                }
 
-                return space.getBlueprintNumber().orElse("-");
+                return name;
             } else if (isToViewBlueprintNumbers != null && isToViewBlueprintNumbers) {
                 return textToInsert;
             }

@@ -18,48 +18,30 @@
  */
 package org.fenixedu.spaces.ui;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServletResponse;
 
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
-import org.fenixedu.spaces.domain.BlueprintFile;
-import org.fenixedu.spaces.domain.BlueprintFile.BlueprintTextRectangles;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
-import org.fenixedu.spaces.services.SpaceBlueprintsDWGProcessor;
-import org.fenixedu.spaces.ui.services.OccupationService;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.Interval;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
-
-import com.google.common.base.Strings;
 
 @SpringApplication(group = "anyone", path = "spaces", title = "title.space.management", hint = "spaces-manager")
 @SpringFunctionality(app = SpacesController.class, title = "title.space.management")
@@ -121,7 +103,7 @@ public class SpacesController {
             model.addAttribute("action", "/spaces/create");
         } else {
             model.addAttribute("action", "/spaces/create/" + space.getExternalId());
-            model.addAttribute("parentSpace", space.bean());
+            model.addAttribute("parentSpace", space);
         }
         model.addAttribute("information", new InformationBean());
         model.addAttribute("classifications", allClassifications());
@@ -207,21 +189,6 @@ public class SpacesController {
     public String delete(@PathVariable() Space space) throws UnavailableException {
         space.delete();
         return "ok";
-    }
-
-    @RequestMapping(value = "/blueprint/{space}", method = RequestMethod.GET)
-    public void blueprint(@PathVariable Space space, @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
-            defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, @RequestParam(defaultValue = "50") BigDecimal scale,
-            HttpServletResponse response) throws IOException, UnavailableException {
-        Boolean isToViewOriginalSpaceBlueprint = false;
-        Boolean viewBlueprintNumbers = true;
-        Boolean isToViewIdentifications = true;
-        Boolean isToViewDoorNumbers = false;
-        BigDecimal scalePercentage = scale;
-        try (OutputStream outputStream = response.getOutputStream()) {
-            SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isToViewOriginalSpaceBlueprint, viewBlueprintNumbers,
-                    isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
-        }
     }
 
 }

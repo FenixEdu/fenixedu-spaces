@@ -463,16 +463,27 @@
 		$("#myModal").modal("show");
 	}
 	
-	/*function gotoFirstEvent() {
+	function gotoFirstEvent() {
 		var events = $("#calendar").fullCalendar('clientEvents');
+		if(events.length==0){
+			gotoToday();
+		}
 		var event = events[0]
 		
 		var year = moment(event.start).year();
 		var month = moment(event.start).month();
 		var day = moment(event.start).date();
 		$("#calendar").fullCalendar('gotoDate', year, month, day);
-	}*/
+	}
 
+	function gotoToday() {
+		var event = moment();
+		var year = moment(event.start).year();
+		var month = moment(event.start).month();
+		var day = moment(event.start).date();
+		$("#calendar").fullCalendar('gotoDate', year, month, day);
+	}
+	
 	$(document).ready(function() {
 		
 		$('#calendar').fullCalendar(calendar);
@@ -552,15 +563,21 @@
 			} else {
 				occupation.id = indexOccupationEvents++;
 			}
-
+			
 			occupationEvents[occupation.id] = occupation;
 			$(config.processIntervals()).each(function() {
 				addEvent(this, occupation);
 			});
-
+			
 			$("#myModal").removeData("event")
 			$("#myModal").modal("hide")
-			$("#add-event").attr("disabled",true)
+			var events = $("#calendar").fullCalendar('clientEvents');
+			if(events.length > 0){
+				$("#add-event").attr("disabled",true)
+			}else{
+				$("#add-event").attr("disabled",false)
+			}
+			gotoFirstEvent();
 		});
 
 		$("#delete").click(function() {
@@ -569,6 +586,7 @@
 			$("#calendar").fullCalendar('removeEvents', event_id);
 			$("#myModal").modal('hide');
 			$("#add-event").attr("disabled",false)
+			gotoToday();
 		});
 
 		/** init code **/
@@ -625,7 +643,11 @@
 	text-align: center;
 }
 </style>
-
+<style>
+.xdsoft_datetimepicker {
+	z-index:20000 !important;
+}
+</style>
 
 <body>
 	<span>
