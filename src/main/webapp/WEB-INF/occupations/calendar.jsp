@@ -484,6 +484,83 @@
 		$("#calendar").fullCalendar('gotoDate', year, month, day);
 	}
 	
+	function checkBadTime(){
+		var allday = $("#allday").prop("checked");
+		var starttime = $("#starttime").val();
+		var endtime = $("#endtime").val();
+		<!-- verify date parameters -->
+		$("#endtime")[0].style.border = "";
+		$("#starttime")[0].style.border = "";
+		if(allday == true) return false;
+		if(starttime == "__:__" && endtime == "__:__"){
+			alert("<spring:message code="calendar.error.time.badstartend" text="Por favor selecione horas de início e fim válidas"/>");
+			$("#starttime")[0].style.border = "1px solid #ff0000";
+			$("#endtime")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		if(starttime == "__:__"){ 
+			alert("<spring:message code="calendar.error.time.badstart" text="Por favor selecione hora de início válida"/>"); 
+			$("#starttime")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		if(endtime == "__:__"){
+			alert("<spring:message code="calendar.error.time.badsend" text="Por favor selecione hora de terminar válida"/>");
+			$("#endtime")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		stime = getStartTime();
+		etime = getEndTime();
+		if(stime >= etime){
+			alert("<spring:message code="calendar.error.time.badorder" text="A hora de iniciar deve ser anterior à hora de terminar"/>");
+			$("#starttime")[0].style.border = "1px solid #ff0000";
+			$("#endtime")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		$("#starttime")[0].style.border = "";
+		$("#endtime")[0].style.border = "";
+		return false;
+	}
+	
+	function checkBadDate(){
+		var startdate = $("#startdate").val();
+		var enddate = $("#enddate").val();
+		$("#enddate")[0].style.border = "";
+		$("#startdate")[0].style.border = "";
+		<!-- verify date parameters -->
+		if(startdate == "__/__/____" && enddate == "__/__/____"){
+			alert("<spring:message code="calendar.error.date.badstartend" text="Por favor selecione datas de início e fim válidas"/>");
+			$("#startdate")[0].style.border = "1px solid #ff0000";
+			$("#enddate")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		if(startdate == "__/__/____"){ 
+			alert("<spring:message code="calendar.error.date.badstart" text="Por favor selecione data de início válida"/>"); 
+			$("#startdate")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		if(enddate == "__/__/____"){
+			alert("<spring:message code="calendar.error.date.badend" text="Por favor selecione data de terminar válida"/>");
+			$("#enddate")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		sdate = getStartMoment();
+		edate = getEndMoment();
+		if(sdate > edate){
+			alert("<spring:message code="calendar.error.date.order" text="A data de iniciar deve ser anterior à data de terminar"/>");
+			$("#enddate")[0].style.border = "1px solid #ff0000";
+			$("#startdate")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		return false;
+	}
+	
+	function checkDateTime(){
+		if(checkBadDate()) return true;
+		if(checkBadTime()) return true;
+		return false;
+		
+	}
+	
 	$(document).ready(function() {
 		
 		$('#calendar').fullCalendar(calendar);
@@ -552,10 +629,14 @@
 			$("#repeatsevery").append(sprintf("<option value='%1$s'>%1$s</option>", i));
 		}
 
+		
+		
 		$("#save").click(function() {
 			var event_id = $("#myModal").data("event")
 			var config = repeatsconfig[$("#frequency").val()];
 			var occupation = config.getOccupation();
+			if(checkBadTime()) return;
+			if(checkBadDate()) return;
 			
 			if (!isNaN(event_id)) {
 				$("#calendar").fullCalendar('removeEvents', event_id)
@@ -563,7 +644,7 @@
 			} else {
 				occupation.id = indexOccupationEvents++;
 			}
-			
+
 			occupationEvents[occupation.id] = occupation;
 			$(config.processIntervals()).each(function() {
 				addEvent(this, occupation);
