@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.UnavailableException;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
@@ -126,7 +128,9 @@ public class SpacesController {
     }
 
     private boolean accessControl(Space space) {
-        return space.isSpaceManagementMember(Authenticate.getUser());
+        User currentUser = Authenticate.getUser();
+        return (space == null && DynamicGroup.get("spaceSuperUsers").isMember(currentUser))
+                || space.isSpaceManagementMember(currentUser);
     }
 
     private void canWrite(Space space) {
@@ -139,7 +143,11 @@ public class SpacesController {
     private void create(Space space, InformationBean infoBean) {
         canWrite(space);
         final Information information = new Information.Builder(infoBean).build();
-        new Space(space, information);
+        Space newSpace = new Space(space, information);
+        if (space == null) {
+            newSpace.setManagementAccessGroup(DynamicGroup.get("spaceSuperUsers"));
+            newSpace.setOccupationsAccessGroup(DynamicGroup.get("spaceSuperUsers"));
+        }
     }
 
     @RequestMapping(value = "/edit/{space}", method = RequestMethod.GET)
@@ -156,7 +164,7 @@ public class SpacesController {
             throws UnavailableException {
         canWrite(space);
         space.bean(informationBean);
-        return "redirect:/spaces/view/" + space.getExternalId();
+        return "redirect:/spaces-view/view/" + space.getExternalId();
     }
 
     @RequestMapping(value = "/timeline/{space}", method = RequestMethod.GET)

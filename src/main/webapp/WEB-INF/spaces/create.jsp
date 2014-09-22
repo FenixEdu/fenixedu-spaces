@@ -31,6 +31,9 @@
 </script>
 
 <script type="text/javascript">
+
+
+
 	$(document).ready(function() {
 		var specs = [];
 		var selectedClassification = $("#classificationInput").val();
@@ -42,9 +45,12 @@
 			</c:if>
 			<c:out value="specs['${id}'] = ${spec};" escapeXml="false"/>
 		</c:forEach>
+		loadClassification(selectedClassification,false);
 		$("#classificationInput").change(function() {
-			var value = this.value;
-			if (value != selectedClassification) {
+			loadClassification(this.value,true);
+		});
+		function loadClassification(value, loaded){
+			if (value != selectedClassification && loaded) {
 				$("input[name^=metadata]").parent().remove();
 				selectedClassification = value;
 			}
@@ -67,7 +73,8 @@
 				formGroup.append(input);
 				$($("form[role=form] .form-group").last()).after(formGroup);
 			});
-		});
+			
+		}
 	});
 </script>
 
@@ -105,7 +112,7 @@
     			<c:when test="${classificationId == information.classification.externalId}">
     				<form:option value="${classificationId}" selected="selected">${classificationName}</form:option>
     			</c:when>
-				<c:otherwise>
+				<c:otherwise>  
 					<form:option value="${classificationId}">${classificationName}</form:option>
 				</c:otherwise>
 			</c:choose>

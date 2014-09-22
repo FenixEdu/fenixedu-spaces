@@ -81,7 +81,7 @@
 							<c:if test="${not empty space.occupationSet}">
 								<a href="${scheduleUrl}" class="btn btn-default" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span></a>
 							</c:if>
-							<%-- <a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a> --%>
+							<a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a>
 						</td>
 					</tr>
 				</c:forEach>
