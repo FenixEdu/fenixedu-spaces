@@ -574,7 +574,7 @@
 		checkBadDateInput();
 		checkBadTimeInput();
 	}
-	
+
 	function checkBadDateInput(){
 		if(checkDateStatus()==true){
 			checkBadDate();
@@ -642,6 +642,7 @@
 				  					}
 								},
 				  onChangeDateTime: function(dp,$input){
+
 					  checkBadInput();
 				  }
 				};
@@ -844,6 +845,7 @@
 						<tr class="row">
 							<th class="col-lg-3"><spring:message code="calendar.repeatsevery" text="Todo o dia"/></th>
 							<td class="col-lg-9">
+
 								<input type="checkbox" id="allday" onchange="checkBadInput()"/>
 								<span style="display:block;">
 										<input type="text" id="starttime" onchange="checkBadInput()"/>
