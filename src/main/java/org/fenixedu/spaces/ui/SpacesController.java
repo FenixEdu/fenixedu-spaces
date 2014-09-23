@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.UnavailableException;
 
+import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
@@ -126,7 +128,9 @@ public class SpacesController {
     }
 
     private boolean accessControl(Space space) {
-        return space.isSpaceManagementMember(Authenticate.getUser());
+        User currentUser = Authenticate.getUser();
+        return (space == null && DynamicGroup.get("managers").isMember(currentUser))
+                || space.isSpaceManagementMember(currentUser);
     }
 
     private void canWrite(Space space) {

@@ -105,7 +105,7 @@
     			<c:when test="${classificationId == information.classification.externalId}">
     				<form:option value="${classificationId}" selected="selected">${classificationName}</form:option>
     			</c:when>
-				<c:otherwise>
+				<c:otherwise>  
 					<form:option value="${classificationId}">${classificationName}</form:option>
 				</c:otherwise>
 			</c:choose>
