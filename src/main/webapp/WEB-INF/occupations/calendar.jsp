@@ -72,7 +72,7 @@
    					week: 'ddd d/M', // Mon 9/7
    					day: 'dddd d/M'  // Monday 9/7
 		},
-		minTime : "08:00",
+		minTime : "00:00",
 		maxTime : "24:00",
 		axisFormat: 'H:mm',
 		allDaySlot : false,
@@ -81,7 +81,9 @@
 		editable: false,
 		eventClick : function(event, jsEvent, view) {
 			editEvent(event)
-		}
+		},
+		firstHour: 8,
+		contentHeight: 600
 	};
 
 	var occupationEvents = {}
@@ -433,7 +435,7 @@
 			}
 		}
 	};
-
+	
 	function addEvent(interval, occupation) {
 		var occupationEvent = {
 				id : occupation.id,
@@ -549,8 +551,14 @@
 			$("#endtime")[0].style.border = "1px solid #ff0000";
 			return true;
 		}
-		stime = getStartTime();
-		etime = getEndTime();
+		<!-- we can only verify start and end time if we have dates -->
+		var startdate = $("#startdate").val();
+		var enddate = $("#enddate").val();
+		if(startdate == "__/__/____" || enddate == "__/__/____"){
+			return false;
+		}
+		stime = getStartMoment();
+		etime = getEndMoment();
 		if(stime >= etime){
 			addHint("endtime","<spring:message code="calendar.error.time.badorder" text="A hora de iniciar deve ser anterior à hora de terminar"/>","endtimehint");
 			$("#starttime")[0].style.border = "1px solid #ff0000";
@@ -560,6 +568,11 @@
 		$("#starttime")[0].style.border = "";
 		$("#endtime")[0].style.border = "";
 		return false;
+	}
+	
+	function checkBadInput(){
+		checkBadDateInput();
+		checkBadTimeInput();
 	}
 	
 	function checkBadDateInput(){
@@ -597,8 +610,8 @@
 			$("#enddate")[0].style.border = "1px solid #ff0000";
 			return true;
 		}
-		sdate = getStartMoment();
-		edate = getEndMoment();
+		sdate = getStartDate();
+		edate = getEndDate();
 		if(sdate > edate){
 			addHint("enddate","<spring:message code="calendar.error.date.order" text="A data de iniciar deve ser igual ou anterior à data de terminar"/>","enddatehint");
 			$("#enddate")[0].style.border = "1px solid #ff0000";
@@ -629,7 +642,7 @@
 				  					}
 								},
 				  onChangeDateTime: function(dp,$input){
-					 checkBadDateInput();
+					  checkBadInput();
 				  }
 				};
 
@@ -645,7 +658,7 @@
 								 datepicker : false, 
 								 step:30,
 								 onChangeDateTime: function(dp,$input){
-									 checkBadTimeInput();
+									 checkBadInput();
 								 }};
 
 		$("#starttime,#endtime").datetimepicker(timepickerConfig);
@@ -814,7 +827,7 @@
 							<th class="col-lg-3"><spring:message code="calendar.start" text="Início"/></th>
 							<td>
 								<span style="display:block;">
-									<input type="text" id="startdate" oninput="checkBadDateInput()"/>
+									<input type="text" id="startdate" oninput="checkBadInput()"/>
 								</span>
 							</td>
 						</tr>
@@ -823,7 +836,7 @@
 							<td class="col-lg-9">
 								
 								<span style="display:block;">
-									<input type="text" id="enddate" oninput="checkBadDateInput()"/>
+									<input type="text" id="enddate" oninput="checkBadInput()"/>
 								</span>
 								
 							</td>
@@ -831,12 +844,12 @@
 						<tr class="row">
 							<th class="col-lg-3"><spring:message code="calendar.repeatsevery" text="Todo o dia"/></th>
 							<td class="col-lg-9">
-								<input type="checkbox" id="allday" onchange="checkBadTime()"/>
+								<input type="checkbox" id="allday" onchange="checkBadInput()"/>
 								<span style="display:block;">
-										<input type="text" id="starttime" onchange="checkBadTime()"/>
+										<input type="text" id="starttime" onchange="checkBadInput()"/>
 									</span>
 									<span>
-										<input type="text" id="endtime" onchange="checkBadTime()"/>
+										<input type="text" id="endtime" onchange="checkBadInput()"/>
 									</span>
 								</td>
 							</tr>
