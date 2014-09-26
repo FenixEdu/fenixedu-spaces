@@ -94,7 +94,7 @@ public class ExportSpace {
                 row.setCell((subSpace.getMetadata("doorNumber").orElse("--")).toString());
                 row.setCell(subSpace.bean().getBlueprintNumber() != null ? subSpace.bean().getBlueprintNumber() : "--");
                 row.setCell(subSpace.bean().getClassification() != null ? subSpace.bean().getClassification().getName()
-                        .toString() : "--");
+                        .getContent() : "--");
                 row.setCell(subSpace.bean().getArea() != null ? subSpace.bean().getArea().toString() : "--");
 
                 row.setCell((subSpace.getMetadata("heightQuality").orElse("--")).toString());
