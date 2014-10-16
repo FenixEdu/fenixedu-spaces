@@ -27,6 +27,7 @@ import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
@@ -178,18 +179,32 @@ public class SpacesController {
     }
 
     @RequestMapping(value = "/access/{space}", method = RequestMethod.GET)
-    public String access(@PathVariable Space space, Model model) throws UnavailableException {
+    public String accessManagement(@PathVariable Space space, Model model) throws UnavailableException {
+        SpaceAccessBean theSab = new SpaceAccessBean();
+        if (space.getManagementGroupWithChainOfResponsability() != null) {
+            theSab.setManagementExpression(space.getManagementGroupWithChainOfResponsability().getExpression());
+        }
+        if (space.getOccupationsGroupWithChainOfResponsability() != null) {
+            theSab.setOccupationExpression(space.getOccupationsGroupWithChainOfResponsability().getExpression());
+        }
+        model.addAttribute("spacebean", theSab);
         model.addAttribute("space", space);
-        model.addAttribute("localOccupationsGroup", space.getOccupationsGroup());
-        model.addAttribute("localManagementGroup", space.getManagementGroup());
-        model.addAttribute("chainOccupationsGroup", space.getOccupationsGroupWithChainOfResponsability());
-        model.addAttribute("chainManagementGroup", space.getManagementGroupWithChainOfResponsability());
+        model.addAttribute("action", "/spaces/access/" + space.getExternalId());
         return "spaces/access";
     }
 
+    @Atomic(mode = TxMode.WRITE)
+    private void changeAccess(Space space, SpaceAccessBean sab) {
+        space.setManagementAccessGroup(Group.parse(sab.getManagementExpression()));
+        space.setOccupationsAccessGroup(Group.parse(sab.getOccupationExpression()));
+        return;
+    }
+
     @RequestMapping(value = "/access/{space}", method = RequestMethod.POST)
-    public String changeAccess(@PathVariable Space space, Model model) throws UnavailableException {
-        return "spaces/timeline";
+    public String changeAccess(@PathVariable Space space, @ModelAttribute SpaceAccessBean spacebean, BindingResult errors)
+            throws UnavailableException {
+        changeAccess(space, spacebean);
+        return "redirect:/spaces/access/" + space.getExternalId();
     }
 
     @ResponseBody
