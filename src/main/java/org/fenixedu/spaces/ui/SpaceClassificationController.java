@@ -109,7 +109,6 @@ public class SpaceClassificationController {
         } else {
             spaceClassificationService.updateClassification(classification, information);
         }
-
         return "redirect:/classification/edit/" + classification.getExternalId();
     }
 
