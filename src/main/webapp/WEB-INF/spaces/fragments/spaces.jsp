@@ -72,16 +72,17 @@
 						<td>${fn:length(space.children)}</td>
 						<td>
 							<a href="${viewUrl}"  class="btn btn-default" title="View"><span class="glyphicon glyphicon-eye-open"></span></a>
+							<c:if test="${not empty space.occupationSet}">
+								<a href="${scheduleUrl}" class="btn btn-default" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span></a>
+							</c:if>
 							<c:if test="${space.isSpaceManagementMember(currentUser)}">
 								<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a>
 								<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
 								<a href="${createSubSpaceUrl}" class="btn btn-default" title="Create"><span class="glyphicon glyphicon-plus-sign"></span></a>
+
+							<%--	<a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a> --%>
 								<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
 							</c:if>
-							<c:if test="${not empty space.occupationSet}">
-								<a href="${scheduleUrl}" class="btn btn-default" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span></a>
-							</c:if>
-							<%-- <a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a> --%>
 						</td>
 					</tr>
 				</c:forEach>

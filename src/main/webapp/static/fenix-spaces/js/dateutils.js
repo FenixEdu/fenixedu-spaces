@@ -66,6 +66,18 @@ function getEndMoment() {
 	return getMoment(endDate, endTime)
 }
 
+function getStartDate() {
+	var startDate = moment($("#startdate").val(),getMomentDateFormat())
+	var startTime = moment("00:00", getMomentTimeFormat())
+	return getMoment(startDate, startTime)
+}
+
+function getEndDate() {
+	var endDate =  moment($("#enddate").val(), getMomentDateFormat())
+	var endTime = moment("00:00", getMomentTimeFormat())
+	return getMoment(endDate, endTime)
+}
+
 function getStartTime() {
 	var when;
 	if (isAllDay()) {

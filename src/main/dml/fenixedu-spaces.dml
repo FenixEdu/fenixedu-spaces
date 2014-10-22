@@ -39,6 +39,26 @@ class Information {
 	DateTime created;
 }
 
+class occupation.SharedOccupation extends occupation.Occupation {
+    
+}
+
+class userOccupationConfig {
+    OccupationConfig config;
+}
+
+relation OccupationConfigUser {
+    userOccupationConfig playsRole userOccupationConfig;
+    .org.fenixedu.bennu.core.domain.User playsRole user;
+}
+
+relation SpaceOccupators {
+    occupation.SharedOccupation playsRole SharedOccupation;
+    protected userOccupationConfig playsRole userConfigPair{
+        multiplicity *;
+    }
+}
+
 class BlueprintFile extends .org.fenixedu.bennu.io.domain.GenericFile;
 
 class SpaceClassification {
@@ -225,13 +245,13 @@ relation SpaceInformationHistory {
 	}
 }
 
-
 relation BennuSpaceOccupation {
 	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
 	occupation.Occupation playsRole occupation {
 		multiplicity *;
 	}
 }
+
 relation BennuSpaces {
 	.org.fenixedu.bennu.core.domain.Bennu playsRole bennu;
 	Space playsRole space {

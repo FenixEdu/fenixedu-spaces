@@ -91,7 +91,7 @@ public final class Space extends Space_Base {
     }
 
     public boolean isActive() {
-        return getInformation().isPresent();
+        return getInformation().isPresent() && getBennu() != null;
     }
 
     public <T extends Object> Optional<T> getMetadata(String field) {

@@ -247,7 +247,7 @@ public class InformationBean {
 
     public byte[] getBlueprintContent() {
         try {
-            if (getBlueprintMultipartFile() != null) {
+            if (getBlueprintMultipartFile() != null && !getBlueprintMultipartFile().isEmpty()) {
                 return getBlueprintMultipartFile().getBytes();
             }
             if (rawBlueprint != null) {

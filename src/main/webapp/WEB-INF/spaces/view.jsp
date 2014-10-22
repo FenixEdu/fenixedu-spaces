@@ -200,3 +200,8 @@
 		<%@include file="fragments/spaces.jsp"%>
 	</div>
 </div>
+
+<spring:url var="exportUrl" value="/spaces-view/export/${space.externalId}" />
+<spring:url var="excelGif" value="/images/" />
+<a href="${exportUrl}"><img src="${excelGif}/excel.gif"/><spring:message code="label.spaces.Export" text=" Export to Excel" /></a>
+

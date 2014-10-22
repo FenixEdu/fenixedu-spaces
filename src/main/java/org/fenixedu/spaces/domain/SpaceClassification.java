@@ -25,8 +25,14 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 import org.fenixedu.commons.i18n.LocalizedString;
+import org.fenixedu.spaces.ui.SpaceClassificationBean;
+
+import pt.ist.fenixframework.Atomic;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -111,6 +117,29 @@ public class SpaceClassification extends SpaceClassification_Base {
         return classifications;
     }
 
+    private static class DeleteSpaceClassificationException extends DomainException {
+
+        protected DeleteSpaceClassificationException(String name) {
+            super(Status.INTERNAL_SERVER_ERROR, "resources/FenixEduSpacesResources", "label.cannotDeleteSpaceClassification",
+                    name);
+        }
+    }
+
+    @Atomic
+    public void delete() {
+        // verify
+        if (!getInformationsSet().isEmpty()) {
+            throw new DeleteSpaceClassificationException(this.getName().getContent());
+        }
+        getChildrenSet().forEach(m -> m.delete());
+
+        setParent(null);
+        setBennu(null);
+        //remove
+        deleteDomainObject();
+        //domain exception
+    }
+
     public Optional<MetadataSpec> getMetadataSpec(String field) {
         for (MetadataSpec spec : getMetadataSpecs()) {
             if (spec.getName().equals(field)) {
@@ -143,6 +172,19 @@ public class SpaceClassification extends SpaceClassification_Base {
             specsJson.add(spec.toJson());
         }
         setMetadataSpec(specsJson);
+    }
+
+    public SpaceClassificationBean getBean() {
+        SpaceClassificationBean scb = new SpaceClassificationBean();
+        scb.setName(this.getName().json().toString());
+        scb.setMetadata(this.getMetadataSpec().toString());
+        scb.setCode(this.getCode());
+        if (this.getParent() != null) {
+            scb.setParent(this.getParent().getExternalId());
+        } else {
+            scb.setParent("");
+        }
+        return scb;
     }
 
     public static SpaceClassification getCampusClassification() {
