@@ -34,6 +34,9 @@ import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
+import org.fenixedu.spaces.domain.userOccupationConfig;
+import org.fenixedu.spaces.domain.occupation.Occupation;
+import org.fenixedu.spaces.domain.occupation.SharedOccupation;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -45,6 +48,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
+
+import com.google.gson.JsonParser;
 
 @SpringApplication(group = "anyone", path = "spaces", title = "title.space.management", hint = "spaces-manager")
 @SpringFunctionality(app = SpacesController.class, title = "title.space.management")
@@ -205,6 +210,55 @@ public class SpacesController {
             throws UnavailableException {
         changeAccess(space, spacebean);
         return "redirect:/spaces/access/" + space.getExternalId();
+    }
+
+    private SharedOccupation getSharedOccupation(Space space) {
+        SharedOccupation SO = null;
+        for (Occupation o : space.getOccupationSet()) {
+            i++;
+            if (o.getClass().equals(SharedOccupation.class)) {
+                SO = (SharedOccupation) o;
+                break;
+            }
+        }
+        return SO;
+    }
+
+    private final JsonParser jsonParser = new JsonParser();
+
+    @RequestMapping(value = "/occupants/{space}", method = RequestMethod.GET)
+    public String occupantsManagement(@PathVariable Space space, Model model) throws UnavailableException {
+        SpaceOccupantsBean theOb = new SpaceOccupantsBean();
+        model.addAttribute("occupantsbean", theOb);
+        SharedOccupation SO = getSharedOccupation(space);
+        Set<userOccupationConfig> theSet = null;
+        if (SO == null) {
+            model.addAttribute("userConfigPairs", null);
+        } else {
+            model.addAttribute("userConfigPairs", SO.getUserOccupationConfigs());
+        }
+        model.addAttribute("action", "/spaces/occupants/" + space.getExternalId());
+        return "spaces/occupants";
+    }
+
+    @Atomic(mode = TxMode.WRITE)
+    private void occupantsManagement(Space space, SpaceOccupantsBean sab) {
+        SharedOccupation sharedOccup = getSharedOccupation(space);
+        if (sharedOccup == null) {
+            sharedOccup = new SharedOccupation();
+
+            space.addOccupation(sharedOccup);
+        }
+        sharedOccup.addConfig(sab);
+        return;
+    }
+
+    @RequestMapping(value = "/occupants/{space}", method = RequestMethod.POST)
+    public String occupantsManagement(@PathVariable Space space, @ModelAttribute SpaceOccupantsBean spacebean,
+            BindingResult errors) throws UnavailableException {
+
+        occupantsManagement(space, spacebean);
+        return "redirect:/spaces/occupants/" + space.getExternalId();
     }
 
     @ResponseBody

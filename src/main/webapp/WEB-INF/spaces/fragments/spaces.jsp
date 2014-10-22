@@ -64,7 +64,7 @@
 					<spring:url value="/spaces/schedule/${space.externalId}" var="scheduleUrl" />
 					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
 					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
-					
+					<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
 					<tr>
 						<td>${space.classification.name.content}</td>
 						<td>${space.name}</td>
@@ -79,7 +79,8 @@
 								<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a>
 								<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
 								<a href="${createSubSpaceUrl}" class="btn btn-default" title="Create"><span class="glyphicon glyphicon-plus-sign"></span></a>
-								<a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-user"></span></a>
+								<a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-ban-circle"></span></a>
+								<a href="${manageOccupantsUrl}" class="btn btn-default" title="Occupants"><span class="glyphicon glyphicon-user"></span></a>
 								<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
 							</c:if>
 						</td>

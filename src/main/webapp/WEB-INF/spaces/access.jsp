@@ -31,6 +31,9 @@
 </script>
 <spring:url var="toolkitCSS" value="/bennu-toolkit/css/toolkit.css"/>
 <link rel="stylesheet" type="text/css" media="screen" href="${toolkitCSS}">
+	<spring:url var="staticUrl" value="/static/fenix-spaces"/>
+<script src="${staticUrl}/js/sprintf.min.js"></script>
+	<script src="${staticUrl}/js/dateutils.js"></script>
 
 <div class="page-header">
   <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.space.access.management" text="Gestão de Grupos de Acesso"/></small></h1>
@@ -52,85 +55,10 @@
 	<input bennu-group allow="public,users,spaceSuperUsers,custom" id="managementExpression" name="managementExpression" value="${spacebean.managementExpression}"/>
 	</div>
 	<p class="help-block"> </p>
-	<div class="form-group">
-<!-- 	<h4> -->
-<%-- 		<spring:message code="label.space.occupation.user" --%>
-<%-- 			text="Ocupação Actual" /> --%>
-<!-- 	</h4> -->
-<%-- 		<input bennu-group allow="custom" id="currentOccupationExpression" name="currentOccupationExpression" value="${spacebean.currentOccupationExpression}"/> --%>
-	</div>
 		<button type="submit" class="btn btn-default">
 			<spring:message code="label.submit" text="Submit" />
 		</button>
-
 </form:form>
-
-<%-- <c:if test="${empty localOccupationsGroup and not empty chainOccupationsGroup}"> --%>
-		
-<!-- 	<p> -->
-<!-- 		<strong> -->
-<%-- 			<spring:message code="label.space.access.occupations.group.description" text="Descrição do Grupo"/> --%>
-<!-- 		</strong> -->
-<%-- 	aaa ${chainOccupationsGroup.expression} --%>
-<!-- 	</p> -->
-<!-- 	<table class="table"> -->
-<!-- 		<thead> -->
-<%-- 			<th><spring:message code="label.space.access.occupations.member" text="Nome Utilizador"/></th> --%>
-<!-- 		</thead> -->
-<!-- 		<tbody> -->
-<%-- 		<c:forEach var="member" items="${chainOccupationsGroup.members}"> --%>
-<!-- 			<tr> -->
-<%-- 				<td>${member.presentationName}</td> --%>
-<!-- 			</tr> -->
-<%-- 		</c:forEach> --%>
-<!-- 		</tbody> -->
-<!-- 	</table> -->
-	
-<%-- </c:if> --%>
-<%-- <c:if test="${ not empty localOccupationsGroup }"> --%>
-<%-- 	<p> bbb ${localOccupationsGroup.expression}</p> --%>
-<%-- </c:if> --%>
-<!-- <h3> -->
-<%-- 	<spring:message code="label.space.access.management.group" text="Grupo de Gestão de Espaço"/> --%>
-<!-- </h3> -->
-<%-- <c:if test="${empty localManagementGroup and not empty chainManagementGroup}"> --%>
-		
-<!-- 	<p> -->
-<!-- 		<strong> -->
-<%-- 			<spring:message code="label.space.access.occupations.group.description" text="Descrição do Grupo"/> --%>
-<!-- 		</strong> -->
-<%-- 	ccc ${chainManagementGroup.presentationName} --%>
-<!-- 	</p> -->
-<!-- 	<table class="table"> -->
-<!-- 		<thead> -->
-<%-- 			<th><spring:message code="label.space.access.occupations.member" text="Nome Utilizador"/></th> --%>
-<!-- 		</thead> -->
-<!-- 		<tbody> -->
-<%-- 		<c:forEach var="member" items="${chainManagementGroup.members}"> --%>
-<!-- 			<tr> -->
-<%-- 				<td>${member.presentationName}</td> --%>
-<!-- 			</tr> -->
-<%-- 		</c:forEach> --%>
-<!-- 		</tbody> -->
-<!-- 	</table> -->
-	
-<%-- </c:if> --%>
-<%-- <c:if test="${ not empty localManagementGroup }"> --%>
-<%-- 	<p>ddd ${localManagementGroup.expression}</p> --%>
-
-<!-- 	<table class="table"> -->
-<!-- 		<thead> -->
-<%-- 			<th><spring:message code="label.space.access.occupations.member" text="Nome Utilizador"/></th> --%>
-<!-- 		</thead> -->
-<!-- 		<tbody> -->
-<%-- 		<c:forEach var="member" items="${localManagementGroup.members}"> --%>
-<!-- 			<tr> -->
-<%-- 				<td>${member.presentationName}</td> --%>
-<!-- 			</tr> -->
-<%-- 		</c:forEach> --%>
-<!-- 		</tbody> -->
-<!-- 	</table> -->
-<%-- 	</c:if> --%>
 
 <script>
  Bennu.group.allow['spaceSuperUsers'] = {
