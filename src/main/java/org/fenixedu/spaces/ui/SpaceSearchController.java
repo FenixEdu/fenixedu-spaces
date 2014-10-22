@@ -36,6 +36,7 @@ import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.BlueprintFile;
 import org.fenixedu.spaces.domain.BlueprintFile.BlueprintTextRectangles;
 import org.fenixedu.spaces.domain.Space;
+import org.fenixedu.spaces.services.ExportSpace;
 import org.fenixedu.spaces.services.SpaceBlueprintsDWGProcessor;
 import org.fenixedu.spaces.ui.services.OccupationService;
 import org.joda.time.DateTime;
@@ -149,6 +150,18 @@ public class SpaceSearchController {
         model.addAttribute("parentSpace", space.getParent());
         model.addAttribute("currentUser", Authenticate.getUser());
         return "spaces/view";
+    }
+
+    @RequestMapping(value = "/export/{space}", method = RequestMethod.GET)
+    public void exportCSV(@PathVariable Space space, @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
+            defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, HttpServletResponse response) throws IOException,
+            UnavailableException {
+        String filename = space.getName() + "_info";
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xls");
+        try (OutputStream outputStream = response.getOutputStream()) {
+            ExportSpace.run(space, outputStream);
+        }
     }
 
     @RequestMapping(value = "/blueprint/{space}", method = RequestMethod.GET)

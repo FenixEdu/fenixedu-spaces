@@ -72,7 +72,7 @@
    					week: 'ddd d/M', // Mon 9/7
    					day: 'dddd d/M'  // Monday 9/7
 		},
-		minTime : "08:00",
+		minTime : "00:00",
 		maxTime : "24:00",
 		axisFormat: 'H:mm',
 		allDaySlot : false,
@@ -81,7 +81,9 @@
 		editable: false,
 		eventClick : function(event, jsEvent, view) {
 			editEvent(event)
-		}
+		},
+		firstHour: 8,
+		contentHeight: 600
 	};
 
 	var occupationEvents = {}
@@ -433,7 +435,7 @@
 			}
 		}
 	};
-
+	
 	function addEvent(interval, occupation) {
 		var occupationEvent = {
 				id : occupation.id,
@@ -484,6 +486,147 @@
 		$("#calendar").fullCalendar('gotoDate', year, month, day);
 	}
 	
+	function addHint(theelement, Message, newId){
+		var element = document.getElementById(theelement);
+		var parent = element.parentNode;
+		var newChildNode = document.createElement("p");
+		newChildNode.id = newId;
+		newChildNode.style.color = "red";
+		newChildNode.textContent = Message;
+		parent.appendChild(newChildNode);
+	}
+	
+	function checkTimeStatus(){
+		var allday = $("#allday").prop("checked");
+		var starttime = $("#starttime").val();
+		var endtime = $("#endtime").val();
+		if(checkHint("endtimehint") == true) return true;
+		if(starttime == "__:__" || endtime == "__:__") return false;
+		return true;
+	}
+	
+	function checkDateStatus(){
+		var startdate = $("#startdate").val();
+		var enddate = $("#enddate").val();
+		if(checkHint("endtimehint")) return true;
+		if(startdate == "__/__/____" || enddate == "__/__/____") return false;
+		return true;
+	}
+	
+	function checkHint(newId){
+		var element = document.getElementById(newId);
+		if(element == null) return false;
+		return true;
+	}
+	
+	function removeHint(newId){
+		var element = document.getElementById(newId);
+		if(element == null) return false;
+		element.parentNode.removeChild(element);
+		return true;
+	}
+	
+	function checkBadTime(){
+		var allday = $("#allday").prop("checked");
+		var starttime = $("#starttime").val();
+		var endtime = $("#endtime").val();
+		<!-- verify date parameters -->
+		removeHint("endtimehint");
+		$("#endtime")[0].style.border = "";
+		$("#starttime")[0].style.border = "";
+		if(allday == true) return false;
+		if(starttime == "__:__" && endtime == "__:__"){
+			addHint("endtime","<spring:message code="calendar.error.time.badstartend" text="Por favor selecione horas de início e fim válidas"/>","endtimehint");
+			$("#starttime")[0].style.border = "1px solid #ff0000";
+			$("#endtime")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		if(starttime == "__:__"){ 
+			addHint("endtime","<spring:message code="calendar.error.time.badstart" text="Por favor selecione hora de início válida"/>","endtimehint"); 
+			$("#starttime")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		if(endtime == "__:__"){
+			addHint("endtime","<spring:message code="calendar.error.time.badsend" text="Por favor selecione hora de terminar válida"/>","endtimehint");
+			$("#endtime")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		<!-- we can only verify start and end time if we have dates -->
+		var startdate = $("#startdate").val();
+		var enddate = $("#enddate").val();
+		if(startdate == "__/__/____" || enddate == "__/__/____"){
+			return false;
+		}
+		stime = getStartMoment();
+		etime = getEndMoment();
+		if(stime >= etime){
+			addHint("endtime","<spring:message code="calendar.error.time.badorder" text="A hora de iniciar deve ser anterior à hora de terminar"/>","endtimehint");
+			$("#starttime")[0].style.border = "1px solid #ff0000";
+			$("#endtime")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		$("#starttime")[0].style.border = "";
+		$("#endtime")[0].style.border = "";
+		return false;
+	}
+	
+	function checkBadInput(){
+		checkBadDateInput();
+		checkBadTimeInput();
+	}
+
+	function checkBadDateInput(){
+		if(checkDateStatus()==true){
+			checkBadDate();
+		}
+	}
+	
+	function checkBadTimeInput(){
+		if(checkTimeStatus()==true){
+			checkBadTime();
+		}
+	}
+	
+	function checkBadDate(){
+		var startdate = $("#startdate").val();
+		var enddate = $("#enddate").val();
+		removeHint("enddatehint");
+		$("#enddate")[0].style.border = "";
+		$("#startdate")[0].style.border = "";
+		<!-- verify date parameters -->
+		if(startdate == "__/__/____" && enddate == "__/__/____"){
+			addHint("enddate","<spring:message code="calendar.error.date.badstartend" text="Por favor selecione datas de início e fim válidas"/>","enddatehint");
+			$("#startdate")[0].style.border = "1px solid #ff0000";
+			$("#enddate")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		if(startdate == "__/__/____"){ 
+			addHint("enddate","<spring:message code="calendar.error.date.badstart" text="Por favor selecione data de início válida"/>","enddatehint");
+			$("#startdate")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		if(enddate == "__/__/____"){
+			addHint("enddate","<spring:message code="calendar.error.date.badend" text="Por favor selecione data de terminar válida"/>","enddatehint");
+			$("#enddate")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		sdate = getStartDate();
+		edate = getEndDate();
+		if(sdate > edate){
+			addHint("enddate","<spring:message code="calendar.error.date.order" text="A data de iniciar deve ser igual ou anterior à data de terminar"/>","enddatehint");
+			$("#enddate")[0].style.border = "1px solid #ff0000";
+			$("#startdate")[0].style.border = "1px solid #ff0000";
+			return true;
+		}
+		return false;
+	}
+	
+	function checkDateTime(){
+		var result = checkBadDate();
+		var result2 = checkBadTime();
+		return result || result2;
+	}
+	
 	$(document).ready(function() {
 		
 		$('#calendar').fullCalendar(calendar);
@@ -497,7 +640,11 @@
 				  					if (config.updateSummary) {
 				  						config.updateSummary();
 				  					}
-								}
+								},
+				  onChangeDateTime: function(dp,$input){
+
+					  checkBadInput();
+				  }
 				};
 
 		$("#startdate").datetimepicker(datepickerConfig);
@@ -507,7 +654,13 @@
 		$("#enddate").datetimepicker(datepickerConfig);
 
 
-		var timepickerConfig = { format : "H:i", mask: true, datepicker : false, step:30};
+		var timepickerConfig = { format : "H:i", 
+								 mask: true, 
+								 datepicker : false, 
+								 step:30,
+								 onChangeDateTime: function(dp,$input){
+									 checkBadInput();
+								 }};
 
 		$("#starttime,#endtime").datetimepicker(timepickerConfig);
 
@@ -552,10 +705,13 @@
 			$("#repeatsevery").append(sprintf("<option value='%1$s'>%1$s</option>", i));
 		}
 
+		
+		
 		$("#save").click(function() {
 			var event_id = $("#myModal").data("event")
 			var config = repeatsconfig[$("#frequency").val()];
 			var occupation = config.getOccupation();
+			if(checkDateTime()) return;
 			
 			if (!isNaN(event_id)) {
 				$("#calendar").fullCalendar('removeEvents', event_id)
@@ -563,7 +719,7 @@
 			} else {
 				occupation.id = indexOccupationEvents++;
 			}
-			
+
 			occupationEvents[occupation.id] = occupation;
 			$(config.processIntervals()).each(function() {
 				addEvent(this, occupation);
@@ -672,7 +828,7 @@
 							<th class="col-lg-3"><spring:message code="calendar.start" text="Início"/></th>
 							<td>
 								<span style="display:block;">
-									<input type="text" id="startdate"/>
+									<input type="text" id="startdate" oninput="checkBadInput()"/>
 								</span>
 							</td>
 						</tr>
@@ -681,7 +837,7 @@
 							<td class="col-lg-9">
 								
 								<span style="display:block;">
-									<input type="text" id="enddate"/>
+									<input type="text" id="enddate" oninput="checkBadInput()"/>
 								</span>
 								
 							</td>
@@ -689,12 +845,13 @@
 						<tr class="row">
 							<th class="col-lg-3"><spring:message code="calendar.repeatsevery" text="Todo o dia"/></th>
 							<td class="col-lg-9">
-								<input type="checkbox" id="allday"/>
+
+								<input type="checkbox" id="allday" onchange="checkBadInput()"/>
 								<span style="display:block;">
-										<input type="text" id="starttime"/>
+										<input type="text" id="starttime" onchange="checkBadInput()"/>
 									</span>
 									<span>
-										<input type="text" id="endtime"/>
+										<input type="text" id="endtime" onchange="checkBadInput()"/>
 									</span>
 								</td>
 							</tr>
