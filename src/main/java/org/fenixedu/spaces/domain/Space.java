@@ -76,6 +76,12 @@ public final class Space extends Space_Base {
         add(Information.builder(informationBean).build());
     }
 
+    /**
+     * get all information beans
+     * 
+     * @return information beans ordered by date (ascending)
+     * @author cfscosta
+     */
     public List<InformationBean> timeline() {
         List<InformationBean> timeline = new ArrayList<>();
         Information current = getCurrent();
@@ -138,6 +144,13 @@ public final class Space extends Space_Base {
         return Optional.empty();
     }
 
+    private Boolean dateEquals(DateTime validFrom, DateTime validUntil) {
+        if (validFrom == null && validUntil == null) {
+            return Boolean.TRUE;
+        }
+        return validFrom == null ? Boolean.FALSE : validFrom.equals(validUntil);
+    }
+
     protected void add(Information information) {
         if (information == null) {
             return;
@@ -180,15 +193,17 @@ public final class Space extends Space_Base {
                     if (current.getValidity().equals(newValidity)) { // if it is the same period just replace current
                         newCurrent = information;
                     } else {
-                        Information right = current.keepRight(newEnd);
+                        Information right = dateEquals(current.getValidUntil(), newEnd) ? information : current.keepRight(newEnd);
                         if (last != null) {
                             last.setPrevious(right);
                         } else {
                             newHead = right; // no previous in new list, make right head
                         }
-                        right.setPrevious(information);
+                        if (right != information) {
+                            right.setPrevious(information);
+                        }
                         last = information;
-                        newCurrent = current.keepLeft(newStart);
+                        newCurrent = dateEquals(current.getValidFrom(), newStart) ? last : current.keepLeft(newStart);
                     }
                     foundEnd = true;
                     foundStart = true;
@@ -289,6 +304,22 @@ public final class Space extends Space_Base {
         return getInformation().map(info -> info.getName()).get();
     }
 
+    public String getFullName() {
+        String toRet = "";
+        String name = getInformation().map(info -> info.getName()).get();
+        String description = (String) getMetadata("description").orElse("");
+        if (!name.isEmpty()) {
+            toRet += name;
+        }
+        if (!description.isEmpty()) {
+            if (!toRet.isEmpty()) {
+                toRet += " - ";
+            }
+            toRet += description;
+        }
+        return toRet;
+    }
+
     public Optional<Integer> getAllocatableCapacity(DateTime when) {
         return getInformation(when).map(info -> info.getAllocatableCapacity());
     }
@@ -305,8 +336,19 @@ public final class Space extends Space_Base {
         return getSpaces().filter(space -> classification.equals(space.getClassification())).collect(Collectors.toSet());
     }
 
+    @Deprecated
+    /***
+     * To be removed in next major.
+     * 
+     * Use getTopLevelSpaces()
+     * @see
+     */
     public static Set<Space> getAllCampus() {
-        return getSpaces(SpaceClassification.getCampusClassification());
+        return getTopLevelSpaces();
+    }
+
+    public static Set<Space> getTopLevelSpaces() {
+        return getSpaces().filter(s -> s.getParent() == null).collect(Collectors.toSet());
     }
 
     public Group getManagementGroup() {

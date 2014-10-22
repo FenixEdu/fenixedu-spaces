@@ -20,20 +20,19 @@ package org.fenixedu.spaces.ui;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
-import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
+import org.joda.time.DateTime;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -51,10 +50,6 @@ import pt.ist.fenixframework.Atomic.TxMode;
 @RequestMapping("/spaces")
 public class SpacesController {
 
-    private Set<Space> getTopLevelSpaces() {
-        return Space.getSpaces().filter(space -> space.getParent() == null).collect(Collectors.toSet());
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public String home(Model model) {
         return home(null, model);
@@ -62,8 +57,9 @@ public class SpacesController {
 
     @RequestMapping(value = "{space}", method = RequestMethod.GET)
     public String home(@PathVariable Space space, Model model) {
-        model.addAttribute("spaces", space == null ? getTopLevelSpaces() : getChildrenOrderedByName(space));
+        model.addAttribute("spaces", space == null ? Space.getTopLevelSpaces() : getChildrenOrderedByName(space));
         model.addAttribute("currentUser", Authenticate.getUser());
+        model.addAttribute("isSpaceSuperUser", DynamicGroup.get("spaceSuperUsers").isMember(Authenticate.getUser()));
         return "spaces/home";
     }
 
@@ -109,14 +105,9 @@ public class SpacesController {
             model.addAttribute("parentSpace", space);
         }
         model.addAttribute("information", new InformationBean());
-        model.addAttribute("classifications", allClassifications());
+        model.addAttribute("classifications", SpaceClassification.all());
         model.addAttribute("currentUser", Authenticate.getUser());
         return "spaces/create";
-    }
-
-    private List<SpaceClassification> allClassifications() {
-        return SpaceClassification.all().stream().sorted((c1, c2) -> c1.getAbsoluteCode().compareTo(c2.getAbsoluteCode()))
-                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/create/{space}", method = RequestMethod.POST)
@@ -153,8 +144,10 @@ public class SpacesController {
 
     @RequestMapping(value = "/edit/{space}", method = RequestMethod.GET)
     public String edit(@PathVariable Space space, Model model) throws UnavailableException {
-        model.addAttribute("information", space.bean());
-        model.addAttribute("classifications", allClassifications());
+        InformationBean bean = space.bean();
+        bean.setValidFrom(new DateTime());
+        model.addAttribute("information", bean);
+        model.addAttribute("classifications", SpaceClassification.all());
         model.addAttribute("currentUser", Authenticate.getUser());
         model.addAttribute("action", "/spaces/edit/" + space.getExternalId());
         return "spaces/create";
@@ -164,6 +157,9 @@ public class SpacesController {
     public String edit(@PathVariable Space space, @ModelAttribute InformationBean informationBean, BindingResult errors)
             throws UnavailableException {
         canWrite(space);
+        if (space.getBlueprintFile().isPresent() && informationBean.getBlueprintContent() == null) {
+            informationBean.setBlueprint(space.getBlueprintFile().get());
+        }
         space.bean(informationBean);
         return "redirect:/spaces-view/view/" + space.getExternalId();
     }
@@ -180,14 +176,15 @@ public class SpacesController {
 
     @RequestMapping(value = "/access/{space}", method = RequestMethod.GET)
     public String accessManagement(@PathVariable Space space, Model model) throws UnavailableException {
-        SpaceAccessBean theSab = new SpaceAccessBean();
+        canWriteOccupations(space);
+        SpaceAccessBean accessBean = new SpaceAccessBean();
         if (space.getManagementGroupWithChainOfResponsability() != null) {
-            theSab.setManagementExpression(space.getManagementGroupWithChainOfResponsability().getExpression());
+            accessBean.setManagementGroup(space.getManagementGroupWithChainOfResponsability());
         }
         if (space.getOccupationsGroupWithChainOfResponsability() != null) {
-            theSab.setOccupationExpression(space.getOccupationsGroupWithChainOfResponsability().getExpression());
+            accessBean.setOccupationGroup(space.getOccupationsGroupWithChainOfResponsability());
         }
-        model.addAttribute("spacebean", theSab);
+        model.addAttribute("spacebean", accessBean);
         model.addAttribute("space", space);
         model.addAttribute("action", "/spaces/access/" + space.getExternalId());
         return "spaces/access";
@@ -195,14 +192,15 @@ public class SpacesController {
 
     @Atomic(mode = TxMode.WRITE)
     private void changeAccess(Space space, SpaceAccessBean sab) {
-        space.setManagementAccessGroup(Group.parse(sab.getManagementExpression()));
-        space.setOccupationsAccessGroup(Group.parse(sab.getOccupationExpression()));
+        space.setManagementAccessGroup(sab.getManagementGroup());
+        space.setOccupationsAccessGroup(sab.getOccupationGroup());
         return;
     }
 
     @RequestMapping(value = "/access/{space}", method = RequestMethod.POST)
     public String changeAccess(@PathVariable Space space, @ModelAttribute SpaceAccessBean spacebean, BindingResult errors)
             throws UnavailableException {
+        canWriteOccupations(space);
         changeAccess(space, spacebean);
         return "redirect:/spaces/access/" + space.getExternalId();
     }
@@ -212,6 +210,18 @@ public class SpacesController {
     public String delete(@PathVariable() Space space) throws UnavailableException {
         space.delete();
         return "ok";
+    }
+
+    private boolean accessOccupationControl(Space space) {
+        User currentUser = Authenticate.getUser();
+        return (space == null && DynamicGroup.get("spaceSuperUsers").isMember(currentUser))
+                || space.isOccupationMember(currentUser);
+    }
+
+    private void canWriteOccupations(Space space) {
+        if (!accessControl(space)) {
+            throw new RuntimeException("Unauthorized");
+        }
     }
 
 }

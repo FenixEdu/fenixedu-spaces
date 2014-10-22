@@ -65,22 +65,22 @@ $(document).ready(function() {
 
 
 <div class="page-header">
-  	<h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.view.occupations" text="Occupation Requests"/></small></h1>
+  	<h1><spring:message code="title.space.management"/><small><spring:message code="title.view.occupations"/></small></h1>
   	
-  	<h3><spring:message code="space.occupations.search" text="Search Occupation Request"></spring:message></h3>
+  	<h3><spring:message code="space.occupations.search"></spring:message></h3>
   	<form id="searchForm" class="form-inline" role="form">
   		<div class="form-group">
-   		  <label class="sr-only" for="searchRequest"><spring:message code="occupations.requests.search" text="Procurar Pedido"/></label>
-    	  <input name="search" type="text" class="form-control" id="searchRequest" value="${searchId}" placeholder="<spring:message code="occupations.requests.search" text="Nº Pedido"/>"></input>
+   		  <label class="sr-only" for="searchRequest"><spring:message code="occupations.requests.search"/></label>
+    	  <input name="search" type="text" class="form-control" id="searchRequest" value="${searchId}" placeholder="<spring:message code="occupations.requests.search"/>"></input>
   		</div>
-  		 <button id="searchRequest" class="btn btn-default"><spring:message code="label.search" text="Procurar"/></button>
+  		 <button id="searchRequest" class="btn btn-default"><spring:message code="label.search"/></button>
   	</form>
   	
   	
   	   <c:if test="${not empty userRequestSearchResult.pageList}">
   	   	
   	   	<c:set var="searchPageUrl" value="${searchUrl}${searchId}"/>
-  	   	<h3><spring:message code="label.occupation.request.search.result" text="Resultado da pesquisa por"/> ${searchId}</h3>
+  	   	<h3><spring:message code="label.occupation.request.search.result"/> ${searchId}</h3>
   		<ul class="pagination">
 	  		<li><a href="${searchPageUrl}?p=f">&laquo;</a></li>
   			<c:forEach var="page" begin="${userRequestSearchResult.firstLinkedPage}" end="${userRequestSearchResult.lastLinkedPage}">
@@ -96,10 +96,10 @@ $(document).ready(function() {
 		</ul>
 	  	<table class="table">
 	  		<thead>
-	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
-	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
-	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
-	  			<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
+	  			<th><spring:message code="label.occupation.request.identification" /></th>
+	  			<th><spring:message code="label.occupation.request.instant" /></th>
+	  			<th><spring:message code="label.occupation.request.subject" /></th>
+	  			<th><spring:message code="label.occupation.request.requestor" /></th>
 	  		</thead>
 	  		<tbody>
 	  			<c:forEach var="occupationRequest" items="${userRequestSearchResult.pageList}">
@@ -126,9 +126,9 @@ $(document).ready(function() {
 	   	</table>
   	</c:if>
   	
-  	<h3><spring:message code="space.occupations.filter.campus" text="Filter by Campus"></spring:message></h3>
+  	<h3><spring:message code="space.occupations.filter.campus"></spring:message></h3>
   	<div class="form-group">
-	    <label for="filterByCampus"><spring:message code="label.occupations.campus" text="Campus"/></label>
+	    <label for="filterByCampus"><spring:message code="label.occupations.campus"/></label>
 	    <select class="form-control" id="filterByCampus">
 	    	<option value="">---</option>
 	    	<c:forEach var="campi" items="${campus}">
@@ -139,9 +139,9 @@ $(document).ready(function() {
   	
   	
   	<!--  My Requests -->
-  	<h3><spring:message code="space.occupations.requests.my" text="My Requests"></spring:message></h3>
+  	<h3><spring:message code="space.occupations.requests.my"></spring:message></h3>
   	<c:if test="${empty myRequests.pageList}">
-  		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
+  		<em><spring:message code="space.occupations.no.requests"></spring:message></em>
   	</c:if>
   	<c:if test="${not empty myRequests.pageList}">
   		<ul class="pagination">
@@ -159,11 +159,11 @@ $(document).ready(function() {
 		</ul>
 	  	<table class="table">
 	  		<thead>
-	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
-	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
-	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
-	  			<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
-				<th><spring:message code="label.occupation.request.actions" text="actions" /></th>
+	  			<th><spring:message code="label.occupation.request.identification" /></th>
+	  			<th><spring:message code="label.occupation.request.instant" /></th>
+	  			<th><spring:message code="label.occupation.request.subject" /></th>
+	  			<th><spring:message code="label.occupation.request.requestor" /></th>
+				<th><spring:message code="label.occupation.request.actions" /></th>
 	  			
 	  		</thead>
 	  		<tbody>
@@ -187,7 +187,7 @@ $(document).ready(function() {
 	 					<td>${requestor.presentationName} (${requestor.username})</td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								<spring:message code="label.occupation.request.deal" text="Tratar Pedido"/>
+								<spring:message code="label.occupation.request.deal"/>
 							</a>
 						</td>
 					</tr>
@@ -197,9 +197,9 @@ $(document).ready(function() {
 	 </c:if>
    	
    	<!--  New Requests -->
-   	<h3><spring:message code="space.occupations.requests.new" text="New Requests"></spring:message></h3>
+   	<h3><spring:message code="space.occupations.requests.new"></spring:message></h3>
    	<c:if test="${empty newRequests.pageList}">
-  		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
+  		<em><spring:message code="space.occupations.no.requests"></spring:message></em>
   	</c:if>
   	<c:if test="${not empty newRequests.pageList}">
   		<ul class="pagination">
@@ -217,11 +217,11 @@ $(document).ready(function() {
 		</ul>
 	   	<table class="table">
 	  		<thead>
-	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
-	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
-	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
-	  			<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
-	  			<th><spring:message code="label.occupation.request.actions" text="actions" /></th>
+	  			<th><spring:message code="label.occupation.request.identification" /></th>
+	  			<th><spring:message code="label.occupation.request.instant" /></th>
+	  			<th><spring:message code="label.occupation.request.subject" /></th>
+	  			<th><spring:message code="label.occupation.request.requestor" /></th>
+	  			<th><spring:message code="label.occupation.request.actions" /></th>
 	  		</thead>
 	  		<tbody>
 	  			<c:forEach var="occupationRequest" items="${newRequests.pageList}">
@@ -244,7 +244,7 @@ $(document).ready(function() {
 	 					<td>${requestor.presentationName} (${requestor.username})</td>
 	 					<td>
 	 						<a href="${requestUrl}/${occupationRequest.externalId}/OPEN">
-	 							<spring:message code="label.occupation.request.open" text="Abrir Pedido"/>
+	 							<spring:message code="label.occupation.request.open"/>
 	 						</a>
 	 					</td>
 					</tr>
@@ -254,9 +254,9 @@ $(document).ready(function() {
 	 </c:if>
    	
    	<!--  Open Requests -->
-   	<h3><spring:message code="space.occupations.requests.open" text="Open Requests"></spring:message></h3>
+   	<h3><spring:message code="space.occupations.requests.open"></spring:message></h3>
    	<c:if test="${empty openRequests.pageList}">
-  		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
+  		<em><spring:message code="space.occupations.no.requests"></spring:message></em>
   	</c:if>
   	<c:if test="${not empty openRequests.pageList}">
   		<ul class="pagination">
@@ -274,11 +274,11 @@ $(document).ready(function() {
 		</ul>
 	   	<table class="table">
 	  		<thead>
-	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
-	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
-	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
-	  			<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
-				<th><spring:message code="label.occupation.request.actions" text="actions" /></th>
+	  			<th><spring:message code="label.occupation.request.identification" /></th>
+	  			<th><spring:message code="label.occupation.request.instant" /></th>
+	  			<th><spring:message code="label.occupation.request.subject" /></th>
+	  			<th><spring:message code="label.occupation.request.requestor" /></th>
+				<th><spring:message code="label.occupation.request.actions" /></th>
 	  		</thead>
 	  		<tbody>
 	  			<c:forEach var="occupationRequest" items="${openRequests.pageList}">
@@ -301,7 +301,7 @@ $(document).ready(function() {
 	 					<td>${requestor.presentationName} (${requestor.username})</td>
 	 					<td>
 	 						<a href="${requestUrl}/${occupationRequest.externalId}">
-	 							<spring:message code="label.occupation.request.open" text="Tratar Pedido"/>
+	 							<spring:message code="label.occupation.request.open"/>
 	 						</a>
 	 					</td>
 					</tr>
@@ -311,9 +311,9 @@ $(document).ready(function() {
    	</c:if>
    	
 	<!--  Closed Requests -->
-	<h3><spring:message code="space.occupations.requests.resolved" text="Resolved Requests"></spring:message></h3>
+	<h3><spring:message code="space.occupations.requests.resolved"></spring:message></h3>
 	<c:if test="${empty resolvedRequests.pageList}">
-  		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
+  		<em><spring:message code="space.occupations.no.requests"></spring:message></em>
   	</c:if>
   	<c:if test="${not empty resolvedRequests.pageList}">
   		<ul class="pagination">
@@ -334,14 +334,14 @@ $(document).ready(function() {
 		<c:if test="${not empty selectedCampi}">
 			<c:set var="exportExcelVars" value="${exportExcelVars}&campus=${selectedCampi.externalId}"/>
 		</c:if>
-		<a href="${exportExcelUrl}?${exportExcelVars}"><spring:message code="export.excel" text="identification" /></a>
+		<a href="${exportExcelUrl}?${exportExcelVars}"><spring:message code="export.excel" /></a>
 		<table class="table">
 	  		<thead>
-	  			<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
-	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
-	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
-	  			<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
-	  			<th><spring:message code="label.occupation.request.owner" text="Dono" /></th>
+	  			<th><spring:message code="label.occupation.request.identification" /></th>
+	  			<th><spring:message code="label.occupation.request.instant" /></th>
+	  			<th><spring:message code="label.occupation.request.subject" /></th>
+	  			<th><spring:message code="label.occupation.request.requestor" /></th>
+	  			<th><spring:message code="label.occupation.request.owner" /></th>
 	  		</thead>
 	  		<tbody>
 	  			<c:forEach var="occupationRequest" items="${resolvedRequests.pageList}">

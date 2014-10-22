@@ -30,7 +30,9 @@ import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.scheduler.custom.CustomTask;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.spaces.domain.MetadataSpec;
+import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
+import org.fenixedu.spaces.ui.InformationBean;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -48,6 +50,7 @@ public class InitializeRoomClassficationTask extends CustomTask {
     Multimap<String, MetadataSpec> codeToMetadataSpecMap;
 
     private void initMetadataSpecMap() {
+
         codeToMetadataSpecMap = HashMultimap.create();
         codeToMetadataSpecMap.put(
                 "Room",
@@ -131,6 +134,16 @@ public class InitializeRoomClassficationTask extends CustomTask {
 
     @Override
     public void runTask() throws Exception {
+        for (Space s : Bennu.getInstance().getSpaceSet()) {
+            if (s.getBlueprintFile().isPresent()) {
+                if (s.getBlueprintFile().get().getSize() == 0) {
+                    InformationBean b = s.bean();
+                    b.setBlueprint(null);
+                    s.bean(b);
+                }
+            }
+        }
+
         Gson gson = new Gson();
         importClassificationsTask(gson);
         initSpaceTypes();

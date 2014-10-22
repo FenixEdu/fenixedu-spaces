@@ -33,11 +33,11 @@ $(document).ready(function() {
 });
 </script>
 <div class="page-header">
-  	<h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.view.occupations" text="Occupation Requests"/></small></h1>
+  	<h1><spring:message code="title.space.management"/><small><spring:message code="title.view.occupations"/></small></h1>
 </div>
 <main>
-	<em><a href="${listUrl}"><spring:message code="label.back" text="Voltar"/></a></em>
-	<h3><spring:message code="occupation.request.details" text="Detalhes do Pedido"/></h3>
+	<em><a href="${listUrl}"><spring:message code="label.back"/></a></em>
+	<h3><spring:message code="occupation.request.details"/></h3>
   	<c:if test="${not empty occupationRequest}">
 	  	<table class="table">
 	  		<tbody>
@@ -54,27 +54,27 @@ $(document).ready(function() {
 					<c:set var="campusName" value="${campus.name}"/>
 				</c:if>
 				<tr>
-					<th class="row"><spring:message code="label.occupation.request.identification" text="Identification" /></th>
+					<th class="row"><spring:message code="label.occupation.request.identification" /></th>
 					<td>${id}</td>
 				</tr>
 				<tr>
-					<th class="row"><spring:message code="label.occupation.request.subject" text="Subject" /></th>
+					<th class="row"><spring:message code="label.occupation.request.subject" /></th>
 					<td>${subject}</td>
 				</tr>
 				<tr>
-					<th class="row"><spring:message code="label.occupation.request.requestor" text="Requestor" /></th>
+					<th class="row"><spring:message code="label.occupation.request.requestor" /></th>
 					<td>${requestor.presentationName} (${requestor.username})</td>
 				</tr>
 				<tr>
-					<th class="row"><spring:message code="label.occupation.request.instant" text="Instant" /></th>
+					<th class="row"><spring:message code="label.occupation.request.instant" /></th>
 					<td>${instant}</td>
 				</tr>
 				<tr>
-					<th class="row"><spring:message code="label.occupation.request.state" text="State" /></th>
+					<th class="row"><spring:message code="label.occupation.request.state" /></th>
 					<td><b><spring:message code="${stateBundleKey}"></spring:message></b></td>
 				</tr>
 				<tr>
-					<th class="row"><spring:message code="label.occupations" text="Occupations" /></th>
+					<th class="row"><spring:message code="label.occupations" /></th>
 					<td>
 						<c:forEach var="occupation" items="${occupationRequest.occupationSet}">
 							<p>
@@ -87,11 +87,11 @@ $(document).ready(function() {
 					</td>
 				</tr>
 				<tr>
-					<th class="row"><spring:message code="label.campus" text="Campus" /></th>
+					<th class="row"><spring:message code="label.campus" /></th>
 					<td>${campusName}</td>
 				</tr>
 				<tr>
-					<th class="row"><spring:message code="label.occupations.description" text="Description" /></th>
+					<th class="row"><spring:message code="label.occupations.description" /></th>
 					<td>
 						<pre class="comment">${occupationRequest.description}</pre>
 					</td>
@@ -101,10 +101,10 @@ $(document).ready(function() {
 	   	</table>
 	   	
 	   	<!--  Comments -->
-	   	<h3><spring:message code="occupation.request.comments" text="Comments"/></h3>
+	   	<h3><spring:message code="occupation.request.comments"/></h3>
 	   	<c:set var="comments" value="${occupationRequest.commentsWithoutFirstCommentOrderByDate}"/>
 	   	<c:if test="${ empty comments }">
-			<em><spring:message code="occupation.no.comments" text="No comments."/></em>
+			<em><spring:message code="occupation.no.comments"/></em>
 	   	</c:if>
 	   	<c:if test="${not empty comments}">
 	   		<c:forEach var="comment" items="${comments}">
@@ -121,31 +121,31 @@ $(document).ready(function() {
 	   	
 	   	<!-- New Comment -->
 	   	<spring:url var="commentUrl" value="/spaces/occupations/requests/my/${occupationRequest.externalId}/comments"/>
-	   	<h3><spring:message code="occupation.request.comments.add" text="Add comment"/></h3>
+	   	<h3><spring:message code="occupation.request.comments.add"/></h3>
 	   	<form class="form" role="form" action="${commentUrl}" method="post">
 	  		<div class="form-group">
-	   		  <label class="sr-only" for="descriptionInput"><spring:message code="occupation.request.comments.add" text="Add comment"/></label>
+	   		  <label class="sr-only" for="descriptionInput"><spring:message code="occupation.request.comments.add"/></label>
 	    	  <textarea rows="10" cols="60" class="form-control" id="descriptionInput" name="description" required="required"></textarea>
 	  		</div>
 	  		<div class="form-group">
 	  			<label class="radio-inline">
 	    			<input type="radio" name="state" id="stateNEW" value="NEW" disabled>
-	    			<spring:message code="OccupationRequestState.NEW" text="New"/>
+	    			<spring:message code="OccupationRequestState.NEW"/>
 	    		</label>
 	    		<label class="radio-inline">
 	    			<input type="radio" name="state" id="stateOPEN" value="OPEN">
-	    			<spring:message code="OccupationRequestState.OPEN" text="Open"/>
+	    			<spring:message code="OccupationRequestState.OPEN"/>
 	    		</label>
 	    		<label class="radio-inline">
 	    			<input type="radio" name="state" id="stateRESOLVED" value="RESOLVED">
-	    			<spring:message code="OccupationRequestState.RESOLVED" text="Resolved"/>
+	    			<spring:message code="OccupationRequestState.RESOLVED"/>
 	  			</label>
 	  		</div>
-	  		 <button type="submit" class="btn btn-default"><spring:message code="label.submit" text="Submit"/></button>
+	  		 <button type="submit" class="btn btn-default"><spring:message code="label.submit"/></button>
 	  	</form>
 	</c:if>
 	<c:if test="${empty occupationRequest}">
-		<h3><spring:message code="occupation.request.not.found" text="Occupation Request not found."></spring:message></h3>
+		<h3><spring:message code="occupation.request.not.found"></spring:message></h3>
 	</c:if>
 </main>
 

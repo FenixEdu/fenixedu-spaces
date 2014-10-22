@@ -18,6 +18,8 @@
  */
 package org.fenixedu.spaces.domain.occupation.config;
 
+import static org.fenixedu.bennu.FenixEduSpaceConfiguration.BUNDLE;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,8 +31,6 @@ import org.joda.time.Interval;
 import org.joda.time.Partial;
 
 public class ExplicitConfigWithSettings extends OccupationConfig {
-
-    private static final String BUNDLE = "resources/FenixEduSpacesResources";
 
     public static enum Frequency {
         NEVER, DAILY, WEEKLY, MONTHLY, YEARLY;
@@ -50,7 +50,7 @@ public class ExplicitConfigWithSettings extends OccupationConfig {
     private final List<Integer> weekdays;
 
     // For monthly
-    private MonthlyType monthlyType;
+    private final MonthlyType monthlyType;
 
     private final List<Interval> intervals;
 
@@ -149,10 +149,10 @@ public class ExplicitConfigWithSettings extends OccupationConfig {
             if (Frequency.WEEKLY.equals(getFrequency())) {
                 String weekdays =
                         getWeekdays().stream().map(w -> new Partial(DateTimeFieldType.dayOfWeek(), w)).map(p -> p.toString("E"))
-                        .collect(Collectors.joining(","));
+                                .collect(Collectors.joining(","));
                 repeats =
                         Stream.of(repeats, BundleUtil.getString(BUNDLE, "label.occupation.config.summary.weekdays", weekdays))
-                        .collect(Collectors.joining(" "));
+                                .collect(Collectors.joining(" "));
             }
 
             return String.format("%s %s", frequency, repeats);

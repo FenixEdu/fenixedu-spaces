@@ -19,88 +19,76 @@
 package org.fenixedu.spaces.ui;
 
 import org.fenixedu.commons.i18n.LocalizedString;
+import org.fenixedu.spaces.domain.SpaceClassification;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class SpaceClassificationBean {
 
-    private String name;
-    private String metadata;
-    private JsonElement metadataSpec;
-    private JsonElement LocalizedName;
+    private final JsonElement metadataSpec;
+    private final LocalizedString localizedName;
 
     private String parent;
     private String code;
 
-//JsonElement = new JsonParser.parse(jsonString); 
-    public SpaceClassificationBean(String name, String metadata) {
-        this.name = name;
-        this.metadata = metadata;
-        setMetadataSpec(metadata);
-        setLocalizezdName(name);
+    private String warningMessage;
+
+    public SpaceClassificationBean(SpaceClassification classification) {
+        this.parent = classification.getParent() == null ? "" : classification.getParent().getExternalId();
+        this.code = classification.getCode();
+        this.localizedName = classification.getName();
+        this.metadataSpec = classification.getMetadataSpec();
+    }
+
+    public SpaceClassificationBean(String json) {
+        JsonObject classificationJson = new JsonParser().parse(json).getAsJsonObject();
+        this.localizedName = LocalizedString.fromJson(classificationJson.get("name"));
+        this.metadataSpec = classificationJson.get("metadata");
+        this.parent = classificationJson.get("parent").getAsString();
+        this.code = classificationJson.get("code").getAsString();
     }
 
     public SpaceClassificationBean() {
         super();
-        this.metadata = "[]";
-        setMetadataSpec(metadata);
-        LocalizedName = new LocalizedString().json();
-        this.parent = null;
-        this.name = LocalizedName.toString();
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public LocalizedString getLocalizedName() {
-        return new LocalizedString().fromJson(this.LocalizedName);
-    }
-
-    public void setName(String name) {
-        setLocalizezdName(name);
-        this.name = name;
-        return;
-    }
-
-    public void setMetadata(String metadata) {
-        setMetadataSpec(metadata);
-        this.metadata = metadata;
-        return;
-    }
-
-    public String getMetadata() {
-        return this.metadata;
-    }
-
-    private void setLocalizezdName(String name) {
-        this.LocalizedName = new JsonParser().parse(name);
-    }
-
-    private void setMetadataSpec(String metadata) {
-        this.metadataSpec = new JsonParser().parse(metadata);
-        return;
-    }
-
-    public JsonElement getMetadataSpec() {
-        return this.metadataSpec;
+        this.localizedName = new LocalizedString();
+        this.metadataSpec = new JsonArray();
+        this.parent = SpaceClassification.getRootClassification().getExternalId();
+        this.code = "";
     }
 
     public String getParent() {
-        return this.parent;
+        return parent;
     }
 
-    public void setParent(String parentClassificationOID) {
-        this.parent = parentClassificationOID;
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 
     public String getCode() {
-        return this.code;
+        return code;
     }
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getWarningMessage() {
+        return warningMessage;
+    }
+
+    public void setWarningMessage(String warningMessage) {
+        this.warningMessage = warningMessage;
+    }
+
+    public JsonElement getMetadataSpec() {
+        return metadataSpec;
+    }
+
+    public LocalizedString getLocalizedName() {
+        return localizedName;
     }
 
 }

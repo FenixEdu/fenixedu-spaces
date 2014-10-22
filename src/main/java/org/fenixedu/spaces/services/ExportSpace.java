@@ -1,135 +1,88 @@
 package org.fenixedu.spaces.services;
 
+import static org.fenixedu.bennu.FenixEduSpaceConfiguration.BUNDLE;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.fenixedu.bennu.core.i18n.BundleUtil;
+import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
 
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
 import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 public class ExportSpace {
-    public static final String CAMPUS = "Campus";
-    public static final String BUILDING = "Building";
-    public static final String FLOOR = "Floor";
 
-    private static List<Object> getHeaders() {
+    private static List<Object> getHeaders(List<String> metaKeys) {
         final List<Object> headers = new ArrayList<Object>();
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.path"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.space"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.id"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.blueprintNumber"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.classification"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.area"));
+        HashMap<String, LocalizedString> showKeys = new HashMap<String, LocalizedString>();
+        for (SpaceClassification spaceClassification : SpaceClassification.all()) {
+            for (JsonElement je : spaceClassification.getMetadataSpec().getAsJsonArray()) {
+                JsonObject attribute = je.getAsJsonObject();
+                String name = attribute.get("name").getAsString();
+                LocalizedString description = LocalizedString.fromJson(attribute.get("description"));
+                if (showKeys.putIfAbsent(name, description) == null) {
+                    metaKeys.add(name);
+                }
+            }
+        }
 
-        headers.add("Edifício");
-        headers.add("Piso");
-        headers.add("Espaço");
-        headers.add("Identificação do Espaço");
-        headers.add("Número na Porta");
-        headers.add("Número na Planta");
-        headers.add("Classificação");
-        headers.add("Área");
-
-        headers.add("Qualid. em Pé Direito");
-        headers.add("Qualid. em Iluminação");
-        headers.add("Qualid. em Dist. às Instalações Sanitárias");
-        headers.add("Qualid. em Segurança");
-        headers.add("Qualid. em Vetustez");
-
-        //     headers.add("Unidade(s) responsáveis");
-        //     headers.add("Ocupantes (Unidades)");
-        //     headers.add("Ocupantes (Pessoas)");
-
-        headers.add("Observações");
-
+        for (String header : metaKeys) {
+            headers.add(showKeys.get(header).getContent());
+        }
         return headers;
     }
 
     private static void exportToXls(Space space, OutputStream outputStream) throws IOException {
-        final List<Object> headers = getHeaders();
+        List<String> metaKeys = new ArrayList<String>();
+        final List<Object> headers = getHeaders(metaKeys);
         final Spreadsheet spreadsheet = new Spreadsheet("GestãoDeEspaços", headers);
-        fillSpreadSheet(space, spreadsheet);
+        fillSpaceInfo(space, spreadsheet, metaKeys);
+        fillSpreadSheet(space, spreadsheet, metaKeys);
         spreadsheet.exportToXLSSheet(outputStream);
     }
 
-    public static boolean isCampus(Space space) {
-        return SpaceClassification.getByName(CAMPUS).equals(space.getClassification());
+    private static String StringPath(List<Space> path) {
+        return path.stream().map(a -> a.getName()).collect(Collectors.joining(" > "));
     }
 
-    public static boolean isBuilding(Space space) {
-        return SpaceClassification.getByName(BUILDING).equals(space.getClassification());
-    }
+    private static void fillSpaceInfo(Space space, final Spreadsheet spreadsheet, List<String> metaKeys) {
+        final Row row = spreadsheet.addRow();
 
-    public static boolean isFloor(Space space) {
-        return SpaceClassification.getByName(FLOOR).equals(space.getClassification());
-    }
+        row.setCell((space.getParent() != null) ? StringPath(space.getParent().getPath()) : "--");
+        row.setCell(space.getName());
+        row.setCell(space.bean().getIdentification() != null ? space.bean().getIdentification() : "--");
+        row.setCell(space.bean().getBlueprintNumber() != null ? space.bean().getBlueprintNumber() : "--");
+        row.setCell(space.bean().getClassification() != null ? space.bean().getClassification().getName().getContent() : "--");
+        row.setCell(space.bean().getArea() != null ? space.bean().getArea().toString() : "--");
 
-    public static Space getSpaceFloor(Space space) {
-        if (isFloor(space)) {
-            if (space.getParent() == null) {
-                return space;
-            } else if (isFloor(space.getParent())) {
-                return getSpaceFloor(space.getParent());
-            } else {
-                return space;
-            }
+        for (String field : metaKeys) {
+            row.setCell((space.getMetadata(field).orElse("--")).toString());
         }
-        if (space.getParent() == null) {
-            return null;
-        }
-        return getSpaceFloor(space.getParent());
     }
 
-    private static void fillSpreadSheet(Space space, final Spreadsheet spreadsheet) {
+    private static void fillSpreadSheet(Space space, final Spreadsheet spreadsheet, List<String> metaKeys) {
         for (Space subSpace : space.getChildren()) {
             if (subSpace.isActive()) {
-                Space room = subSpace;
-                final Row row = spreadsheet.addRow();
-
-                row.setCell(space.getName());
-
-                Space spaceFloor = getSpaceFloor(subSpace);
-                row.setCell((spaceFloor != null) ? spaceFloor.getName() : "--");
-
-                row.setCell((subSpace.getMetadata("description").orElse("--")).toString());
-                row.setCell(subSpace.bean().getIdentification() != null ? subSpace.bean().getIdentification() : "--");
-                row.setCell((subSpace.getMetadata("doorNumber").orElse("--")).toString());
-                row.setCell(subSpace.bean().getBlueprintNumber() != null ? subSpace.bean().getBlueprintNumber() : "--");
-                row.setCell(subSpace.bean().getClassification() != null ? subSpace.bean().getClassification().getName()
-                        .getContent() : "--");
-                row.setCell(subSpace.bean().getArea() != null ? subSpace.bean().getArea().toString() : "--");
-
-                row.setCell((subSpace.getMetadata("heightQuality").orElse("--")).toString());
-                row.setCell((subSpace.getMetadata("illuminationQuality").orElse("--")).toString());
-                row.setCell((subSpace.getMetadata("distanceFromSanitaryInstalationsQuality").orElse("--")).toString());
-                row.setCell((subSpace.getMetadata("securityQuality").orElse("--")).toString());
-                row.setCell((subSpace.getMetadata("ageQualitity").orElse("--")).toString());
-
-//                StringBuilder builder = new StringBuilder();
-//                for (ResourceResponsibility responsibility : room.getResourceResponsibility()) {
-//                    if (responsibility.isSpaceResponsibility()) {
-//                        Unit unit = ((SpaceResponsibility) responsibility).getUnit();
-//                        builder.append(unit.getPresentationName()).append("; ");
-//                    }
-//                }
-//                row.setCell("--");
-
-//                builder = new StringBuilder();
-//                for (UnitSpaceOccupation occupation : room.getUnitSpaceOccupations()) {
-//                    Unit unit = occupation.getUnit();
-//                    builder.append(unit.getPresentationName()).append("; ");
-//                }
-                //               row.setCell("--");
-
-//                builder = new StringBuilder();
-//                for (PersonSpaceOccupation occupation : room.getPersonSpaceOccupations()) {
-//                    Person person = occupation.getPerson();
-//                    builder.append(person.getName() + " (" + person.getUsername() + "); ");
-//                }
-                //               row.setCell("--");
-                row.setCell((String) subSpace.getMetadata("observations").orElse("--"));
+                fillSpaceInfo(subSpace, spreadsheet, metaKeys);
             }
-
             if (subSpace.getChildren().size() != 0) {
-                fillSpreadSheet(subSpace, spreadsheet);
+                fillSpreadSheet(subSpace, spreadsheet, metaKeys);
             }
         }
     }

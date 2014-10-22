@@ -26,14 +26,14 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management.occupations" text="Space Occupation Management"/><small><spring:message code="title.create.occupation" text="Create Occupation Request"/></small></h1>
+  <h1><spring:message code="title.space.management.occupations"/><small><spring:message code="title.create.occupation"/></small></h1>
 </div>
 
 <spring:url var="createUrl" value="/spaces/occupations/requests/my/create"/>
 
 <form:form modelAttribute="occupation" role="form" method="post" action="${createUrl}">
 	<div class="form-group">
-	    <form:label for="campusInput" path="campus"><spring:message code="label.occupations.campus" text="Campus"/></form:label>
+	    <form:label for="campusInput" path="campus"><spring:message code="label.occupations.campus"/></form:label>
 	    <form:select class="form-control" id="campusInput" path="campus">
 			<option value="">---</option>	    
 	    	<c:forEach var="campi" items="${campus}">
@@ -44,12 +44,12 @@
 	    </form:select>
   </div>
 	<div class="form-group">
-		<form:label for="subjectInput" path="subject"><spring:message code="label.occupations.subject" text="Subject"/></form:label>
+		<form:label for="subjectInput" path="subject"><spring:message code="label.occupations.subject"/></form:label>
 		<form:input type="text" class="form-control" id="subjectInput" path="subject" placeholder="Subject" required="required"/>
 	</div>
 	<div class="form-group">
-		<form:label for="descriptionInput" path="description"><spring:message code="label.occupations.description" text="Description"/></form:label>
+		<form:label for="descriptionInput" path="description"><spring:message code="label.occupations.description"/></form:label>
 		<form:textarea rows="10" cols="60" class="form-control" id="descriptionInput" path="description" placeholder="Description" required="required"/>
 	</div>
-	<button type="submit" class="btn btn-success"><spring:message code="label.submit" text="Submit"/></button>
+	<button type="submit" class="btn btn-success"><spring:message code="label.submit"/></button>
 </form:form>

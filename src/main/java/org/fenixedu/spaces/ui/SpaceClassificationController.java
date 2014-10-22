@@ -18,21 +18,18 @@
  */
 package org.fenixedu.spaces.ui;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.SpaceClassification;
 import org.fenixedu.spaces.ui.services.SpaceClassificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,6 +37,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 import pt.ist.fenixframework.FenixFramework;
+
+import com.google.gson.JsonObject;
 
 @SpringFunctionality(app = SpacesController.class, title = "title.space.classification.management")
 @RequestMapping("/classification")
@@ -53,25 +52,24 @@ public class SpaceClassificationController {
         return listClassifications(model);
     }
 
-    private List<SpaceClassification> allClassifications() {
-        return SpaceClassification.all().stream().sorted((c1, c2) -> c1.getAbsoluteCode().compareTo(c2.getAbsoluteCode()))
-                .collect(Collectors.toList());
-    }
-
     @RequestMapping(value = "/list")
     public String listClassifications(Model model) {
-        model.addAttribute("classifications", allClassifications());
+        canWrite();
+        model.addAttribute("classifications", SpaceClassification.all());
         return "classification/list";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String edit(Model model) throws UnavailableException {
+        canWrite();
         return create(null, model);
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(@ModelAttribute SpaceClassificationBean information, BindingResult errors) {
-        return create(null, information, errors);
+    @ResponseBody
+    public String edit(@RequestBody String informationJson) {
+        canWrite();
+        return create(null, informationJson);
     }
 
     @Atomic(mode = TxMode.WRITE)
@@ -85,7 +83,13 @@ public class SpaceClassificationController {
 
     @RequestMapping(value = "/edit/{classification}", method = RequestMethod.GET)
     public String create(@PathVariable SpaceClassification classification, Model model) {
+        canWrite();
+        return create(classification, model, false);
+    }
+
+    public String create(SpaceClassification classification, Model model, boolean newInfo) {
         SpaceClassificationBean scb = null;
+        canWrite();
         if (classification == null) {
             model.addAttribute("action", "/classification/edit");
             scb = new SpaceClassificationBean();
@@ -93,34 +97,59 @@ public class SpaceClassificationController {
             model.addAttribute("action", "/classification/edit/" + classification.getExternalId());
             scb = classification.getBean();
         }
-        model.addAttribute("information", scb);
-        model.addAttribute("classifications", allClassifications());
+        if (newInfo == false) {
+            model.addAttribute("information", scb);
+        }
+        model.addAttribute("classifications", SpaceClassification.all());
         model.addAttribute("currentUser", Authenticate.getUser());
         return "classification/edit";
     }
 
+    @ResponseBody
     @RequestMapping(value = "/edit/{classification}", method = RequestMethod.POST)
-    public String create(@PathVariable SpaceClassification classification, @ModelAttribute SpaceClassificationBean information,
-            BindingResult errors) {
+    public String create(@PathVariable SpaceClassification classification, @RequestBody String json) {
         // validation
+        canWrite();
+        SpaceClassificationBean information = new SpaceClassificationBean(json);
+        try {
+            spaceClassificationService.verifyClassification(information);
+        } catch (DomainException de) {
+            return de.asJson().toString();
+        }
         if (classification == null) {
-            // create new classification
             classification = create(information);
         } else {
-            spaceClassificationService.updateClassification(classification, information);
+            try {
+                spaceClassificationService.updateClassification(classification, information);
+            } catch (DomainException de) {
+                return de.asJson().toString();
+            }
         }
-        return "redirect:/classification/edit/" + classification.getExternalId();
+        JsonObject ok = new JsonObject();
+        String okS = ok.toString();
+        return okS;
     }
 
     @ResponseBody
     @RequestMapping(value = "/remove/{classification}", method = RequestMethod.DELETE)
     public String create(@PathVariable() SpaceClassification classification) {
+        canWrite();
         try {
             classification.delete();
         } catch (DomainException de) {
             return de.asJson().toString();
         }
         return "ok";
+    }
+
+    private boolean accessControl() {
+        return DynamicGroup.get("spaceSuperUsers").isMember(Authenticate.getUser());
+    }
+
+    private void canWrite() {
+        if (!accessControl()) {
+            throw new RuntimeException("Unauthorized");
+        }
     }
 
 }
