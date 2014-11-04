@@ -29,5 +29,4 @@
 </div>
 <%@include file="fragments/spaces.jsp" %>
 
-<spring:url var="createUrl" value="/spaces/create"/>
-<a href="${createUrl}" class="btn btn-success"><spring:message code="link.space.create" text="Create Space"></spring:message></a>
+

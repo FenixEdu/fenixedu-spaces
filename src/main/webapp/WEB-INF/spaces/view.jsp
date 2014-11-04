@@ -50,9 +50,10 @@
 					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
 					<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
 					<c:if test="${not empty space.occupationSet}">
-						<a href="${scheduleUrl}" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span> <spring:message code="label.spaces.operations.viewSchedule" text="View Schedule"/></a> |
+						<a href="${scheduleUrl}" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span> <spring:message code="label.spaces.operations.viewSchedule" text="View Schedule"/></a> 
 					</c:if>
 					<c:if test="${space.isSpaceManagementMember(currentUser)}">
+					<c:if test="${not empty space.occupationSet}"> | </c:if>
 						<a href="${timelineUrl}" title="Timeline"><span class="glyphicon glyphicon-time"></span> <spring:message code="label.spaces.operations.viewTimeline" text="View Timeline"/></a> |
 						<a href="${editUrl}" title="Edit"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="label.spaces.operations.edit" text="Edit"/></a> |
 						<a href="${manageAccessUrl}" title="Access"><span class="glyphicon glyphicon-ban-circle"></span> <spring:message code="label.spaces.operations.manageAccess" text="Manage Access"/></a> |

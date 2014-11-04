@@ -111,3 +111,11 @@
     </div>
   </div>
 </div>
+
+<spring:url var="createUrl" value="/spaces/create/${space.externalId}"/>
+
+<c:if test='${space == null || space.isSpaceManagementMember(currentUser)}'>
+	<div>
+		<a href="${createUrl}" class="btn btn-success"><spring:message code="link.space.create" text="Create Space"></spring:message></a>
+	</div>
+</c:if>
