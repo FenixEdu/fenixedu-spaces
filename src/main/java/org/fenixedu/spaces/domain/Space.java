@@ -289,6 +289,22 @@ public final class Space extends Space_Base {
         return getInformation().map(info -> info.getName()).get();
     }
 
+    public String getFullName() {
+        String toRet = "";
+        String name = getInformation().map(info -> info.getName()).get();
+        String description = (String) getMetadata("description").orElse("");
+        if (!name.isEmpty()) {
+            toRet += name;
+        }
+        if (!description.isEmpty()) {
+            if (!toRet.isEmpty()) {
+                toRet += " - ";
+            }
+            toRet += description;
+        }
+        return toRet;
+    }
+
     public Optional<Integer> getAllocatableCapacity(DateTime when) {
         return getInformation(when).map(info -> info.getAllocatableCapacity());
     }

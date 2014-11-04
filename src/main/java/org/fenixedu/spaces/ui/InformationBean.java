@@ -207,13 +207,15 @@ public class InformationBean {
 
     public JsonElement getRawMetadata() {
         JsonObject json = new JsonObject();
-        for (MetadataSpec spec : classification.getMetadataSpecs()) {
-            final String name = spec.getName();
-            if (metadata.containsKey(name)) {
-                json.add(name, convert(spec.getType(), getValue(name)));
-            } else {
-                if (spec.isRequired()) {
-                    json.add(name, convert(spec.getType(), spec.getDefaultValue()));
+        if (classification != null) {
+            for (MetadataSpec spec : classification.getMetadataSpecs()) {
+                final String name = spec.getName();
+                if (metadata.containsKey(name)) {
+                    json.add(name, convert(spec.getType(), getValue(name)));
+                } else {
+                    if (spec.isRequired()) {
+                        json.add(name, convert(spec.getType(), spec.getDefaultValue()));
+                    }
                 }
             }
         }

@@ -43,20 +43,11 @@ class occupation.SharedOccupation extends occupation.Occupation {
     
 }
 
-class userOccupationConfig {
-    OccupationConfig config;
-}
-
-relation OccupationConfigUser {
-    userOccupationConfig playsRole userOccupationConfig;
-    .org.fenixedu.bennu.core.domain.User playsRole user;
-}
-
 relation SpaceOccupators {
-    occupation.SharedOccupation playsRole SharedOccupation;
-    protected userOccupationConfig playsRole userConfigPair{
+    occupation.SharedOccupation playsRole SharedOccupation{
         multiplicity *;
     }
+    .org.fenixedu.bennu.core.domain.User playsRole user;
 }
 
 class BlueprintFile extends .org.fenixedu.bennu.io.domain.GenericFile;

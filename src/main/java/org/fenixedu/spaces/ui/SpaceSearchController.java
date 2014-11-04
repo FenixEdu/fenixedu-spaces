@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,6 +70,7 @@ public class SpaceSearchController {
     @RequestMapping(value = "/search")
     public String search(@RequestParam(required = false) String name, Model model) {
         model.addAttribute("name", name);
+        model.addAttribute("currentUser", Authenticate.getUser());
         if (!Strings.isNullOrEmpty(name)) {
             model.addAttribute("foundSpaces", findSpace(name));
         }
@@ -76,7 +78,10 @@ public class SpaceSearchController {
     }
 
     private Set<Space> findSpace(String text) {
-        return Space.getSpaces().filter(s -> s.getName().toLowerCase().contains(text.toLowerCase())).collect(Collectors.toSet());
+        return Space
+                .getSpaces()
+                .filter(s -> Arrays.asList(s.getFullName().toLowerCase().split(" ")).containsAll(
+                        Arrays.asList(text.toLowerCase().split(" ")))).collect(Collectors.toSet());
     }
 
     @RequestMapping(value = "/schedule/{space}")

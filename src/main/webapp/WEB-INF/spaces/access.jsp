@@ -41,19 +41,21 @@
 <spring:url var="formActionUrl" value="${action}"/>
 <form:form modelAttribute="spacebean" role="form" method="post"  action="${formActionUrl}" enctype="multipart/form-data">
 	<div class="form-group">
-	<h4>
-		<spring:message code="label.space.access.occupations.group"
-			text="Grupo de Gestão de Ocupações" />
-	</h4>
+		<h4>
+			<spring:message code="label.space.access.occupations.group"
+				text="Grupo de Gestão de Ocupações" />
+		</h4>
+		${spacebean.occupationGroup.presentationName}
 	</div>
 	<input bennu-group allow="public,users,spaceSuperUsers,custom" id="occupationExpression" name="occupationExpression" value="${spacebean.occupationExpression}"/>
 	<div class="form-group">
-	<h4>
-		<spring:message code="label.space.access.management.group"
-			text="Grupo de Gestão de Espaço" />
-	</h4>
-	<input bennu-group allow="public,users,spaceSuperUsers,custom" id="managementExpression" name="managementExpression" value="${spacebean.managementExpression}"/>
+		<h4>
+			<spring:message code="label.space.access.management.group"
+				text="Grupo de Gestão de Espaço" />
+		</h4>
+		${spacebean.managementGroup.presentationName}
 	</div>
+	<input bennu-group allow="public,users,spaceSuperUsers,custom" id="managementExpression" name="managementExpression" value="${spacebean.managementExpression}"/>
 	<p class="help-block"> </p>
 		<button type="submit" class="btn btn-default">
 			<spring:message code="label.submit" text="Submit" />

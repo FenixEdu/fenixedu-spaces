@@ -33,6 +33,8 @@ public class SpaceClassificationBean {
     private String parent;
     private String code;
 
+    private String warningMessage;
+
 //JsonElement = new JsonParser.parse(jsonString); 
     public SpaceClassificationBean(String name, String metadata) {
         this.name = name;
@@ -101,6 +103,14 @@ public class SpaceClassificationBean {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getWarningMessage() {
+        return warningMessage;
+    }
+
+    public void setWarningMessage(String warningMessage) {
+        this.warningMessage = warningMessage;
     }
 
 }

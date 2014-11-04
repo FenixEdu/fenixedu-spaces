@@ -52,14 +52,27 @@
 					<c:forEach var="space" items="${foundSpaces}">
 						<spring:url value="/spaces-view/view/${space.externalId}" var="viewUrl" />
 						<spring:url value="/spaces-view/schedule/${space.externalId}" var="scheduleUrl" />
+						<spring:url value="/spaces/edit/${space.externalId}" var="editUrl" />
+						<spring:url value="/spaces/timeline/${space.externalId}" var="timelineUrl" />
+						<spring:url value="/spaces-view/view/${space.externalId}" var="viewUrl" />
+						<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
+						<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
+						<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
 						<tr>
 							<td>${space.classification.name.content}</td>
-							<td>${space.name}</td>
+							<td>${space.fullName}</td>
 							<td>${fn:length(space.children)}</td>
 							<td>
 								<a href="${viewUrl}" class="btn btn-default" title="View"><span class="glyphicon glyphicon-eye-open"></span></a>
 								<c:if test="${not empty space.occupationSet}">
 									<a href="${scheduleUrl}" class="btn btn-default" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span></a>
+								</c:if>
+								<c:if test="${space.isSpaceManagementMember(currentUser)}">
+									<a href="${timelineUrl}" class="btn btn-default" title="Timeline"><span class="glyphicon glyphicon-time"></span></a>
+									<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+									<a href="${createSubSpaceUrl}" class="btn btn-default" title="Create"><span class="glyphicon glyphicon-plus-sign"></span></a>
+									<a href="${manageAccessUrl}" class="btn btn-default" title="Access"><span class="glyphicon glyphicon-lock"></span></a>
+									<a href="${manageOccupantsUrl}" class="btn btn-default" title="Occupants"><span class="glyphicon glyphicon-user"></span></a>
 								</c:if>
 							</td>
 						</tr>

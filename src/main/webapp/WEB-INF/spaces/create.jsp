@@ -29,12 +29,15 @@
 
 <script type="text/javascript" src="${baseUrl}/js/sprintf.min.js">
 </script>
-
 <script type="text/javascript">
-
-
+var thisSpec = {};
+ 
+ <c:if test="${ null != information}">
+ 	thisSpec = ${information.rawMetadata};
+ </c:if>
 
 	$(document).ready(function() {
+		
 		var specs = [];
 		var selectedClassification = $("#classificationInput").val();
 		<c:forEach var="classification" items="${classifications}">
@@ -67,8 +70,16 @@
 				if (this.type === "java.lang.Integer") {
 					type = "number";
 				}
-				
-				var input = $(sprintf("<input type='%s' name=\"metadata['%s']\" class='form-control' value='%s', %s/>", type, this.name, this.defaultValue, required));
+				var thisValue = thisSpec[this.name];
+				var theValue = this.defaultValue;
+				if(thisValue != undefined){
+					theValue = thisValue;					
+				}
+				var checked = "";
+				if(type == "checkbox" && theValue == true){
+					checked = 'checked="checked"';
+				}
+				var input = $(sprintf("<input type='%s' name=\"metadata['%s']\" class='form-control' value='%s', %s %s/>", type, this.name, theValue, required, checked));
 				formGroup.append(label);
 				formGroup.append(input);
 				$($("form[role=form] .form-group").last()).after(formGroup);

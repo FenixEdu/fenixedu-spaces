@@ -19,38 +19,48 @@
 
 package org.fenixedu.spaces.ui;
 
+import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.groups.NobodyGroup;
+
 public class SpaceAccessBean {
-    private String occupationExpression;
-    private String managementExpression;
-    private String currentOccupationExpression;
+    private Group occupationGroup;
+    private Group managementGroup;
 
     public SpaceAccessBean() {
-        occupationExpression = "";
-        managementExpression = "";
-        currentOccupationExpression = "";
+        occupationGroup = NobodyGroup.get();
+        managementGroup = NobodyGroup.get();
     }
 
     public String getOccupationExpression() {
-        return occupationExpression;
+        return occupationGroup.getExpression();
     }
 
     public void setOccupationExpression(String occupationExpression) {
-        this.occupationExpression = occupationExpression;
+        this.occupationGroup = Group.parse(occupationExpression);
     }
 
     public String getManagementExpression() {
-        return managementExpression;
+        return managementGroup.getExpression();
     }
 
     public void setManagementExpression(String managementExpression) {
-        this.managementExpression = managementExpression;
+        this.managementGroup = Group.parse(managementExpression);
     }
 
-    public String getCurrentOccupationExpression() {
-        return currentOccupationExpression;
+    public void setManagementGroup(Group managementGroup) {
+        this.managementGroup = managementGroup;
     }
 
-    public void setCurrentOccupationExpression(String currentOccupationExpression) {
-        this.currentOccupationExpression = currentOccupationExpression;
+    public void setOccupationGroup(Group occupationGroup) {
+        this.occupationGroup = occupationGroup;
     }
+
+    public Group getManagementGroup() {
+        return managementGroup;
+    }
+
+    public Group getOccupationGroup() {
+        return occupationGroup;
+    }
+
 }

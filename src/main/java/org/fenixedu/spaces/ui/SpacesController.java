@@ -18,6 +18,7 @@
  */
 package org.fenixedu.spaces.ui;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -26,15 +27,14 @@ import java.util.stream.Collectors;
 import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
-import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
-import org.fenixedu.spaces.domain.userOccupationConfig;
 import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.domain.occupation.SharedOccupation;
 import org.springframework.ui.Model;
@@ -185,14 +185,14 @@ public class SpacesController {
 
     @RequestMapping(value = "/access/{space}", method = RequestMethod.GET)
     public String accessManagement(@PathVariable Space space, Model model) throws UnavailableException {
-        SpaceAccessBean theSab = new SpaceAccessBean();
+        SpaceAccessBean accessBean = new SpaceAccessBean();
         if (space.getManagementGroupWithChainOfResponsability() != null) {
-            theSab.setManagementExpression(space.getManagementGroupWithChainOfResponsability().getExpression());
+            accessBean.setManagementGroup(space.getManagementGroupWithChainOfResponsability());
         }
         if (space.getOccupationsGroupWithChainOfResponsability() != null) {
-            theSab.setOccupationExpression(space.getOccupationsGroupWithChainOfResponsability().getExpression());
+            accessBean.setOccupationGroup(space.getOccupationsGroupWithChainOfResponsability());
         }
-        model.addAttribute("spacebean", theSab);
+        model.addAttribute("spacebean", accessBean);
         model.addAttribute("space", space);
         model.addAttribute("action", "/spaces/access/" + space.getExternalId());
         return "spaces/access";
@@ -200,8 +200,8 @@ public class SpacesController {
 
     @Atomic(mode = TxMode.WRITE)
     private void changeAccess(Space space, SpaceAccessBean sab) {
-        space.setManagementAccessGroup(Group.parse(sab.getManagementExpression()));
-        space.setOccupationsAccessGroup(Group.parse(sab.getOccupationExpression()));
+        space.setManagementAccessGroup(sab.getManagementGroup());
+        space.setOccupationsAccessGroup(sab.getOccupationGroup());
         return;
     }
 
@@ -212,16 +212,23 @@ public class SpacesController {
         return "redirect:/spaces/access/" + space.getExternalId();
     }
 
-    private SharedOccupation getSharedOccupation(Space space) {
-        SharedOccupation SO = null;
-        for (Occupation o : space.getOccupationSet()) {
-            i++;
-            if (o.getClass().equals(SharedOccupation.class)) {
-                SO = (SharedOccupation) o;
-                break;
+    private List<SharedOccupation> getSharedOccupations(Space space) {
+        return getSharedOccupations(space, null);
+    }
+
+    private List<SharedOccupation> getSharedOccupations(Space space, Boolean active) {
+        List<SharedOccupation> occupationList = new ArrayList<SharedOccupation>();
+        for (Occupation occupation : space.getOccupationSet()) {
+            if (occupation instanceof SharedOccupation) {
+                SharedOccupation sharedOccupation = (SharedOccupation) occupation;
+                if (active == null
+                        || (active ? !sharedOccupation.getActiveIntervals().isEmpty() : !sharedOccupation.getInactiveIntervals()
+                                .isEmpty())) {
+                    occupationList.add(sharedOccupation);
+                }
             }
         }
-        return SO;
+        return occupationList;
     }
 
     private final JsonParser jsonParser = new JsonParser();
@@ -230,34 +237,43 @@ public class SpacesController {
     public String occupantsManagement(@PathVariable Space space, Model model) throws UnavailableException {
         SpaceOccupantsBean theOb = new SpaceOccupantsBean();
         model.addAttribute("occupantsbean", theOb);
-        SharedOccupation SO = getSharedOccupation(space);
-        Set<userOccupationConfig> theSet = null;
-        if (SO == null) {
-            model.addAttribute("userConfigPairs", null);
-        } else {
-            model.addAttribute("userConfigPairs", SO.getUserOccupationConfigs());
-        }
+        model.addAttribute("spaceinfo", space.bean());
+        model.addAttribute("space", space);
+        model.addAttribute("activeOccupations", getSharedOccupations(space, true));
+        model.addAttribute("inactiveOccupations", getSharedOccupations(space, false));
         model.addAttribute("action", "/spaces/occupants/" + space.getExternalId());
         return "spaces/occupants";
     }
 
     @Atomic(mode = TxMode.WRITE)
     private void occupantsManagement(Space space, SpaceOccupantsBean sab) {
-        SharedOccupation sharedOccup = getSharedOccupation(space);
-        if (sharedOccup == null) {
+        SharedOccupation sharedOccup = null;
+        List<SharedOccupation> sharedOccups = getSharedOccupations(space);
+        for (SharedOccupation so : sharedOccups) {
+            if (so.getUser().equals(sab.getUserObject())) {
+                sharedOccup = so;
+            }
+        }
+        if (sharedOccups.size() == 0 || sharedOccup == null) {
             sharedOccup = new SharedOccupation();
 
+        }
+
+        if (sharedOccup.doConfig(sab)) {
             space.addOccupation(sharedOccup);
         }
-        sharedOccup.addConfig(sab);
         return;
     }
 
     @RequestMapping(value = "/occupants/{space}", method = RequestMethod.POST)
     public String occupantsManagement(@PathVariable Space space, @ModelAttribute SpaceOccupantsBean spacebean,
-            BindingResult errors) throws UnavailableException {
-
-        occupantsManagement(space, spacebean);
+            BindingResult errors, Model model) throws UnavailableException {
+        try {
+            occupantsManagement(space, spacebean);
+        } catch (DomainException e) {
+            model.addAttribute("message", e.asJson().toString());
+            return occupantsManagement(space, model);
+        }
         return "redirect:/spaces/occupants/" + space.getExternalId();
     }
 

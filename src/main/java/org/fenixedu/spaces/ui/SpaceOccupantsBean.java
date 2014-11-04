@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.fenixedu.bennu.core.domain.User;
-import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings;
-import org.fenixedu.spaces.domain.occupation.config.OccupationConfig;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
@@ -37,16 +35,19 @@ public class SpaceOccupantsBean {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
-    private String intervals;
+    private String oldInterval;
+    private String newInterval;
+    private String action;
     private final JsonParser jsonParser = new JsonParser();
+    private String warningMessage;
 
     private List<Interval> parseIntervals(String events) {
         final JsonArray jsonEvents = jsonParser.parse(events).getAsJsonArray();
         List<Interval> intervals = new ArrayList<>();
         for (JsonElement jsonEvent : jsonEvents) {
             final JsonObject event = jsonEvent.getAsJsonObject();
-            final Long start = Long.parseLong(event.get("start").getAsString()) * 1000L;
-            final Long end = Long.parseLong(event.get("end").getAsString()) * 1000L;
+            final Long start = Long.parseLong(event.get("start").getAsString());
+            final Long end = Long.parseLong(event.get("end").getAsString());
             intervals.add(new Interval(new DateTime(start), new DateTime(end)));
         }
         return intervals;
@@ -55,27 +56,19 @@ public class SpaceOccupantsBean {
     private String user;
 
     public SpaceOccupantsBean() {
-    }
-
-    public OccupationConfig getConfig() {
-        ExplicitConfigWithSettings ecws;
-        List<Interval> intervalsList = parseIntervals(intervals);
-        DateTime endDate = new DateTime(0);
-        DateTime startDate = new DateTime(Long.MAX_VALUE);
-        for (Interval i : intervalsList) {
-            if (startDate.isAfter(i.getStart())) {
-                startDate = i.getStart();
-            }
-            if (endDate.isBefore(i.getEnd())) {
-                endDate = i.getEnd();
-            }
-        }
-        ecws = new ExplicitConfigWithSettings(startDate, endDate, true, intervalsList);
-        return ecws;
+        warningMessage = "";
     }
 
     public User getUserObject() {
         return User.findByUsername(user);
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public String getUser() {
@@ -84,6 +77,42 @@ public class SpaceOccupantsBean {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public List<Interval> getOldIntervalList() {
+        return parseIntervals(oldInterval);
+    }
+
+    public List<Interval> getNewIntervalList() {
+        return parseIntervals(newInterval);
+    }
+
+    public String getOldInterval() {
+        return oldInterval;
+    }
+
+    public void setOldInterval(String oldInterval) {
+        this.oldInterval = oldInterval;
+    }
+
+    public String getNewInterval() {
+        return newInterval;
+    }
+
+    public void setNewInterval(String newInterval) {
+        this.newInterval = newInterval;
+    }
+
+    public String getWarningMessage() {
+        return warningMessage;
+    }
+
+    public void setWarningMessage(String warningMessage) {
+        this.warningMessage = warningMessage;
+    }
+
+    public boolean hasWarningMessage() {
+        return !warningMessage.isEmpty();
     }
 
 }

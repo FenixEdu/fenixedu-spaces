@@ -61,13 +61,13 @@
 					<spring:url value="/spaces/edit/${space.externalId}" var="editUrl" />
 					<spring:url value="/spaces/timeline/${space.externalId}" var="timelineUrl" />
 					<spring:url value="/spaces-view/view/${space.externalId}" var="viewUrl" />
-					<spring:url value="/spaces/schedule/${space.externalId}" var="scheduleUrl" />
+					<spring:url value="/spaces-view/schedule/${space.externalId}" var="scheduleUrl" />
 					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
 					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
 					<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
 					<tr>
 						<td>${space.classification.name.content}</td>
-						<td>${space.name}</td>
+						<td>${space.fullName}</td>
 						<td>${space.getBlueprintNumber().orElse("-")}</td>
 						<td>${fn:length(space.children)}</td>
 						<td>

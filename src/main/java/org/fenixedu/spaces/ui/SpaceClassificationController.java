@@ -70,8 +70,8 @@ public class SpaceClassificationController {
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(@ModelAttribute SpaceClassificationBean information, BindingResult errors) {
-        return create(null, information, errors);
+    public String edit(@ModelAttribute SpaceClassificationBean information, BindingResult errors, Model model) {
+        return create(null, information, errors, model);
     }
 
     @Atomic(mode = TxMode.WRITE)
@@ -101,12 +101,19 @@ public class SpaceClassificationController {
 
     @RequestMapping(value = "/edit/{classification}", method = RequestMethod.POST)
     public String create(@PathVariable SpaceClassification classification, @ModelAttribute SpaceClassificationBean information,
-            BindingResult errors) {
+            BindingResult errors, Model model) {
         // validation
+        try {
+            spaceClassificationService.verifyClassification(information);
+        } catch (DomainException e) {
+            model.addAttribute("message", e.asJson().toString());
+            return create(classification, model);
+        }
         if (classification == null) {
             // create new classification
             classification = create(information);
         } else {
+
             spaceClassificationService.updateClassification(classification, information);
         }
         return "redirect:/classification/edit/" + classification.getExternalId();
