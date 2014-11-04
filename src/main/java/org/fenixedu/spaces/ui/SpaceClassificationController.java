@@ -85,6 +85,10 @@ public class SpaceClassificationController {
 
     @RequestMapping(value = "/edit/{classification}", method = RequestMethod.GET)
     public String create(@PathVariable SpaceClassification classification, Model model) {
+        return create(classification, model, false);
+    }
+
+    public String create(SpaceClassification classification, Model model, boolean newInfo) {
         SpaceClassificationBean scb = null;
         if (classification == null) {
             model.addAttribute("action", "/classification/edit");
@@ -93,7 +97,9 @@ public class SpaceClassificationController {
             model.addAttribute("action", "/classification/edit/" + classification.getExternalId());
             scb = classification.getBean();
         }
-        model.addAttribute("information", scb);
+        if (newInfo == false) {
+            model.addAttribute("information", scb);
+        }
         model.addAttribute("classifications", allClassifications());
         model.addAttribute("currentUser", Authenticate.getUser());
         return "classification/edit";
@@ -107,7 +113,8 @@ public class SpaceClassificationController {
             spaceClassificationService.verifyClassification(information);
         } catch (DomainException e) {
             model.addAttribute("message", e.asJson().toString());
-            return create(classification, model);
+            model.addAttribute("information", information);
+            return create(classification, model, true);
         }
         if (classification == null) {
             // create new classification

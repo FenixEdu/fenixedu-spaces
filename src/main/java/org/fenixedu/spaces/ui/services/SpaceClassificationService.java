@@ -71,10 +71,7 @@ public class SpaceClassificationService {
                             + defaultValue + " --> Boolean )");
                 }
             }
-
         }
-        // repeated field names
-        // field types vs defaultValues
     }
 
     public void updateClassification(SpaceClassification classification, SpaceClassificationBean bean) {
