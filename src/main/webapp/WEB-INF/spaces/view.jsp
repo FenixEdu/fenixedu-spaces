@@ -40,6 +40,26 @@
 	</div>
 	<div class="panel-body">
 		<table class="table">
+		<tr>
+			<th scope="row"><spring:message code="label.spaces.operations" text="Operations" /></th>
+				<td>
+					<spring:url value="/spaces/edit/${space.externalId}" var="editUrl" />
+					<spring:url value="/spaces/timeline/${space.externalId}" var="timelineUrl" />
+					<spring:url value="/spaces-view/schedule/${space.externalId}" var="scheduleUrl" />
+					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
+					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
+					<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
+					<c:if test="${not empty space.occupationSet}">
+						<a href="${scheduleUrl}" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span> <spring:message code="label.spaces.operations.viewSchedule" text="View Schedule"/></a> |
+					</c:if>
+					<c:if test="${space.isSpaceManagementMember(currentUser)}">
+						<a href="${timelineUrl}" title="Timeline"><span class="glyphicon glyphicon-time"></span> <spring:message code="label.spaces.operations.viewTimeline" text="View Timeline"/></a> |
+						<a href="${editUrl}" title="Edit"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="label.spaces.operations.edit" text="Edit"/></a> |
+						<a href="${manageAccessUrl}" title="Access"><span class="glyphicon glyphicon-ban-circle"></span> <spring:message code="label.spaces.operations.manageAccess" text="Manage Access"/></a> |
+						<a href="${manageOccupantsUrl}" title="Occupants"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.spaces.operations.manageOccupants" text="Manage Occupants"/></a>
+					</c:if>
+				</td>
+			</tr>
 			<tr>
 				<th scope="row"><spring:message code="label.spaces.validFrom" text="Valid From" /></th>
 				<td><spring:eval expression="information.validFrom" /></td>
@@ -200,8 +220,7 @@
 		<%@include file="fragments/spaces.jsp"%>
 	</div>
 </div>
-
 <spring:url var="exportUrl" value="/spaces-view/export/${space.externalId}" />
 <spring:url var="excelGif" value="/images/" />
-<a href="${exportUrl}"><img src="${excelGif}/excel.gif"/><spring:message code="label.spaces.Export" text=" Export to Excel" /></a>
+<p><a href="${exportUrl}"><img src="${excelGif}/excel.gif"/><spring:message code="label.spaces.Export" text=" Export to Excel" /></a></p>
 
