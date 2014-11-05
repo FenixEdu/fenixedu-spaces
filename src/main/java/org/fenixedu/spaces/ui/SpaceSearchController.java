@@ -130,7 +130,6 @@ public class SpaceSearchController {
                 }
             }
         }
-
         return null;
     }
 
@@ -183,6 +182,7 @@ public class SpaceSearchController {
         Boolean isToViewIdentifications = viewIdentifications;
         Boolean isToViewDoorNumbers = viewDoorNumbers;
         BigDecimal scalePercentage = scale;
+        response.setContentType("image/jpeg");
         try (OutputStream outputStream = response.getOutputStream()) {
             SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isToViewOriginalSpaceBlueprint, isToViewBlueprintNumbers,
                     isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
