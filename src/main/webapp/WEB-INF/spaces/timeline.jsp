@@ -78,7 +78,7 @@
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.blueprint" text="Blueprint"/></th>
-					<c:url value="/spaces/blueprint/${space.externalId}?when=${information.validFrom.toString('yyyy-MM-dd')}" var="blueprintUrl"/>
+					<c:url value="/spaces-view/blueprint/${space.externalId}?when=${information.validFrom.toString('yyyy-MM-dd')}" var="blueprintUrl"/>
 					<td><img src="${blueprintUrl}"/>
 				</tr>
 				<tr>

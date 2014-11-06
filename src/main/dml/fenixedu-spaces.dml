@@ -184,7 +184,9 @@ relation ContainedSpaceClassification {
 
 relation InformationBlueprint {
 	BlueprintFile playsRole blueprint;
-	Information playsRole information;
+	Information playsRole information {
+	    multiplicity *;
+	}
 }
 
 relation InformationClassification {

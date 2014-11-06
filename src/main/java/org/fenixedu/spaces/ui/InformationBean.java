@@ -56,7 +56,6 @@ public class InformationBean {
     private String externalId;
     private BlueprintFile blueprint;
     private MultipartFile blueprintMultipartFile;
-    private byte[] rawBlueprint;
     private User user;
 
     private static Gson gson = new Gson();
@@ -243,17 +242,10 @@ public class InformationBean {
         return this.blueprint;
     }
 
-    public void setRawBlueprint(byte[] rawBlueprint) {
-        this.rawBlueprint = rawBlueprint;
-    }
-
     public byte[] getBlueprintContent() {
         try {
             if (getBlueprintMultipartFile() != null && !getBlueprintMultipartFile().isEmpty()) {
                 return getBlueprintMultipartFile().getBytes();
-            }
-            if (rawBlueprint != null) {
-                return rawBlueprint;
             }
             return null;
         } catch (IOException e) {

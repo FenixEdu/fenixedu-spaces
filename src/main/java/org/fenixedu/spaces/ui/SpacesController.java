@@ -37,6 +37,7 @@ import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
 import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.domain.occupation.SharedOccupation;
+import org.joda.time.DateTime;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -158,7 +159,9 @@ public class SpacesController {
 
     @RequestMapping(value = "/edit/{space}", method = RequestMethod.GET)
     public String edit(@PathVariable Space space, Model model) throws UnavailableException {
-        model.addAttribute("information", space.bean());
+        InformationBean bean = space.bean();
+        bean.setValidFrom(new DateTime());
+        model.addAttribute("information", bean);
         model.addAttribute("classifications", allClassifications());
         model.addAttribute("currentUser", Authenticate.getUser());
         model.addAttribute("action", "/spaces/edit/" + space.getExternalId());
@@ -169,6 +172,9 @@ public class SpacesController {
     public String edit(@PathVariable Space space, @ModelAttribute InformationBean informationBean, BindingResult errors)
             throws UnavailableException {
         canWrite(space);
+        if (space.getBlueprintFile().isPresent() && informationBean.getBlueprintContent() == null) {
+            informationBean.setBlueprint(space.getBlueprintFile().get());
+        }
         space.bean(informationBean);
         return "redirect:/spaces-view/view/" + space.getExternalId();
     }
