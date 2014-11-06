@@ -18,9 +18,6 @@
  */
 package org.fenixedu.spaces.ui;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
@@ -53,14 +50,9 @@ public class SpaceClassificationController {
         return listClassifications(model);
     }
 
-    private List<SpaceClassification> allClassifications() {
-        return SpaceClassification.all().stream().sorted((c1, c2) -> c1.getAbsoluteCode().compareTo(c2.getAbsoluteCode()))
-                .collect(Collectors.toList());
-    }
-
     @RequestMapping(value = "/list")
     public String listClassifications(Model model) {
-        model.addAttribute("classifications", allClassifications());
+        model.addAttribute("classifications", SpaceClassification.all());
         return "classification/list";
     }
 
@@ -100,7 +92,7 @@ public class SpaceClassificationController {
         if (newInfo == false) {
             model.addAttribute("information", scb);
         }
-        model.addAttribute("classifications", allClassifications());
+        model.addAttribute("classifications", SpaceClassification.all());
         model.addAttribute("currentUser", Authenticate.getUser());
         return "classification/edit";
     }

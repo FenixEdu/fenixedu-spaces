@@ -470,7 +470,6 @@ function setAlertModal(container, msg){
 			<div class="modal-body">
 			 <div id="alertDiv">
 				<p id="alertMessage">
-					LOL
 				</p>
 				</div>
 			</div>

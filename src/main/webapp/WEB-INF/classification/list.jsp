@@ -51,7 +51,7 @@
 					<spring:url value="/classification/edit/${classification.externalId}" var="editUrl" />
 					<spring:url value="/classification/remove/${classification.externalId}" var="removeUrl" />
 					<tr>
-						<td>${classification.name.content}</td>
+						<td>${classification.absoluteCode} - ${classification.name.content}</td>
 						<td>
 							<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
 							<button data-classification-id="${classification.externalId}" data-classification-name="${classification.name.content}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>

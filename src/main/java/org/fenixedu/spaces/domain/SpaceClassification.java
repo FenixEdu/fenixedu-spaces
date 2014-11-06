@@ -20,6 +20,7 @@ package org.fenixedu.spaces.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -38,6 +39,32 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 public class SpaceClassification extends SpaceClassification_Base {
+
+    private static final Comparator<SpaceClassification> ABSOLUTE_CODE_COMPARATOR = new Comparator<SpaceClassification>() {
+
+        private int compareIntString(String o1, String o2) {
+            try {
+                Integer o1AbsCode = Integer.parseInt(o1);
+                Integer o2AbsCode = Integer.parseInt(o2);
+                return o1AbsCode.compareTo(o2AbsCode);
+            } catch (NumberFormatException nfe) {
+                return o1.compareTo(o2);
+            }
+        }
+
+        @Override
+        public int compare(SpaceClassification o1, SpaceClassification o2) {
+            String tokens1[] = o1.getAbsoluteCode().split("[.]");
+            String tokens2[] = o2.getAbsoluteCode().split("[.]");
+            for (int i = 0; i < Math.min(tokens1.length, tokens2.length); i++) {
+                int result = compareIntString(tokens1[i], tokens2[i]);
+                if (result != 0) {
+                    return result;
+                }
+            }
+            return tokens1.length - tokens2.length;
+        }
+    };
 
     public SpaceClassification(String code, LocalizedString name, SpaceClassification parent, JsonElement metadataSpec) {
         super();
@@ -114,7 +141,8 @@ public class SpaceClassification extends SpaceClassification_Base {
         for (SpaceClassification classification : Bennu.getInstance().getRootClassificationSet()) {
             classification.dump(classifications);
         }
-        return classifications;
+
+        return classifications.stream().sorted(ABSOLUTE_CODE_COMPARATOR).collect(Collectors.toList());
     }
 
     private static class DeleteSpaceClassificationException extends DomainException {

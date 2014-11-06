@@ -115,14 +115,9 @@ public class SpacesController {
             model.addAttribute("parentSpace", space);
         }
         model.addAttribute("information", new InformationBean());
-        model.addAttribute("classifications", allClassifications());
+        model.addAttribute("classifications", SpaceClassification.all());
         model.addAttribute("currentUser", Authenticate.getUser());
         return "spaces/create";
-    }
-
-    private List<SpaceClassification> allClassifications() {
-        return SpaceClassification.all().stream().sorted((c1, c2) -> c1.getAbsoluteCode().compareTo(c2.getAbsoluteCode()))
-                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/create/{space}", method = RequestMethod.POST)
@@ -162,7 +157,7 @@ public class SpacesController {
         InformationBean bean = space.bean();
         bean.setValidFrom(new DateTime());
         model.addAttribute("information", bean);
-        model.addAttribute("classifications", allClassifications());
+        model.addAttribute("classifications", SpaceClassification.all());
         model.addAttribute("currentUser", Authenticate.getUser());
         model.addAttribute("action", "/spaces/edit/" + space.getExternalId());
         return "spaces/create";
