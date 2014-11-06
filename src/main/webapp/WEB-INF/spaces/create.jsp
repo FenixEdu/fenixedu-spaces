@@ -86,17 +86,20 @@ var thisSpec = {};
 			});
 			
 		}
-		$("#BlueprintFrame").toggle();
+		$("#blueprintFrame").toggle();
+		
+		$("#toggleBluePrint").click(function(e) {
+			e.preventDefault();
+			if($("#blueprintFrame:visible").size()){
+				$("#toggleBluePrint").text('<spring:message code="label.spaces.blueprint.show" text="show"/>');
+			}else{
+				$("#toggleBluePrint").text('<spring:message code="label.spaces.blueprint.hide" text="hide"/>');
+			}
+			
+			$("#blueprintFrame").toggle();
+		});
 	});
 	
-	function toggleBlueprint(){
-		if($("#toggleBluePrint").text() == ' [<spring:message code="label.spaces.blueprint.hide" text="hide"/>]'){
-			$("#toggleBluePrint").text(' [<spring:message code="label.spaces.blueprint.show" text="show"/>]');
-		}else{
-			$("#toggleBluePrint").text(' [<spring:message code="label.spaces.blueprint.hide" text="hide"/>]');
-		}
-		$("#BlueprintFrame").toggle();
-	}
 </script>
 
 <div class="page-header">
@@ -149,10 +152,14 @@ var thisSpec = {};
     <form:input type="file" class="form-control" id="blueprintFileInput" path="blueprintMultipartFile"/>
     <c:if test="${information.blueprint != null}">
 	  <div div class="form-group has-warning">
-	    <p class="help-block has-warning"><spring:message code="label.spaces.replaceBlueprintWarning" text="This space already has a blueprint. Selecting a new one will replace it"/><span style="color:grey" id="toggleBluePrint" onClick="toggleBlueprint()"> [<spring:message code="label.spaces.blueprint.show" text="show"/>]</span></p>
+	    <p class="help-block has-warning">
+	    	<spring:message code="label.spaces.replaceBlueprintWarning" text="This space already has a blueprint. Selecting a new one will replace it"/>
+	    	<a href="#" class="btn btn-link" id="toggleBluePrint"><spring:message code="label.spaces.blueprint.show" text="show"/></a>
+	    </p>
 	  </div>
-	  <div id="BlueprintFrame">
-	  	<img src="/fenix/spaces-view/blueprint/${space.externalId}?viewDoorNumbers=false&amp;viewBlueprintNumbers=false&amp;viewIdentifications=false&amp;viewOriginalSpaceBlueprint=true&amp;scale=100" usemap="#roomLinksMap">
+	  <spring:url var="blueprintUrl" value="/spaces-view/blueprint/${space.externalId}?viewDoorNumbers=false&amp;viewBlueprintNumbers=false&amp;viewIdentifications=false&amp;viewOriginalSpaceBlueprint=true&amp;scale=100"/>
+	  <div id="blueprintFrame">
+	  	<img src="${blueprintUrl}" usemap="#roomLinksMap">
 	  </div>
     </c:if>
   </div>
