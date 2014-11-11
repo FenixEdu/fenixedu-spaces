@@ -52,49 +52,6 @@ ${portal.angularToolkit()}
 	window.parent = "${information.parent}";
 	window.locale = Bennu.locale.lang;
 
-$(document).ready(function() {
-	var alertmessage = {};
-	<c:if test="${not empty message}">
-		alertmessage = ${message};
-	</c:if>
-	setAlertModal(alertmessage);
-	
-});
-
-function prepareSubmit(){
-
-}
-
-function setAlertModal(container, msg){
-	var kind = "";
-	var message = "";
-	if(msg == undefined){
-		if(container["warning"]!= undefined){
-			kind = "warning";
-			message = container["warning"];
-		}
-		if(container["error"]!= undefined){
-			kind = "error";
-			message = container["error"];
-		}
-	}else{
-		kind = container;
-		message = msg;
-	}
-	if(kind == "") return;
-	$('#alertModal').find('#alertMessage').text(message);
-	$('#alertModal').find('#alertDiv').attr("role","alert");
-	$('#alertModal').find('#alertDiv').removeClass();
-	if(kind.toLowerCase() == "warning"){
-		$('#alertModal').find('#alertTitle').text("Warning");
-		$('#alertModal').find('#alertDiv').addClass("alert alert-warning");
-	}if(kind.toLowerCase() == "error"){
-		$('#alertModal').find('#alertTitle').text("Error");
-		$('#alertModal').find('#alertDiv').addClass("alert alert-danger");
-	}
-	$("#alertModal").modal('show');
-}
-
 </script>
 <div ng-app="metadataEdit" ng-controller="MetadataController">
 
@@ -217,28 +174,6 @@ function setAlertModal(container, msg){
 		text-color: #c2741b;
 	}
 </style>
-
-<div class="modal fade" id="alertModal" role="dialog"
-	aria-labelledby="alertModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header" >
-				<h4 id="alertTitle" />
-			</div>
-			<div class="modal-body">
-			 <div id="alertDiv">
-				<p id="alertMessage">
-				</p>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">
-					<spring:message code="label.ok" text="Ok" />
-				</button>
-			</div>
-		</div>
-	</div>
-</div>
 
 <spring:url var="formActionUrl" value="${action}"/>
 <button type="submit" class="btn btn-default" ng-click="submitInfo()"><spring:message code="label.submit"  text="Submit"/></button>
