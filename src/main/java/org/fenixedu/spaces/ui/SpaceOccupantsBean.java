@@ -115,4 +115,13 @@ public class SpaceOccupantsBean {
         return !warningMessage.isEmpty();
     }
 
+    /***
+     * 
+     * This method is used in occupants.jsp due to SPel limitations when choosing overridden isAfter methods (long, DateTime)
+     *
+     */
+    public static boolean isAfter(DateTime d1, DateTime d2) {
+        return d1.isAfter(d2);
+    }
+
 }

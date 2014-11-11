@@ -262,9 +262,12 @@ function getSelectedPeriod(unixFormat){
 							<div class="col-md-5" id="theNameInput">${occupation.user.name}</div>
 							<div class="col-md-6">
 								<c:set var="endDate" value='${interval.end.toString("dd/MM/yyyy")}' />
-								<c:if test="${interval.end.isAfter(interval.start.plusYears(150))}">
+								<c:set var="startPlus150Years" value="${interval.start.plusYears(150)}" />
+								
+								<c:if test="${occupantsbean.isAfter(interval.end,startPlus150Years)}">
 									<c:set var="endDate" value="" />
 								</c:if>
+								
 								${interval.start.toString("dd/MM/yyyy")} --- ${endDate}
 							</div>
 							<div class="col-md-1">
@@ -317,7 +320,8 @@ function getSelectedPeriod(unixFormat){
 							<div class="col-md-5" id="theNameInput">${occupation.user.name}</div>
 							<div class="col-md-6">
 								<c:set var="endDate" value='${interval.end.toString("dd/MM/yyyy")}' />
-								<c:if test="${interval.end.isAfter(interval.start.plusYears(150))}">
+								<c:set var="startPlus150Years" value="${interval.start.plusYears(150)}" />
+								<c:if test="${occupantsbean.isAfter(interval.end,startPlus150Years)}">
 									<c:set var="endDate" value="" />
 								</c:if>
 								${interval.start.toString("dd/MM/yyyy")} --- ${endDate}
