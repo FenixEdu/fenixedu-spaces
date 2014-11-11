@@ -40,9 +40,12 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 	    });
 
 	    modalInstance.result.then(function (selectedItem) {
-	      $scope.fieldDefs = $scope.fieldDefs.filter(function(e) {
-	    	 return e != selectedItem;
-	      });
+	    	for(var i = 0; i < $scope.fieldDefs.length; i++){
+	    		if($scope.fieldDefs[i] == selectedItem) {
+	    			$scope.fieldDefs[i].inactive = true;
+	    			break;
+	    		}
+	    	}
 	    }, function () {
 	      $log.info('Modal dismissed at: ' + new Date());
 	    });
@@ -53,7 +56,11 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 		if (trimmedKey == "")
 			return;
 		for (var i = 0; i < $scope.fieldDefs.length; i++) {
-			if ($scope.fieldDefs[i].name === trimmedKey) {
+			if ($scope.fieldDefs[i].name === trimmedKey ) {
+				if($scope.fieldDefs[i].inactive == true){
+					$scope.fieldDefs[i].inactive = false;
+					return;
+				}
 				dialogs.error($translate.instant("DIALOGS_ERROR"), $translate.instant("ERROR_SAME_KEY", {keyName : $scope.newKey}));
 				return;
 			}

@@ -180,6 +180,7 @@ public class SpacesController {
 
     @RequestMapping(value = "/access/{space}", method = RequestMethod.GET)
     public String accessManagement(@PathVariable Space space, Model model) throws UnavailableException {
+        canWriteOccupations(space);
         SpaceAccessBean accessBean = new SpaceAccessBean();
         if (space.getManagementGroupWithChainOfResponsability() != null) {
             accessBean.setManagementGroup(space.getManagementGroupWithChainOfResponsability());
@@ -203,6 +204,7 @@ public class SpacesController {
     @RequestMapping(value = "/access/{space}", method = RequestMethod.POST)
     public String changeAccess(@PathVariable Space space, @ModelAttribute SpaceAccessBean spacebean, BindingResult errors)
             throws UnavailableException {
+        canWriteOccupations(space);
         changeAccess(space, spacebean);
         return "redirect:/spaces/access/" + space.getExternalId();
     }
@@ -212,6 +214,18 @@ public class SpacesController {
     public String delete(@PathVariable() Space space) throws UnavailableException {
         space.delete();
         return "ok";
+    }
+
+    private boolean accessOccupationControl(Space space) {
+        User currentUser = Authenticate.getUser();
+        return (space == null && DynamicGroup.get("spaceSuperUsers").isMember(currentUser))
+                || space.isOccupationMember(currentUser);
+    }
+
+    private void canWriteOccupations(Space space) {
+        if (!accessControl(space)) {
+            throw new RuntimeException("Unauthorized");
+        }
     }
 
 }

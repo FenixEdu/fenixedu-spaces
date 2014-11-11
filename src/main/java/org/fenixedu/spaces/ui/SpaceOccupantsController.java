@@ -5,7 +5,10 @@ import java.util.List;
 
 import javax.servlet.UnavailableException;
 
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.BennuSpringController;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.occupation.Occupation;
@@ -45,6 +48,7 @@ public class SpaceOccupantsController {
 
     @RequestMapping(value = "{space}", method = RequestMethod.GET)
     public String occupantsManagement(@PathVariable Space space, Model model) throws UnavailableException {
+        canWrite(space);
         SpaceOccupantsBean theOb = new SpaceOccupantsBean();
         model.addAttribute("occupantsbean", theOb);
         model.addAttribute("spaceinfo", space.bean());
@@ -78,6 +82,7 @@ public class SpaceOccupantsController {
     @RequestMapping(value = "{space}", method = RequestMethod.POST)
     public String occupantsManagement(@PathVariable Space space, @ModelAttribute SpaceOccupantsBean spacebean,
             BindingResult errors, Model model) throws UnavailableException {
+        canWrite(space);
         try {
             occupantsManagement(space, spacebean);
         } catch (DomainException e) {
@@ -85,5 +90,17 @@ public class SpaceOccupantsController {
             return occupantsManagement(space, model);
         }
         return "redirect:/spaces/occupants/" + space.getExternalId();
+    }
+
+    private boolean accessControl(Space space) {
+        User currentUser = Authenticate.getUser();
+        return (space == null && DynamicGroup.get("spaceSuperUsers").isMember(currentUser))
+                || space.isOccupationMember(currentUser);
+    }
+
+    private void canWrite(Space space) {
+        if (!accessControl(space)) {
+            throw new RuntimeException("Unauthorized");
+        }
     }
 }

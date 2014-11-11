@@ -72,13 +72,17 @@ var thisSpec = {};
 				}
 				var thisValue = thisSpec[this.name];
 				var theValue = this.defaultValue;
+				if(this.invalid === true && thisValue === undefined){
+					return;
+				}
 				if(thisValue != undefined){
 					theValue = thisValue;					
 				}
 				var checked = "";
-				if(type == "checkbox" && theValue == true){
+				if(type === "checkbox" && theValue === true){
 					checked = 'checked="checked"';
 				}
+
 				var input = $(sprintf("<input type='%s' name=\"metadata['%s']\" class='form-control' value='%s', %s %s/>", type, this.name, theValue, required, checked));
 				formGroup.append(label);
 				formGroup.append(input);

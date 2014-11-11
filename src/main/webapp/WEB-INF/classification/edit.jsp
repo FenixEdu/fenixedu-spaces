@@ -138,7 +138,8 @@ ${portal.angularToolkit()}
 				  <div class="col-md-2"><b>Default Value</b></div>
 				  <div class="col-md-1"></div>
 				</div>
-				<div class="row" ng-repeat="fieldDef in fieldDefs">
+				<div ng-repeat="fieldDef in fieldDefs">
+				<div class="row"  ng-hide="fieldDef.inactive === true">
 				  <div class="col-md-3">{{fieldDef.name}}</div>
 				  <div class="col-md-4">
 				  	<input type="text" ng-localized-string="fieldDef.description" required-any class='form-control'/>
@@ -157,6 +158,7 @@ ${portal.angularToolkit()}
 				  <div class="col-md-1">
 				  <button class="btn btn-default" ng-click="removeField(fieldDef)">Remove</button>
 				  </div>
+				</div>
 				</div>
 			</div>
 		</div>

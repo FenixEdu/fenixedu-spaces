@@ -21,6 +21,7 @@ package org.fenixedu.spaces.ui;
 import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.SpaceClassification;
@@ -53,18 +54,21 @@ public class SpaceClassificationController {
 
     @RequestMapping(value = "/list")
     public String listClassifications(Model model) {
+        canWrite();
         model.addAttribute("classifications", SpaceClassification.all());
         return "classification/list";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String edit(Model model) throws UnavailableException {
+        canWrite();
         return create(null, model);
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
     public String edit(@RequestBody String informationJson) {
+        canWrite();
         return create(null, informationJson);
     }
 
@@ -79,11 +83,13 @@ public class SpaceClassificationController {
 
     @RequestMapping(value = "/edit/{classification}", method = RequestMethod.GET)
     public String create(@PathVariable SpaceClassification classification, Model model) {
+        canWrite();
         return create(classification, model, false);
     }
 
     public String create(SpaceClassification classification, Model model, boolean newInfo) {
         SpaceClassificationBean scb = null;
+        canWrite();
         if (classification == null) {
             model.addAttribute("action", "/classification/edit");
             scb = new SpaceClassificationBean();
@@ -103,6 +109,7 @@ public class SpaceClassificationController {
     @RequestMapping(value = "/edit/{classification}", method = RequestMethod.POST)
     public String create(@PathVariable SpaceClassification classification, @RequestBody String json) {
         // validation
+        canWrite();
         SpaceClassificationBean information = new SpaceClassificationBean(json);
         try {
             spaceClassificationService.verifyClassification(information);
@@ -122,12 +129,23 @@ public class SpaceClassificationController {
     @ResponseBody
     @RequestMapping(value = "/remove/{classification}", method = RequestMethod.DELETE)
     public String create(@PathVariable() SpaceClassification classification) {
+        canWrite();
         try {
             classification.delete();
         } catch (DomainException de) {
             return de.asJson().toString();
         }
         return "ok";
+    }
+
+    private boolean accessControl() {
+        return DynamicGroup.get("spaceSuperUsers").isMember(Authenticate.getUser());
+    }
+
+    private void canWrite() {
+        if (!accessControl()) {
+            throw new RuntimeException("Unauthorized");
+        }
     }
 
 }
