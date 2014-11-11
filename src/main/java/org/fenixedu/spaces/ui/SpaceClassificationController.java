@@ -27,9 +27,8 @@ import org.fenixedu.spaces.domain.SpaceClassification;
 import org.fenixedu.spaces.ui.services.SpaceClassificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,6 +36,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 import pt.ist.fenixframework.FenixFramework;
+
+import com.google.gson.JsonObject;
 
 @SpringFunctionality(app = SpacesController.class, title = "title.space.classification.management")
 @RequestMapping("/classification")
@@ -62,8 +63,9 @@ public class SpaceClassificationController {
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(@ModelAttribute SpaceClassificationBean information, BindingResult errors, Model model) {
-        return create(null, information, errors, model);
+    @ResponseBody
+    public String edit(@RequestBody String informationJson) {
+        return create(null, informationJson);
     }
 
     @Atomic(mode = TxMode.WRITE)
@@ -97,25 +99,24 @@ public class SpaceClassificationController {
         return "classification/edit";
     }
 
+    @ResponseBody
     @RequestMapping(value = "/edit/{classification}", method = RequestMethod.POST)
-    public String create(@PathVariable SpaceClassification classification, @ModelAttribute SpaceClassificationBean information,
-            BindingResult errors, Model model) {
+    public String create(@PathVariable SpaceClassification classification, @RequestBody String json) {
         // validation
+        SpaceClassificationBean information = new SpaceClassificationBean(json);
         try {
             spaceClassificationService.verifyClassification(information);
-        } catch (DomainException e) {
-            model.addAttribute("message", e.asJson().toString());
-            model.addAttribute("information", information);
-            return create(classification, model, true);
+        } catch (DomainException de) {
+            return de.asJson().toString();
         }
         if (classification == null) {
-            // create new classification
             classification = create(information);
         } else {
-
             spaceClassificationService.updateClassification(classification, information);
         }
-        return "redirect:/classification/edit/" + classification.getExternalId();
+        JsonObject ok = new JsonObject();
+        String okS = ok.toString();
+        return okS;
     }
 
     @ResponseBody

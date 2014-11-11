@@ -203,16 +203,7 @@ public class SpaceClassification extends SpaceClassification_Base {
     }
 
     public SpaceClassificationBean getBean() {
-        SpaceClassificationBean scb = new SpaceClassificationBean();
-        scb.setName(this.getName().json().toString());
-        scb.setMetadata(this.getMetadataSpec().toString());
-        scb.setCode(this.getCode());
-        if (this.getParent() != null) {
-            scb.setParent(this.getParent().getExternalId());
-        } else {
-            scb.setParent("");
-        }
-        return scb;
+        return new SpaceClassificationBean(this);
     }
 
     public static SpaceClassification getCampusClassification() {

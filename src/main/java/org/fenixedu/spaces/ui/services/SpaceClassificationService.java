@@ -44,7 +44,7 @@ public class SpaceClassificationService {
         }
     }
 
-    public void verifyClassification(SpaceClassificationBean bean) {
+    public void verifyClassification(SpaceClassificationBean bean) throws SpaceClassificationException {
         JsonArray jsarray = bean.getMetadataSpec().getAsJsonArray();
         Map<String, Boolean> hasName = new HashMap<String, Boolean>();
         for (JsonElement jsonElement : jsarray) {
