@@ -87,7 +87,9 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 				return false;
 			}
 		}
-		$http({method : 'POST', url : location.href, data : 
+		var urlToPost = location.href;
+		debugger;
+		$http({method : 'POST', url : urlToPost, data : 
 					{name : $scope.informationName,
 			     metadata : $scope.fieldDefs,
 			     parent : $scope.parent,
@@ -109,7 +111,6 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 			  });
 		}).
 		  error(function(data, status, headers, config) {
-			  debugger;
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
 		  });

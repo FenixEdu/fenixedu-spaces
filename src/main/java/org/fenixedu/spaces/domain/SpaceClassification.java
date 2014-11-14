@@ -21,6 +21,7 @@ package org.fenixedu.spaces.domain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -37,6 +38,8 @@ import pt.ist.fenixframework.Atomic;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class SpaceClassification extends SpaceClassification_Base {
 
@@ -116,7 +119,7 @@ public class SpaceClassification extends SpaceClassification_Base {
     }
 
     public String getAbsoluteCode() {
-        return getPath().stream().map(c -> c.getCode()).collect(Collectors.joining("."));
+        return getPath().stream().filter(c -> !c.getCode().isEmpty()).map(c -> c.getCode()).collect(Collectors.joining("."));
     }
 
     private List<SpaceClassification> getPath() {
@@ -141,7 +144,14 @@ public class SpaceClassification extends SpaceClassification_Base {
         for (SpaceClassification classification : Bennu.getInstance().getRootClassificationSet()) {
             classification.dump(classifications);
         }
+        return classifications.stream().sorted(ABSOLUTE_CODE_COMPARATOR).collect(Collectors.toList());
+    }
 
+    public List<SpaceClassification> getAllChildren() {
+        final List<SpaceClassification> classifications = new ArrayList<>();
+        for (SpaceClassification classification : getChildrenSet()) {
+            classification.dump(classifications);
+        }
         return classifications.stream().sorted(ABSOLUTE_CODE_COMPARATOR).collect(Collectors.toList());
     }
 
@@ -177,6 +187,34 @@ public class SpaceClassification extends SpaceClassification_Base {
         return Optional.empty();
     }
 
+    @Override
+    public JsonElement getMetadataSpec() {
+        HashMap<String, JsonElement> theMetadata = new HashMap<String, JsonElement>();
+        JsonElement parentMetadata = this.getParent() == null ? new JsonArray() : this.getParent().getMetadataSpec();
+        JsonElement thisMeta = super.getMetadataSpec();
+        parentMetadata = new JsonParser().parse(parentMetadata.toString());
+        for (JsonElement jel : parentMetadata.getAsJsonArray()) {
+            String name = jel.getAsJsonObject().get("name").getAsString();
+            JsonObject job = jel.getAsJsonObject();
+            job.addProperty("inherited", true);
+            theMetadata.put(name, job);
+        }
+        for (JsonElement jel : thisMeta.getAsJsonArray()) {
+            String name = jel.getAsJsonObject().get("name").getAsString();
+            if (theMetadata.containsKey(name)) {
+                continue;
+            }
+            theMetadata.put(name, jel);
+        }
+
+        JsonArray returnArray = new JsonArray();
+
+        for (JsonElement je : theMetadata.values()) {
+            returnArray.add(je);
+        }
+        return returnArray;
+    }
+
     public Collection<MetadataSpec> getMetadataSpecs() {
         List<MetadataSpec> specs = new ArrayList<>();
         for (JsonElement metadataSpec : getMetadataSpec().getAsJsonArray()) {
@@ -189,9 +227,23 @@ public class SpaceClassification extends SpaceClassification_Base {
     public void setMetadataSpec(JsonElement metadataSpec) {
         if (metadataSpec == null) {
             super.setMetadataSpec(new JsonArray());
-        } else {
-            super.setMetadataSpec(metadataSpec);
         }
+        HashMap<String, JsonElement> theMetadata = new HashMap<String, JsonElement>();
+        JsonElement parentMetadata = this.getParent() == null ? new JsonArray() : this.getParent().getMetadataSpec();
+
+        for (JsonElement jel : parentMetadata.getAsJsonArray()) {
+            String name = jel.getAsJsonObject().get("name").getAsString();
+            theMetadata.put(name, jel);
+        }
+        JsonArray returnArray = new JsonArray();
+        for (JsonElement jel : metadataSpec.getAsJsonArray()) {
+            String name = jel.getAsJsonObject().get("name").getAsString();
+            if (theMetadata.containsKey(name)) {
+                continue;
+            }
+            returnArray.add(jel);
+        }
+        super.setMetadataSpec(returnArray);
     }
 
     public void setMetadataSpecs(Collection<MetadataSpec> specs) {
@@ -206,6 +258,10 @@ public class SpaceClassification extends SpaceClassification_Base {
         return new SpaceClassificationBean(this);
     }
 
+    @Deprecated
+    /***
+     * To be removed in next major
+     */
     public static SpaceClassification getCampusClassification() {
         final SpaceClassification byName = getByName("Campus");
         if (byName == null) {
@@ -236,6 +292,10 @@ public class SpaceClassification extends SpaceClassification_Base {
             }
         }
         return null;
+    }
+
+    public boolean isRootClassification() {
+        return Bennu.getInstance().getRootClassificationSet().contains(this);
     }
 
     public static SpaceClassification getByName(String needle) {

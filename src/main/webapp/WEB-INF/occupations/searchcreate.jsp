@@ -233,7 +233,7 @@
 </c:if>
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.create.occupation" text="Reservar Espaço"/></small></h1>
+  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.create.occupation.reserve" text="Reservar Espaço"/></small></h1>
 </div>
 
 <h3><spring:message code="title.create.occupation.details" text="Detalhes da ocupação"/></h3>

@@ -119,7 +119,11 @@ public class SpaceClassificationController {
         if (classification == null) {
             classification = create(information);
         } else {
-            spaceClassificationService.updateClassification(classification, information);
+            try {
+                spaceClassificationService.updateClassification(classification, information);
+            } catch (DomainException de) {
+                return de.asJson().toString();
+            }
         }
         JsonObject ok = new JsonObject();
         String okS = ok.toString();

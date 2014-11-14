@@ -115,7 +115,7 @@
 					}
 				},
 				"m": {
-					label: "<spring:message code="calendar.repeatson.daily" text="Meses"/>",
+					label: "<spring:message code="calendar.repeatson.monthly" text="Meses"/>",
 					summary: "<spring:message code="calendar.repeats.monthly" text="Mensalmente"/>",
 					getSummary: function(config) {
 						var startdate = getStart(config)

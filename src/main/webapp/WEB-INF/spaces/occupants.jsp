@@ -447,7 +447,7 @@ function getSelectedPeriod(unixFormat){
 					<button type="button" class="close" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
 					<h4 class="modal-title" id="myModalLabel">
-						<spring:message code="calendar.add.event"
+						<spring:message code="occupation.periods"
 							text="Periodos de Ocupação" />
 					</h4>
 				</div>

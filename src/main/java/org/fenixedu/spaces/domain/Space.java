@@ -76,6 +76,12 @@ public final class Space extends Space_Base {
         add(Information.builder(informationBean).build());
     }
 
+    /**
+     * get all information beans
+     * 
+     * @return information beans ordered by date (ascending)
+     * @author cfscosta
+     */
     public List<InformationBean> timeline() {
         List<InformationBean> timeline = new ArrayList<>();
         Information current = getCurrent();
@@ -330,8 +336,19 @@ public final class Space extends Space_Base {
         return getSpaces().filter(space -> classification.equals(space.getClassification())).collect(Collectors.toSet());
     }
 
+    @Deprecated
+    /***
+     * To be removed in next major.
+     * 
+     * Use getTopLevelSpaces()
+     * @see
+     */
     public static Set<Space> getAllCampus() {
-        return getSpaces(SpaceClassification.getCampusClassification());
+        return getTopLevelSpaces();
+    }
+
+    public static Set<Space> getTopLevelSpaces() {
+        return getSpaces().filter(s -> s.getParent() == null).collect(Collectors.toSet());
     }
 
     public Group getManagementGroup() {

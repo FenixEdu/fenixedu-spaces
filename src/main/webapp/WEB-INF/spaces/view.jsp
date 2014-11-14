@@ -53,11 +53,14 @@
 						<a href="${scheduleUrl}" title="<spring:message code="title.space.schedule" text="Horário do Espaço"/>"><span class="glyphicon glyphicon-dashboard"></span> <spring:message code="label.spaces.operations.viewSchedule" text="View Schedule"/></a> 
 					</c:if>
 					<c:if test="${space.isSpaceManagementMember(currentUser)}">
-					<c:if test="${not empty space.occupationSet}"> | </c:if>
+						<c:if test="${not empty space.occupationSet}"> | </c:if>
 						<a href="${timelineUrl}" title="Timeline"><span class="glyphicon glyphicon-time"></span> <spring:message code="label.spaces.operations.viewTimeline" text="View Timeline"/></a> |
 						<a href="${editUrl}" title="Edit"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="label.spaces.operations.edit" text="Edit"/></a> |
-						<a href="${manageAccessUrl}" title="Access"><span class="glyphicon glyphicon-ban-circle"></span> <spring:message code="label.spaces.operations.manageAccess" text="Manage Access"/></a> |
-						<a href="${manageOccupantsUrl}" title="Occupants"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.spaces.operations.manageOccupants" text="Manage Occupants"/></a>
+						<a href="${manageAccessUrl}" title="Access"><span class="glyphicon glyphicon-ban-circle"></span> <spring:message code="label.spaces.operations.manageAccess" text="Manage Access"/></a>		
+					</c:if>
+					<c:if test="${space.isOccupationMember(currentUser)}">
+						<c:if test="${not empty space.occupationSet || space.isSpaceManagementMember(currentUser)}"> | </c:if>
+						<a href="${manageOccupantsUrl}" title="Occupants"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.spaces.operations.manageOccupants" text="Manage Occupants"/></a>	
 					</c:if>
 				</td>
 			</tr>

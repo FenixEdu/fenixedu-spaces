@@ -20,7 +20,6 @@ package org.fenixedu.spaces.ui;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.UnavailableException;
@@ -51,10 +50,6 @@ import pt.ist.fenixframework.Atomic.TxMode;
 @RequestMapping("/spaces")
 public class SpacesController {
 
-    private Set<Space> getTopLevelSpaces() {
-        return Space.getSpaces().filter(space -> space.getParent() == null).collect(Collectors.toSet());
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public String home(Model model) {
         return home(null, model);
@@ -62,7 +57,7 @@ public class SpacesController {
 
     @RequestMapping(value = "{space}", method = RequestMethod.GET)
     public String home(@PathVariable Space space, Model model) {
-        model.addAttribute("spaces", space == null ? getTopLevelSpaces() : getChildrenOrderedByName(space));
+        model.addAttribute("spaces", space == null ? Space.getTopLevelSpaces() : getChildrenOrderedByName(space));
         model.addAttribute("currentUser", Authenticate.getUser());
         return "spaces/home";
     }

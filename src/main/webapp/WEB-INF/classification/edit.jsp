@@ -51,11 +51,8 @@ ${portal.angularToolkit()}
 	window.code = "${information.code}";
 	window.parent = "${information.parent}";
 	window.locale = Bennu.locale.lang;
-
 </script>
 <div ng-app="metadataEdit" ng-controller="MetadataController">
-
-
 <!-- Modal Dialog -->
 <script type="text/ng-template" id="deleteModal.html">
 	<div class="modal-header">
@@ -73,90 +70,122 @@ ${portal.angularToolkit()}
 		<button type="button" class="btn btn-danger" ng-click='confirm()'>Delete</button>
 	</div>
 </script>
-
-	
-
 	<div class="page-header">
   <h1><fmt:message key="title.space.management"/><small><spring:message code="title.edit.classification" text="Criar/Editar Classificação"/></small></h1>
 </div>
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title">Space Classification Details</h3>
+		<h3 class="panel-title"><spring:message code="label.spaces.classification.details" text="Space Classification Details"/></h3>
 	</div>
-	<div class="panel-body" >
-	<div class="container-fluid">
-		<div class="row">
-		  <div class="col-md-2"><b>Name:</b></div> 
-    	  <div class="col-md-10" id="theNameInput">
-    	 	 <input ng-localized-string='informationName' type="text"/>
-    	  </div> 	
-		</div>
-		<div class="row show-grid">
-		  <div class="col-md-2"><b>Parent Classification:</b></div> 
-    	  <div class="col-md-10"> 
-    	<c:set var="ParentClassId" value="${information.parent}"/>
-    	<select class="form-control" id="classificationParentInput" ng-model="parent">
-    		<option value="${null}">No Parent</option>
-	    	<c:forEach var="classItem" items="${classifications}">
-	    	<c:set var="classificationName" value="${classItem.absoluteCode} - ${classItem.name.content}"/>
-	    	<c:set var="classificationId" value="${classItem.externalId}"/>
-	    		<c:choose>
-	    			<c:when test="${classificationId == ParentClassId}">
-	    				<option value="${classificationId}" selected="selected">${classificationName}</option>
-	    			</c:when>
+		<div class="panel-body">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-2">
+						<b><spring:message code="label.spaces.name" text="Name" /></b>
+					</div>
+					<div class="col-md-10" id="theNameInput">
+						<input ng-localized-string='informationName' type="text" />
+					</div>
+				</div>
+				<c:choose>
+					<c:when test="${classification.isRootClassification()}">
+						<input type="hidden" id="classificationParentInput" ng-model="parent">
+						<input type="hidden" id="classificationCodeInput" ng-model="code" />
+					</c:when>
 					<c:otherwise>
-						<option value="${classificationId}">${classificationName}</option>
+						<div class="row show-grid">
+							<div class="col-md-2">
+								<b><spring:message
+										code="label.spaces.classification.parentClassification"
+										text="Parent Classification" /></b>
+							</div>
+							<div class="col-md-10">
+								<c:set var="ParentClassId" value="${information.parent}" />
+								<select class="form-control" id="classificationParentInput"
+									ng-model="parent">
+									<c:forEach var="classItem" items="${classifications}">
+										<c:set var="classificationName"
+											value="${classItem.absoluteCode} - ${classItem.name.content}" />
+										<c:choose>
+											<c:when test="${empty classItem.absoluteCode}">
+												<c:set var="classificationName"
+													value="${classItem.name.content}" />
+											</c:when>
+											<c:otherwise>
+												<c:set var="classificationName"
+													value="${classItem.absoluteCode} - ${classItem.name.content}" />
+											</c:otherwise>
+										</c:choose>
+										<c:set var="classificationId" value="${classItem.externalId}" />
+										<c:choose>
+											<c:when test="${classificationId == ParentClassId}">
+												<option value="${classificationId}" selected="selected">${classificationName}</option>
+											</c:when>
+											<c:otherwise>
+												<option value="${classificationId}">${classificationName}</option>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
+								</select>
+								<p class="help-block"></p>
+							</div>
+						</div>
+						<div class="row show-grid">
+							<div class="col-md-2">
+								<b><spring:message code="label.spaces.classification.code"
+										text="Code" /></b>
+							</div>
+							<div class="col-md-10">
+								<input class="form-control" type="text" required="required"
+									id="classificationCodeInput" ng-model="code" />
+							</div>
+							<p />
+						</div>
 					</c:otherwise>
 				</c:choose>
-	    	</c:forEach>
-    	</select>
-    <p class="help-block"> </p>
-    </div> 
-  </div>
-		<div class="row show-grid">
-		  <div class="col-md-2"><b>Code:</b></div> 
-    	  <div class="col-md-10"><input class="form-control" type="text" required="required" id="classificationCodeInput" ng-model="code"/></div> 	
-    	  <p/>
+			</div>
 		</div>
 	</div>
-	</div>
-</div>
 
 <div>
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">Space Classification Properties</h3>
+			<h3 class="panel-title"><spring:message code="label.spaces.classification.properties" text="Space Classification Properties"/></h3>
 		</div>
 		
 		<div class="panel-body" >
 			<div class="container-fluid" id=fieldtable">
 				<div class="row">
-				  <div class="col-md-3"><b>Name</b></div>
-				  <div class="col-md-4"><b>Description</b></div>
-				  <div class="col-md-1"><b>Type</b></div>
-				  <div class="col-md-1"><b>Required</b></div>
-				  <div class="col-md-2"><b>Default Value</b></div>
+				  <div class="col-md-3"><b><spring:message code="label.spaces.name" text="Name"/></b></div>
+				  <div class="col-md-4"><b><spring:message code="label.spaces.classification.description" text="Description"/></b></div>
+				  <div class="col-md-1"><b><spring:message code="label.spaces.classification.type" text="Type"/></b></div>
+				  <div class="col-md-1"><b><spring:message code="label.spaces.classification.required" text="Required"/></b></div>
+				  <div class="col-md-2"><b><spring:message code="label.spaces.classification.defaultValue" text="Default Value"/></b></div>
 				  <div class="col-md-1"></div>
 				</div>
-				<div ng-repeat="fieldDef in fieldDefs">
+<%-- 				ng-attr-title='{{fieldDef.inherited && "<spring:message code="label.spaces.classification.inherited.message" text="This attribute is inherited. To Modify it edit the parent class."/>"}}' --%>
+				<div ng-repeat="fieldDef in fieldDefs | orderBy:'inherited'">
 				<div class="row"  ng-hide="fieldDef.inactive === true">
 				  <div class="col-md-3">{{fieldDef.name}}</div>
 				  <div class="col-md-4">
-				  	<input type="text" ng-localized-string="fieldDef.description" required-any class='form-control'/>
+				  	<input type="text" ng-localized-string="fieldDef.description" required-any class='form-control' ng-readonly='fieldDef.inherited'/>
 				  </div>
-				  <div class="col-md-1">
-				  	<select ng-model="fieldDef.type">
+					<div class="col-md-1">
+				  	<select ng-model="fieldDef.type" ng-disabled='{{fieldDef.inherited}}' ng-checked='{{fieldDef.inherited}}'>
 				  	 	<option ng-repeat="opt in options" value="{{opt.value}}" ng-selected="opt.value==fieldDef.type">{{opt.text}}</option>
 				  	</select>
 				  </div>
 				  <div class="col-md-1">
-				  <input type="checkbox" ng-checked="{{fieldDef.required}}" ng-model="fieldDef.required"/>
+				  <input type="checkbox" ng-disabled='{{fieldDef.inherited}}' ng-model="fieldDef.required"/>
 				  </div>
 				  <div class="col-md-2">
-				  <input ng-model="fieldDef.defaultValue"/>
+				  <input ng-model="fieldDef.defaultValue" ng-readonly='{{fieldDef.inherited}}'/>
 				  </div>
-				  <div class="col-md-1">
-				  <button class="btn btn-default" ng-click="removeField(fieldDef)">Remove</button>
+				  <div class="col-md-1" ng-hide="fieldDef.inherited === true">
+				  	<button class="btn btn-default" ng-click="removeField(fieldDef)"><spring:message code="label.spaces.classification.remove" text="Remove"/></button>
+				  </div>
+				  <div class="col-md-1" ng-show="fieldDef.inherited === true" ng-attr-title='{{fieldDef.inherited && "<spring:message code="label.spaces.classification.inherited.message" text="This attribute is inherited. To Modify it edit the parent class."/>"}}'>
+				  	<button disabled class="btn btn-warning" ng-click="removeField(fieldDef)"><spring:message code="label.spaces.classification.inherited" text="Inherited"/></button>
 				  </div>
 				</div>
 				</div>

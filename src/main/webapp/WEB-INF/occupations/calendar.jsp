@@ -843,7 +843,7 @@
 							</td>
 						</tr>
 						<tr class="row">
-							<th class="col-lg-3"><spring:message code="calendar.repeatsevery" text="Todo o dia"/></th>
+							<th class="col-lg-3"><spring:message code="calendar.allday" text="Todo o dia"/></th>
 							<td class="col-lg-9">
 
 								<input type="checkbox" id="allday" onchange="checkBadInput()"/>

@@ -77,7 +77,7 @@
 
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.create.occupation" text="Reservar Espaço"/></small></h1>
+  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.create.occupation.reserve" text="Reservar Espaço"/></small></h1>
 </div>
 
 <h2><spring:message code="title.create.occupation.select.period" text="Seleccionar Periodo"/></h2>

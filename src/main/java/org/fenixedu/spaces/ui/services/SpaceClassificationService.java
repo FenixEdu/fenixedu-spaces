@@ -1,6 +1,9 @@
 package org.fenixedu.spaces.ui.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
@@ -39,7 +42,11 @@ public class SpaceClassificationService {
         @Override
         public JsonObject asJson() {
             JsonObject json = new JsonObject();
-            json.addProperty(kind, getLocalizedMessage() + " : " + message);
+            String finalMessage = getLocalizedMessage();
+            if (!message.isEmpty()) {
+                finalMessage += " : " + message;
+            }
+            json.addProperty(kind, finalMessage);
             return json;
         }
     }
@@ -101,8 +108,29 @@ public class SpaceClassificationService {
         SpaceClassification parentClassification = null;
         if (parent.length() > 0) {
             parentClassification = FenixFramework.getDomainObject(parent);
+        } else {
+            if (!classification.isRootClassification()) {
+                throw new SpaceClassificationException("error", "label.spaceClassification.mustSelectParent", "");
+            }
+            classification.setParent(parentClassification);
+            return;
         }
+        // verify that this classification is not in its parent chain
+        SpaceClassification loopParents = parentClassification;
+        List<SpaceClassification> listParentClassifications = new ArrayList<SpaceClassification>();
+        while (loopParents != null) {
+            listParentClassifications.add(loopParents);
+            if (loopParents.equals(classification)) {
+                throw new SpaceClassificationException("error", "label.spaceClassification.isInParentChain", "");
+            }
+            loopParents = loopParents.getParent();
+        }
+        // verify that no children of this classification are in its parent chain
+        List<SpaceClassification> listChildClassifications = classification.getAllChildren();
 
+        if (Collections.disjoint(listChildClassifications, listParentClassifications) == false) {
+            throw new SpaceClassificationException("error", "label.spaceClassification.isInParentChain", "");
+        }
         classification.setParent(parentClassification);
     }
 }
