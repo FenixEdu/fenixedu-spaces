@@ -44,13 +44,13 @@
 		var weekdaysNumbers = [1,2,3,4,5,6,7];
 		var weekdaysAcronyms = ["mo","tu", "we", "th", "fr", "sa", "su"]
 		var weekdaysLabels = [
-			"<spring:message code="calendar.daysofweek.mo" text="Segunda-Feira"/>",
-			"<spring:message code="calendar.daysofweek.tu" text="Terça-Feira"/>",
-			"<spring:message code="calendar.daysofweek.we" text="Quarta-Feira"/>",
-			"<spring:message code="calendar.daysofweek.th" text="Quinta-Feira"/>",
-			"<spring:message code="calendar.daysofweek.fr" text="Sexta-Feira"/>",
-			"<spring:message code="calendar.daysofweek.sa" text="Sábado"/>",
-			"<spring:message code="calendar.daysofweek.su" text="Domingo"/>"
+			"<spring:message code="calendar.daysofweek.mo"/>",
+			"<spring:message code="calendar.daysofweek.tu"/>",
+			"<spring:message code="calendar.daysofweek.we"/>",
+			"<spring:message code="calendar.daysofweek.th"/>",
+			"<spring:message code="calendar.daysofweek.fr"/>",
+			"<spring:message code="calendar.daysofweek.sa"/>",
+			"<spring:message code="calendar.daysofweek.su"/>"
 		];
 		
 		return {
@@ -93,37 +93,37 @@
 			
 		var repeatsconfig = {
 				"w": {
-					label: "<spring:message code="calendar.repeatson.weekly" text="Semanas"/>",
-					summary: "<spring:message code="calendar.repeats.weekly" text="Semanalmente"/>",
+					label: "<spring:message code="calendar.repeatson.weekly"/>",
+					summary: "<spring:message code="calendar.repeats.weekly"/>",
 					getSummary: function(config) {
 						var label = this['summary'];
 						var selectedDays = config.weekdays;
 						if (selectedDays.length > 0) {
 							selectedDays = $(selectedDays).map(function() {return weekdaysLabels().getLabelByNumber(this);}).get();
-							label += " <spring:message code="calendar.on" text="às"/> " + selectedDays.join(", ")
+							label += " <spring:message code="calendar.on"/> " + selectedDays.join(", ")
 						}
 						$("#summary").html(label)
 					},
 				},
 				"d": {
-					label: "<spring:message code="calendar.repeatson.daily" text="Dias"/>",
-					summary: "<spring:message code="calendar.repeats.daily" text="Diariamente"/>",
+					label: "<spring:message code="calendar.repeatson.daily"/>",
+					summary: "<spring:message code="calendar.repeats.daily"/>",
 					getSummary: function(config) {
 						var repeatsevery = config.repeatsevery;
 						return sprintf("%s de %s em %s %s", this.summary, repeatsevery , repeatsevery, this.label);
 					}
 				},
 				"m": {
-					label: "<spring:message code="calendar.repeatson.daily" text="Meses"/>",
-					summary: "<spring:message code="calendar.repeats.monthly" text="Mensalmente"/>",
+					label: "<spring:message code="calendar.repeatson.monthly"/>",
+					summary: "<spring:message code="calendar.repeats.monthly"/>",
 					getSummary: function(config) {
 						var startdate = getStart(config)
 						var value = config.monthlyType;
 						if (value == "dayofmonth") {
-							$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofmonth" text=" ao dia "/>" + startdate.date());
+							$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofmonth"/>" + startdate.date());
 						}
 						if (value == "dayofweek") {
-							$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofweek" text=" à "/>" + nthDayOfTheWeekLabel(startdate) + " " + dayOfWeekLabel(startdate));
+							$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofweek"/>" + nthDayOfTheWeekLabel(startdate) + " " + dayOfWeekLabel(startdate));
 						}
 					},
 				},
@@ -131,14 +131,14 @@
 				"n": {
 					label: false,
 					getSummary: function() {
-						return "<spring:message code="calendar.repeats.never" text="Nunca"/>";
+						return "<spring:message code="calendar.repeats.never"/>";
 					}
 				},
 			
 				"y": {
-					label: "<spring:message code="calendar.repeatson.yearly" text="Anos"/>",
+					label: "<spring:message code="calendar.repeatson.yearly"/>",
 					getSummary: function() {
-						return "<spring:message code="calendar.repeats.yearly" text="Anualmente"/>"
+						return "<spring:message code="calendar.repeats.yearly"/>"
 					}
 				}
 			};
@@ -211,7 +211,7 @@
 					$("#config-input").val(JSON.stringify(config));
 					$("#events-input").val(JSON.stringify(events));
 				} else {
-					bootbox.alert("<spring:message code="error.occupation.no.selected.spaces" text="Por favor selecione no mínimo um espaço."/>");
+					bootbox.alert("<spring:message code="error.occupation.no.selected.spaces"/>");
 					return false;
 				}
 			});
@@ -233,52 +233,52 @@
 </c:if>
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.create.occupation.reserve" text="Reservar Espaço"/></small></h1>
+  <h1><spring:message code="title.space.management"/><small><spring:message code="title.create.occupation.reserve"/></small></h1>
 </div>
 
-<h3><spring:message code="title.create.occupation.details" text="Detalhes da ocupação"/></h3>
+<h3><spring:message code="title.create.occupation.details"/></h3>
 
 <table class="table">
 	<tr class="row">
-		<th><spring:message code="label.create.occupation.start.date" text="Data Início"/></th>
+		<th><spring:message code="label.create.occupation.start.date"/></th>
 		<td id="startdate">
 		</td>
 	</tr>
 	<tr class="row">
-		<th><spring:message code="label.create.occupation.end.date" text="Data Fim"/></th>
+		<th><spring:message code="label.create.occupation.end.date"/></th>
 		<td id="enddate">
 		</td>
 	</tr>
 	<tr class="row time">
-		<th><spring:message code="label.create.occupation.start.time" text="Hora Início"/></th>
+		<th><spring:message code="label.create.occupation.start.time"/></th>
 		<td id="starttime">
 		</td>
 	</tr>
 	<tr class="row time">
-		<th><spring:message code="label.create.occupation.end.time" text="Hora Fim"/></th>
+		<th><spring:message code="label.create.occupation.end.time"/></th>
 		<td id="endtime">
 		</td>
 	</tr>
 	<tr class="row allday">
-		<th><spring:message code="label.create.occupation.allday" text="Todo o dia"/></th>
+		<th><spring:message code="label.create.occupation.allday"/></th>
 		<td>
 			<span class="glyphicon glyphicon-ok"></span>
 		</td>
 	</tr>
 	<tr class="row">
-		<th><spring:message code="label.create.occupation.frequency" text="Frequência"/></th>
+		<th><spring:message code="label.create.occupation.frequency"/></th>
 		<td id="summary">
 		</td>
 	</tr>
 	<tr class="row">
-		<th><spring:message code="label.create.occupation.intervals" text="Intervalos"/></th>
+		<th><spring:message code="label.create.occupation.intervals"/></th>
 		<td>
 			<a href="#" id="events-number"></a>
 		</td>
 	</tr>
 </table>
 
-<h3><spring:message code="title.create.occupation.choose.space" text="Escolher Espaço"/></h3>
+<h3><spring:message code="title.create.occupation.choose.space"/></h3>
 
 <form role="form" id="choose-space-form">
   <div class="form-group">
@@ -291,30 +291,30 @@
 		</c:forEach>
 	</select>
   </div>
-  <input type="submit" class="btn btn-success" value="<spring:message code="label.create.occupation.add.space" text="Adicionar Espaço"/>"></input>
+  <input type="submit" class="btn btn-success" value="<spring:message code="label.create.occupation.add.space"/>"></input>
 </form>
 
 
 <table class="table" id="selected-spaces">
-	<caption><spring:message code="title.create.occupation.selected.space" text="Espaços Selecionados"/></caption>
+	<caption><spring:message code="title.create.occupation.selected.space"/></caption>
 	<thead>
-		<th><spring:message code="label.create.occupation.selected.space.name" text="Nome"/></th>
-		<th><spring:message code="label.create.occupation.selected.space.normal.capacity" text="Capacidade Normal"/></th>
-		<th><spring:message code="label.create.occupation.selected.space.exam.capacity" text="Capacidade Exame"/></th>
-		<th><spring:message code="label.create.occupation.selected.space.operations" text="Ações"/>
+		<th><spring:message code="label.create.occupation.selected.space.name"/></th>
+		<th><spring:message code="label.create.occupation.selected.space.normal.capacity"/></th>
+		<th><spring:message code="label.create.occupation.selected.space.exam.capacity"/></th>
+		<th><spring:message code="label.create.occupation.selected.space.operations"/>
 	</thead>
 	<tbody>
 	</tbody>
 </table>
 
-<h3><spring:message code="title.create.occupation.reason" text="Motivo da Ocupação de Espaços"/></h3>
+<h3><spring:message code="title.create.occupation.reason"/></h3>
 
 <spring:url var="createUrl" value="/spaces/occupations/create" />
 
 <form class="form-horizontal" role="form" id="create-occupation-form" method="POST" action ="${createUrl}">
   <div class="form-group">
     <label for="occupation-emails" class="col-sm-2 control-label">
-    	<spring:message code="label.create.occupation.reason.emails" text="Destinatários (emails separados por virgula):"></spring:message>
+    	<spring:message code="label.create.occupation.reason.emails"></spring:message>
     </label>
     <div class="col-sm-10">
       <input type="text" class="form-control" name="emails" id="occupation-emails">
@@ -322,7 +322,7 @@
   </div>
   <div class="form-group">
     <label for="occupation-subject" class="col-sm-2 control-label">
-    	<spring:message code="label.create.occupation.reason.subject" text="Descrição Breve"></spring:message>
+    	<spring:message code="label.create.occupation.reason.subject"></spring:message>
     </label>
     <div class="col-sm-10">
       <input type="text" class="form-control" name="subject" id="occupation-subject" required>
@@ -330,7 +330,7 @@
   </div>
   <div class="form-group">
     <label for="occupation-description" class="col-sm-2 control-label">
-    	<spring:message code="label.create.occupation.reason.description" text="Descrição Completa"></spring:message>
+    	<spring:message code="label.create.occupation.reason.description"></spring:message>
     </label>
     <div class="col-sm-10">
       <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description" required></textarea>
@@ -338,7 +338,7 @@
   </div>
   <div class="form-group">
     <div class="col-sm-10">
-      <button type="submit" class="btn btn-success"><spring:message code="label.create.occupation.reason.submit" text="Criar Ocupação"/></button>
+      <button type="submit" class="btn btn-success"><spring:message code="label.create.occupation.reason.submit"/></button>
     </div>
   </div>
   <input type="hidden" name="selectedSpaces" id="selected-spaces-input"/>

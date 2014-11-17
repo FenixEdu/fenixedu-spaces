@@ -27,7 +27,7 @@
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.space.timeline" text="Space Timeline"/></small></h1>
+  <h1><spring:message code="title.space.management"/><small><spring:message code="title.space.timeline"/></small></h1>
 </div>
 
 <script type="text/javascript">
@@ -49,40 +49,40 @@
 		<div class="tab-pane fade" id="${information.externalId}">
 			<table class="table">
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.validFrom" text="Valid From"/></th>
+					<th scope="row"><spring:message code="label.spaces.validFrom"/></th>
 					<td><spring:eval expression="information.validFrom"/></td>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.validUntil" text="Valid Until"/></th>
+					<th scope="row"><spring:message code="label.spaces.validUntil"/></th>
 					<td><spring:eval expression="information.validUntil"/></td>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.name" text="Name"/></th>
+					<th scope="row"><spring:message code="label.spaces.name"/></th>
 					<td>${information.name}</td>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.identification" text="Identification"/></th>
+					<th scope="row"><spring:message code="label.spaces.identification"/></th>
 					<td>${information.identification}</td>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.classification" text="Classification"/></th>
+					<th scope="row"><spring:message code="label.spaces.classification"/></th>
 					<td>${information.classification.name.content}</td>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.allocatableCapacity" text="Allocatable Capacity"/></th>
+					<th scope="row"><spring:message code="label.spaces.allocatableCapacity"/></th>
 					<td>${information.allocatableCapacity}</td>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.blueprintNumber" text="Blueprint Number"/></th>
+					<th scope="row"><spring:message code="label.spaces.blueprintNumber"/></th>
 					<td>${information.blueprintNumber}</td>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.blueprint" text="Blueprint"/></th>
+					<th scope="row"><spring:message code="label.spaces.blueprint"/></th>
 					<c:url value="/spaces-view/blueprint/${space.externalId}?when=${information.validFrom.toString('yyyy-MM-dd')}" var="blueprintUrl"/>
 					<td><img src="${blueprintUrl}"/>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.area" text="Area"/></th>
+					<th scope="row"><spring:message code="label.spaces.area"/></th>
 					<td>${information.area}</td>
 				</tr>
 				<c:forEach var="metadata" items="${information.metadata}">

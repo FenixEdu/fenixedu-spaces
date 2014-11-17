@@ -230,9 +230,8 @@ function getSelectedPeriod(unixFormat){
 
 <div class="page-header">
 	<h1>
-		<spring:message code="title.space.management" text="Space Management" />
-		<small><spring:message code="title.space.access.management"
-				text="Gestão de Ocupantes" /></small>
+		<spring:message code="title.space.management" />
+		<small><spring:message code="title.space.access.management" /></small>
 	</h1>
 </div>
 
@@ -356,7 +355,7 @@ function getSelectedPeriod(unixFormat){
 	data-user-username="" data-user-name="Novo Utilizador" data-toggle="modal"
 	data-target="#otherModal" title="edit" type="button" data-action="add"
 	class="btn btn-success" id="confirm">
-	<spring:message code="label.addUser" text="Adicionar Ocupação" />
+	<spring:message code="label.addUser" />
 </button>
 
 <style>
@@ -384,22 +383,20 @@ function getSelectedPeriod(unixFormat){
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true">&times;</button>
 				<h4 class="modal-title">
-					<spring:message code="label.spaces.delete.title"
-						text="Delete Permanently" />
+					<spring:message code="label.spaces.delete.title" />
 				</h4>
 			</div>
 			<div class="modal-body">
 				<p>
-					<spring:message code="label.spaces.delete.message"
-						text="Are you sure you want to delete this ?" />
+					<spring:message code="label.spaces.delete.message" />
 				</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">
-					<spring:message code="label.cancel" text="Cancel" />
+					<spring:message code="label.cancel" />
 				</button>
 				<button type="submit" class="btn btn-danger" id="confirm">
-					<spring:message code="label.delete" text="Delete" />
+					<spring:message code="label.delete" />
 				</button>
 			</div>
 			</form:form>
@@ -423,7 +420,7 @@ function getSelectedPeriod(unixFormat){
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">
-					<spring:message code="label.ok" text="Ok" />
+					<spring:message code="label.ok" />
 				</button>
 			</div>
 		</div>
@@ -447,8 +444,7 @@ function getSelectedPeriod(unixFormat){
 					<button type="button" class="close" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
 					<h4 class="modal-title" id="myModalLabel">
-						<spring:message code="occupation.periods"
-							text="Periodos de Ocupação" />
+						<spring:message code="occupation.periods" />
 					</h4>
 				</div>
 				<div class="modal-body">

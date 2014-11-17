@@ -20,11 +20,11 @@
 --%>
 <table class="table">
 	<thead>
-		<th><spring:message code="label.occupation.request.identification" text="identification" /></th>
-		<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
-		<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
-		<th><spring:message code="label.occupation.request.requestor" text="requestor" /></th>
-		<th><spring:message code="label.occupation.request.actions" text="actions" /></th>
+		<th><spring:message code="label.occupation.request.identification" /></th>
+		<th><spring:message code="label.occupation.request.instant" /></th>
+		<th><spring:message code="label.occupation.request.subject" /></th>
+		<th><spring:message code="label.occupation.request.requestor" /></th>
+		<th><spring:message code="label.occupation.request.actions" /></th>
 
 	</thead>
 	<tbody>
@@ -38,8 +38,7 @@
 				<td>${instant}</td>
 				<td><a href="${requestUrl}/${occupationRequest.externalId}"> ${subject} </a></td>
 				<td>${requestor.presentationName}</td>
-				<td><a href="${requestUrl}/${occupationRequest.externalId}"> <spring:message code="label.occupation.request.deal"
-							text="Tratar Pedido" />
+				<td><a href="${requestUrl}/${occupationRequest.externalId}"> <spring:message code="label.occupation.request.deal" />
 				</a></td>
 			</tr>
 		</c:forEach>

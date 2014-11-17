@@ -25,7 +25,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.spaces" text="Spaces"/></small></h1>
+  <h1><spring:message code="title.space.management"/><small><spring:message code="title.spaces"/></small></h1>
 </div>
 <%@include file="fragments/spaces.jsp" %>
 

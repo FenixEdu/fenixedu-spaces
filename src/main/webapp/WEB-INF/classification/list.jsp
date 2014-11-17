@@ -27,14 +27,14 @@
 
 <div class="page-header">
 	<h1>
-		<spring:message code="title.space.classification.management" text="Space Classification Management" />
+		<spring:message code="title.space.classification.management" />
 		<small>${information.name}</small>
 	</h1>
 </div>
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title"><spring:message code="title.space.classification" text="Classifications" /></h3>
+		<h3 class="panel-title"><spring:message code="title.space.classification" /></h3>
 	</div>
 	<div class="panel-body">
 	<c:choose>
@@ -42,8 +42,8 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th><spring:message code="label.spaces.name" text="Name"/></th>
-					<th><spring:message code="label.spaces.operations" text="Operations"/></th>
+					<th><spring:message code="label.spaces.name"/></th>
+					<th><spring:message code="label.spaces.operations"/></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -71,7 +71,7 @@
 		</table>
 	</c:when>
 	<c:otherwise>
-		<spring:message code="label.empty.spaces" text="No available spaces." />
+		<spring:message code="label.empty.spaces" />
 	</c:otherwise>
 </c:choose>
 	</div>

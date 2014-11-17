@@ -36,29 +36,27 @@
 	<script src="${staticUrl}/js/dateutils.js"></script>
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.space.access.management" text="Gestão de Grupos de Acesso"/></small></h1>
+  <h1><spring:message code="title.space.management"/><small><spring:message code="title.space.access.management"/></small></h1>
 </div>
 <spring:url var="formActionUrl" value="${action}"/>
 <form:form modelAttribute="spacebean" role="form" method="post"  action="${formActionUrl}" enctype="multipart/form-data">
 	<div class="form-group">
 		<h4>
-			<spring:message code="label.space.access.occupations.group"
-				text="Grupo de Gestão de Ocupações" />
+			<spring:message code="label.space.access.occupations.group" />
 		</h4>
 		${spacebean.occupationGroup.presentationName}
 	</div>
 	<input bennu-group allow="public,users,spaceSuperUsers,custom" id="occupationExpression" name="occupationExpression" value="${spacebean.occupationExpression}"/>
 	<div class="form-group">
 		<h4>
-			<spring:message code="label.space.access.management.group"
-				text="Grupo de Gestão de Espaço" />
+			<spring:message code="label.space.access.management.group" />
 		</h4>
 		${spacebean.managementGroup.presentationName}
 	</div>
 	<input bennu-group allow="public,users,spaceSuperUsers,custom" id="managementExpression" name="managementExpression" value="${spacebean.managementExpression}"/>
 	<p class="help-block"> </p>
 		<button type="submit" class="btn btn-default">
-			<spring:message code="label.submit" text="Submit" />
+			<spring:message code="label.submit" />
 		</button>
 </form:form>
 

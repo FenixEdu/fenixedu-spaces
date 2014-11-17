@@ -77,12 +77,12 @@
 
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.create.occupation.reserve" text="Reservar Espaço"/></small></h1>
+  <h1><spring:message code="title.space.management"/><small><spring:message code="title.create.occupation.reserve"/></small></h1>
 </div>
 
-<h2><spring:message code="title.create.occupation.select.period" text="Seleccionar Periodo"/></h2>
+<h2><spring:message code="title.create.occupation.select.period"/></h2>
 
-<button class="btn btn-success" id="search-spaces"><spring:message code="title.create.occupation.search.periods" text="Procurar Espaços"/></button>
+<button class="btn btn-success" id="search-spaces"><spring:message code="title.create.occupation.search.periods"/></button>
 
 <%@include file="calendar.jsp" %>
 

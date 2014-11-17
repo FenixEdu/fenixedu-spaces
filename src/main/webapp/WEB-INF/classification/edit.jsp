@@ -66,22 +66,22 @@ ${portal.angularToolkit()}
 		</p>
 	</div>
 	<div class="modal-footer">
-		<button type="button" class="btn btn-default" ng-click='cancel()'>Cancel</button>
-		<button type="button" class="btn btn-danger" ng-click='confirm()'>Delete</button>
+		<button type="button" class="btn btn-default" ng-click='cancel()'><spring:message code="label.cancel"/></button>
+		<button type="button" class="btn btn-danger" ng-click='confirm()'><spring:message code="label.delete"/></button>
 	</div>
 </script>
 	<div class="page-header">
-  <h1><fmt:message key="title.space.management"/><small><spring:message code="title.edit.classification" text="Criar/Editar Classificação"/></small></h1>
+  <h1><fmt:message key="title.space.management"/><small><spring:message code="title.edit.classification"/></small></h1>
 </div>
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title"><spring:message code="label.spaces.classification.details" text="Space Classification Details"/></h3>
+		<h3 class="panel-title"><spring:message code="label.spaces.classification.details"/></h3>
 	</div>
 		<div class="panel-body">
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-2">
-						<b><spring:message code="label.spaces.name" text="Name" /></b>
+						<b><spring:message code="label.spaces.name" /></b>
 					</div>
 					<div class="col-md-10" id="theNameInput">
 						<input ng-localized-string='informationName' type="text" />
@@ -96,8 +96,7 @@ ${portal.angularToolkit()}
 						<div class="row show-grid">
 							<div class="col-md-2">
 								<b><spring:message
-										code="label.spaces.classification.parentClassification"
-										text="Parent Classification" /></b>
+										code="label.spaces.classification.parentClassification" /></b>
 							</div>
 							<div class="col-md-10">
 								<c:set var="ParentClassId" value="${information.parent}" />
@@ -132,8 +131,7 @@ ${portal.angularToolkit()}
 						</div>
 						<div class="row show-grid">
 							<div class="col-md-2">
-								<b><spring:message code="label.spaces.classification.code"
-										text="Code" /></b>
+								<b><spring:message code="label.spaces.classification.code" /></b>
 							</div>
 							<div class="col-md-10">
 								<input class="form-control" type="text" required="required"
@@ -150,20 +148,20 @@ ${portal.angularToolkit()}
 <div>
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><spring:message code="label.spaces.classification.properties" text="Space Classification Properties"/></h3>
+			<h3 class="panel-title"><spring:message code="label.spaces.classification.properties"/></h3>
 		</div>
 		
 		<div class="panel-body" >
 			<div class="container-fluid" id=fieldtable">
 				<div class="row">
-				  <div class="col-md-3"><b><spring:message code="label.spaces.name" text="Name"/></b></div>
-				  <div class="col-md-4"><b><spring:message code="label.spaces.classification.description" text="Description"/></b></div>
-				  <div class="col-md-1"><b><spring:message code="label.spaces.classification.type" text="Type"/></b></div>
-				  <div class="col-md-1"><b><spring:message code="label.spaces.classification.required" text="Required"/></b></div>
-				  <div class="col-md-2"><b><spring:message code="label.spaces.classification.defaultValue" text="Default Value"/></b></div>
+				  <div class="col-md-3"><b><spring:message code="label.spaces.name"/></b></div>
+				  <div class="col-md-4"><b><spring:message code="label.spaces.classification.description"/></b></div>
+				  <div class="col-md-1"><b><spring:message code="label.spaces.classification.type"/></b></div>
+				  <div class="col-md-1"><b><spring:message code="label.spaces.classification.required"/></b></div>
+				  <div class="col-md-2"><b><spring:message code="label.spaces.classification.defaultValue"/></b></div>
 				  <div class="col-md-1"></div>
 				</div>
-<%-- 				ng-attr-title='{{fieldDef.inherited && "<spring:message code="label.spaces.classification.inherited.message" text="This attribute is inherited. To Modify it edit the parent class."/>"}}' --%>
+<%-- 				ng-attr-title='{{fieldDef.inherited && "<spring:message code="label.spaces.classification.inherited.message"/>"}}' --%>
 				<div ng-repeat="fieldDef in fieldDefs | orderBy:'inherited'">
 				<div class="row"  ng-hide="fieldDef.inactive === true">
 				  <div class="col-md-3">{{fieldDef.name}}</div>
@@ -182,18 +180,18 @@ ${portal.angularToolkit()}
 				  <input ng-model="fieldDef.defaultValue" ng-readonly='{{fieldDef.inherited}}'/>
 				  </div>
 				  <div class="col-md-1" ng-hide="fieldDef.inherited === true">
-				  	<button class="btn btn-default" ng-click="removeField(fieldDef)"><spring:message code="label.spaces.classification.remove" text="Remove"/></button>
+				  	<button class="btn btn-default" ng-click="removeField(fieldDef)"><spring:message code="label.spaces.classification.remove"/></button>
 				  </div>
-				  <div class="col-md-1" ng-show="fieldDef.inherited === true" ng-attr-title='{{fieldDef.inherited && "<spring:message code="label.spaces.classification.inherited.message" text="This attribute is inherited. To Modify it edit the parent class."/>"}}'>
-				  	<button disabled class="btn btn-warning" ng-click="removeField(fieldDef)"><spring:message code="label.spaces.classification.inherited" text="Inherited"/></button>
+				  <div class="col-md-1" ng-show="fieldDef.inherited === true" ng-attr-title='{{fieldDef.inherited && "<spring:message code="label.spaces.classification.inherited.message"/>"}}'>
+				  	<button disabled class="btn btn-warning" ng-click="removeField(fieldDef)"><spring:message code="label.spaces.classification.inherited"/></button>
 				  </div>
 				</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<input type="text" id="newKey" placeholder="New Key" required="required" ng-model="newKey"/>
-	<button class="btn btn-default" ng-click='addField()'><spring:message code="label.addfield" text="Add Field"/></button>
+	<input type="text" id="newKey" placeholder="<spring:message code="label.newKey"/>" required="required" ng-model="newKey"/>
+	<button class="btn btn-default" ng-click='addField()'><spring:message code="label.addfield"/></button>
 </div>
 
 <style>		
@@ -207,6 +205,6 @@ ${portal.angularToolkit()}
 </style>
 
 <spring:url var="formActionUrl" value="${action}"/>
-<button type="submit" class="btn btn-default" ng-click="submitInfo()"><spring:message code="label.submit"  text="Submit"/></button>
+<button type="submit" class="btn btn-default" ng-click="submitInfo()"><spring:message code="label.submit"/></button>
 
 </div>
