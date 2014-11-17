@@ -79,7 +79,7 @@
 								<a href="${timelineUrl}" class="btn btn-default" title="<spring:message code="label.space.timeline"/>"><span class="glyphicon glyphicon-time"></span></a>
 								<a href="${editUrl}" class="btn btn-default" title="<spring:message code="label.space.edit"/>"><span class="glyphicon glyphicon-pencil"></span></a>
 								<a href="${createSubSpaceUrl}" class="btn btn-default" title="<spring:message code="label.space.create"/>"><span class="glyphicon glyphicon-plus-sign"></span></a>
-								<a href="${manageAccessUrl}" class="btn btn-default" title="<spring:message code="label.space.access"/>"><span class="glyphicon glyphicon-ban-circle"></span></a>	
+								<a href="${manageAccessUrl}" class="btn btn-default" title="<spring:message code="label.space.access"/>"><span class="glyphicon glyphicon-lock"></span></a>	
 							</c:if>
 							<c:if test="${space.isOccupationMember(currentUser)}">
 								<a href="${manageOccupantsUrl}" class="btn btn-default" title="<spring:message code="label.space.occupants"/>"><span class="glyphicon glyphicon-user"></span></a>	
