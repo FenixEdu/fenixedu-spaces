@@ -56,7 +56,6 @@ public class InformationBean {
     private String externalId;
     private BlueprintFile blueprint;
     private MultipartFile blueprintMultipartFile;
-    private byte[] rawBlueprint;
     private User user;
 
     private static Gson gson = new Gson();
@@ -207,13 +206,15 @@ public class InformationBean {
 
     public JsonElement getRawMetadata() {
         JsonObject json = new JsonObject();
-        for (MetadataSpec spec : classification.getMetadataSpecs()) {
-            final String name = spec.getName();
-            if (metadata.containsKey(name)) {
-                json.add(name, convert(spec.getType(), getValue(name)));
-            } else {
-                if (spec.isRequired()) {
-                    json.add(name, convert(spec.getType(), spec.getDefaultValue()));
+        if (classification != null) {
+            for (MetadataSpec spec : classification.getMetadataSpecs()) {
+                final String name = spec.getName();
+                if (metadata.containsKey(name)) {
+                    json.add(name, convert(spec.getType(), getValue(name)));
+                } else {
+                    if (spec.isRequired()) {
+                        json.add(name, convert(spec.getType(), spec.getDefaultValue()));
+                    }
                 }
             }
         }
@@ -241,17 +242,10 @@ public class InformationBean {
         return this.blueprint;
     }
 
-    public void setRawBlueprint(byte[] rawBlueprint) {
-        this.rawBlueprint = rawBlueprint;
-    }
-
     public byte[] getBlueprintContent() {
         try {
             if (getBlueprintMultipartFile() != null && !getBlueprintMultipartFile().isEmpty()) {
                 return getBlueprintMultipartFile().getBytes();
-            }
-            if (rawBlueprint != null) {
-                return rawBlueprint;
             }
             return null;
         } catch (IOException e) {

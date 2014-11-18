@@ -27,7 +27,7 @@
 
 <div class="page-header">
 	<h1>
-		<spring:message code="title.space.management" text="Space Management" />
+		<spring:message code="title.space.management" />
 		<small>${information.name}</small>
 	</h1>
 </div>
@@ -36,41 +36,65 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title"><spring:message code="title.view.space" text="Space Details" /></h3>
+		<h3 class="panel-title"><spring:message code="title.view.space" /></h3>
 	</div>
 	<div class="panel-body">
 		<table class="table">
+		<tr>
+			<th scope="row"><spring:message code="label.spaces.operations" /></th>
+				<td>
+					<spring:url value="/spaces/edit/${space.externalId}" var="editUrl" />
+					<spring:url value="/spaces/timeline/${space.externalId}" var="timelineUrl" />
+					<spring:url value="/spaces-view/schedule/${space.externalId}" var="scheduleUrl" />
+					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
+					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
+					<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
+					<c:if test="${not empty space.occupationSet}">
+						<a href="${scheduleUrl}" title="<spring:message code="title.space.schedule"/>"><span class="glyphicon glyphicon-dashboard"></span> <spring:message code="label.spaces.operations.viewSchedule"/></a> 
+					</c:if>
+					<c:if test="${space.isSpaceManagementMember(currentUser)}">
+						<c:if test="${not empty space.occupationSet}"> | </c:if>
+						<a href="${timelineUrl}" title="Timeline"><span class="glyphicon glyphicon-time"></span> <spring:message code="label.spaces.operations.viewTimeline"/></a> |
+						<a href="${editUrl}" title="Edit"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="label.spaces.operations.edit"/></a> |
+						<a href="${manageAccessUrl}" title="Access"><span class="glyphicon glyphicon-ban-circle"></span> <spring:message code="label.spaces.operations.manageAccess"/></a>		
+					</c:if>
+					<c:if test="${space.isOccupationMember(currentUser)}">
+						<c:if test="${not empty space.occupationSet || space.isSpaceManagementMember(currentUser)}"> | </c:if>
+						<a href="${manageOccupantsUrl}" title="Occupants"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.spaces.operations.manageOccupants"/></a>	
+					</c:if>
+				</td>
+			</tr>
 			<tr>
-				<th scope="row"><spring:message code="label.spaces.validFrom" text="Valid From" /></th>
+				<th scope="row"><spring:message code="label.spaces.validFrom" /></th>
 				<td><spring:eval expression="information.validFrom" /></td>
 			</tr>
 			<tr>
-				<th scope="row"><spring:message code="label.spaces.validUntil" text="Valid Until" /></th>
+				<th scope="row"><spring:message code="label.spaces.validUntil" /></th>
 				<td><spring:eval expression="information.validUntil" /></td>
 			</tr>
 			<tr>
-				<th scope="row"><spring:message code="label.spaces.name" text="Name" /></th>
+				<th scope="row"><spring:message code="label.spaces.name" /></th>
 				<td>${information.name}</td>
 			</tr>
 			<tr>
-				<th scope="row"><spring:message code="label.spaces.identification" text="Identification" /></th>
+				<th scope="row"><spring:message code="label.spaces.identification" /></th>
 				<td>${information.identification}</td>
 			</tr>
 			<tr>
-				<th scope="row"><spring:message code="label.spaces.classification" text="Classification" /></th>
+				<th scope="row"><spring:message code="label.spaces.classification" /></th>
 				<td>${information.classification.name.content}</td>
 			</tr>
 			<tr>
-				<th scope="row"><spring:message code="label.spaces.allocatableCapacity" text="Allocatable Capacity" /></th>
+				<th scope="row"><spring:message code="label.spaces.allocatableCapacity" /></th>
 				<td>${information.allocatableCapacity}</td>
 			</tr>
 			<tr>
-				<th scope="row"><spring:message code="label.spaces.blueprintNumber" text="Blueprint Number" /></th>
+				<th scope="row"><spring:message code="label.spaces.blueprintNumber" /></th>
 				<td>${information.blueprintNumber}</td>
 			</tr>
 			<tr>
 				<th scope="row">
-					<spring:message code="label.spaces.blueprint" text="Blueprint" />
+					<spring:message code="label.spaces.blueprint" />
 				</th>
 				<spring:url var="viewUrl" value="/spaces-view/view"/>
 				<spring:url var="scaleOpts" value=""/>
@@ -95,10 +119,10 @@
 				</c:if>
 				
 				<td>
-					<a href="${viewUrl}/${space.externalId}?viewIdentifications=true${keepScale}"><spring:message code="label.spaces.viewBlueprintIds" text="Identifications" /></a> |
-					<a href="${viewUrl}/${space.externalId}?viewDoorNumbers=true${keepScale}"><spring:message code="label.spaces.viewDoorNumbers" text="Door Numbers" /></a> |
-					<a href="${viewUrl}/${space.externalId}?viewBlueprintNumbers=true${keepScale}"><spring:message code="label.spaces.viewBlueprintNumbers" text="Blueprint Numbers" /></a> |
-					<a href="${viewUrl}/${space.externalId}?viewOriginalSpaceBlueprint=true${keepScale}"><spring:message code="label.spaces.viewOriginalBlueprint" text="Original Blueprint" /></a> |
+					<a href="${viewUrl}/${space.externalId}?viewIdentifications=true${keepScale}"><spring:message code="label.spaces.viewBlueprintIds" /></a> |
+					<a href="${viewUrl}/${space.externalId}?viewDoorNumbers=true${keepScale}"><spring:message code="label.spaces.viewDoorNumbers" /></a> |
+					<a href="${viewUrl}/${space.externalId}?viewBlueprintNumbers=true${keepScale}"><spring:message code="label.spaces.viewBlueprintNumbers" /></a> |
+					<a href="${viewUrl}/${space.externalId}?viewOriginalSpaceBlueprint=true${keepScale}"><spring:message code="label.spaces.viewOriginalBlueprint" /></a> |
 					<c:if test="${scale < 100 }">
 						<a href="${viewUrl}/${space.externalId}?${scaleOpts}&scale=100"><span class="glyphicon glyphicon-zoom-in"/></a>					
 					</c:if>
@@ -162,7 +186,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><spring:message code="label.spaces.area" text="Area" /></th>
+					<th scope="row"><spring:message code="label.spaces.area" /></th>
 					<td>${information.area}</td>
 				</tr>
 				<c:forEach var="metadata" items="${information.metadata}">
@@ -194,14 +218,13 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title"><spring:message code="title.sub.spaces" text="Sub Spaces" /></h3>
+		<h3 class="panel-title"><spring:message code="title.sub.spaces" /></h3>
 	</div>
 	<div class="panel-body">
 		<%@include file="fragments/spaces.jsp"%>
 	</div>
 </div>
-
 <spring:url var="exportUrl" value="/spaces-view/export/${space.externalId}" />
 <spring:url var="excelGif" value="/images/" />
-<a href="${exportUrl}"><img src="${excelGif}/excel.gif"/><spring:message code="label.spaces.Export" text=" Export to Excel" /></a>
+<p><a href="${exportUrl}"><img src="${excelGif}/excel.gif"/><spring:message code="label.spaces.Export" /></a></p>
 

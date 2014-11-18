@@ -26,21 +26,21 @@
 
 <div class="page-header">
 	<h1>
-		<spring:message code="title.space.management" text="Space Management" />
-		<small><spring:message code="title.list.occupation" text="Listagem de ocupações" /></small>
+		<spring:message code="title.space.management" />
+		<small><spring:message code="title.list.occupation" /></small>
 	</h1>
 </div>
 
 <spring:url var="viewUrl" value="/spaces/occupations/view"/>
 
 <spring:url var="createUrl" value="/spaces/occupations/create"/>
-<a href="${createUrl}"><spring:message code="title.create.occupation" text="Criar Ocupação"/></a>
+<a href="${createUrl}"><spring:message code="title.create.occupation"/></a>
 
-<h2><spring:message code="label.filters" text="Filtros"/></h2>
+<h2><spring:message code="label.filters"/></h2>
 
 <form role="form" action="" method="GET">
   <div class="form-group">
-    <label for="year"><spring:message code="label.year" text="Ano"/></label>
+    <label for="year"><spring:message code="label.year"/></label>
     <select name="year">
     	<c:forEach var="year" items="${years}">
     		<c:choose>
@@ -55,7 +55,7 @@
     </select>
   </div>
   <div class="form-group">
-    <label for="month"><spring:message code="label.month" text="Mês"/></label>
+    <label for="month"><spring:message code="label.month"/></label>
      <select name="month">
     	<c:forEach var="month" items="${months}">
     		<c:set var="monthValue" value="${month.toString('M')}"/>
@@ -71,22 +71,22 @@
     </select>
   </div>
   <div class="form-group">
-    <label for="searchSpace"><spring:message code="label.space" text="Nome"/></label>
-    <input name="name" type="text" id="searchSpace" value="${name}" placeholder="<spring:message code="label.space.search.name" text="Nome do espaço"/>"></input>
+    <label for="searchSpace"><spring:message code="label.space"/></label>
+    <input name="name" type="text" id="searchSpace" value="${name}" placeholder="<spring:message code="label.space.search.name"/>"></input>
   </div>
-  <button type="submit" class="btn btn-default"><spring:message code="label.select" text="Seleccionar"/></button>
+  <button type="submit" class="btn btn-default"><spring:message code="label.select"/></button>
 </form>
 
-<h2><spring:message code="title.list.occupation.details" text="Detalhes das ocupações" /></h2>
+<h2><spring:message code="title.list.occupation.details" /></h2>
 
 <spring:url var="viewUrl" value="/spaces/occupations/view"/>
 
 <c:if test="${not empty occupations}">
 	<table class="table">
 		<thead>
-			<th><spring:message code="label.occupation.subject" text="Assunto" /></th>
-			<th><spring:message code="label.occupation.intervals" text="Intervalo" /></th>
-			<th><spring:message code="label.occupation.rooms" text="Salas" /></th>
+			<th><spring:message code="label.occupation.subject" /></th>
+			<th><spring:message code="label.occupation.intervals" /></th>
+			<th><spring:message code="label.occupation.rooms" /></th>
 		</thead>
 		<tbody>
 			<c:forEach var="occupation" items="${occupations}">
@@ -109,5 +109,5 @@
 	</table>
 </c:if>
 <c:if test="${empty occupations}">
-	<h4><spring:message code="label.occupations.empty" text="Não existem ocupações para o período seleccionado."/></h4>
+	<h4><spring:message code="label.occupations.empty"/></h4>
 </c:if>
