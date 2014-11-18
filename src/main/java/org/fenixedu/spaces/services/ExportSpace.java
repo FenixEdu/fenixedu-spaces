@@ -52,6 +52,7 @@ public class ExportSpace {
         List<String> metaKeys = new ArrayList<String>();
         final List<Object> headers = getHeaders(metaKeys);
         final Spreadsheet spreadsheet = new Spreadsheet("GestãoDeEspaços", headers);
+        fillSpaceInfo(space, spreadsheet, metaKeys);
         fillSpreadSheet(space, spreadsheet, metaKeys);
         spreadsheet.exportToXLSSheet(outputStream);
     }
@@ -60,24 +61,26 @@ public class ExportSpace {
         return path.stream().map(a -> a.getName()).collect(Collectors.joining(" > "));
     }
 
+    private static void fillSpaceInfo(Space space, final Spreadsheet spreadsheet, List<String> metaKeys) {
+        final Row row = spreadsheet.addRow();
+
+        row.setCell((space.getParent() != null) ? StringPath(space.getParent().getPath()) : "--");
+        row.setCell(space.getName());
+        row.setCell(space.bean().getIdentification() != null ? space.bean().getIdentification() : "--");
+        row.setCell(space.bean().getBlueprintNumber() != null ? space.bean().getBlueprintNumber() : "--");
+        row.setCell(space.bean().getClassification() != null ? space.bean().getClassification().getName().getContent() : "--");
+        row.setCell(space.bean().getArea() != null ? space.bean().getArea().toString() : "--");
+
+        for (String field : metaKeys) {
+            row.setCell((space.getMetadata(field).orElse("--")).toString());
+        }
+    }
+
     private static void fillSpreadSheet(Space space, final Spreadsheet spreadsheet, List<String> metaKeys) {
         for (Space subSpace : space.getChildren()) {
             if (subSpace.isActive()) {
-                final Row row = spreadsheet.addRow();
-
-                row.setCell((subSpace.getParent() != null) ? StringPath(subSpace.getParent().getPath()) : "--");
-                row.setCell(subSpace.getName());
-                row.setCell(subSpace.bean().getIdentification() != null ? subSpace.bean().getIdentification() : "--");
-                row.setCell(subSpace.bean().getBlueprintNumber() != null ? subSpace.bean().getBlueprintNumber() : "--");
-                row.setCell(subSpace.bean().getClassification() != null ? subSpace.bean().getClassification().getName()
-                        .getContent() : "--");
-                row.setCell(subSpace.bean().getArea() != null ? subSpace.bean().getArea().toString() : "--");
-
-                for (String field : metaKeys) {
-                    row.setCell((subSpace.getMetadata(field).orElse("--")).toString());
-                }
+                fillSpaceInfo(subSpace, spreadsheet, metaKeys);
             }
-
             if (subSpace.getChildren().size() != 0) {
                 fillSpreadSheet(subSpace, spreadsheet, metaKeys);
             }
