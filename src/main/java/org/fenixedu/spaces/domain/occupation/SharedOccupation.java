@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.fenixedu.bennu.FenixEduSpaceConfiguration;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
@@ -174,7 +175,7 @@ public class SharedOccupation extends SharedOccupation_Base {
         String kind;
 
         protected SpaceOccupationException(String kind, String label, String message) {
-            super(Status.INTERNAL_SERVER_ERROR, "resources/FenixEduSpacesResources", label, message);
+            super(Status.INTERNAL_SERVER_ERROR, FenixEduSpaceConfiguration.BUNDLE, label, message);
             this.kind = kind;
         }
 

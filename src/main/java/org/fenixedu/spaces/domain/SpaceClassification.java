@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.fenixedu.bennu.FenixEduSpaceConfiguration;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 import org.fenixedu.commons.i18n.LocalizedString;
@@ -158,8 +159,7 @@ public class SpaceClassification extends SpaceClassification_Base {
     private static class DeleteSpaceClassificationException extends DomainException {
 
         protected DeleteSpaceClassificationException(String name) {
-            super(Status.INTERNAL_SERVER_ERROR, "resources/FenixEduSpacesResources", "label.cannotDeleteSpaceClassification",
-                    name);
+            super(Status.INTERNAL_SERVER_ERROR, FenixEduSpaceConfiguration.BUNDLE, "label.cannotDeleteSpaceClassification", name);
         }
     }
 

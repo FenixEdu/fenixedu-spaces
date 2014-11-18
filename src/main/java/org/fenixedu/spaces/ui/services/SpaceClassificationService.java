@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.fenixedu.bennu.FenixEduSpaceConfiguration;
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.spaces.domain.SpaceClassification;
@@ -34,7 +35,7 @@ public class SpaceClassificationService {
         String message;
 
         protected SpaceClassificationException(String kind, String label, String message) {
-            super(Status.INTERNAL_SERVER_ERROR, "resources/FenixEduSpacesResources", label, message);
+            super(Status.INTERNAL_SERVER_ERROR, FenixEduSpaceConfiguration.BUNDLE, label, message);
             this.kind = kind;
             this.message = message;
         }

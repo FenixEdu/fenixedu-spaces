@@ -49,4 +49,6 @@ public class FenixEduSpaceConfiguration {
         return ConfigurationInvocationHandler.getConfiguration(ConfigurationProperties.class);
     }
 
+    public static final String BUNDLE = "resources/FenixEduSpacesResources";
+
 }
