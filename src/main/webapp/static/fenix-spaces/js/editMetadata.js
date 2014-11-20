@@ -5,7 +5,7 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 		value : "java.lang.String",
 		text : "Text"
 	}, {
-		value : "java.util.Date",
+		value : "org.joda.time.DateTime",
 		text : "Date"
 	}, {
 		value : "java.lang.Boolean",

@@ -55,7 +55,7 @@ public class SpaceClassificationBean {
         super();
         this.localizedName = new LocalizedString();
         this.metadataSpec = new JsonArray();
-        this.parent = "";
+        this.parent = SpaceClassification.getRootClassification().getExternalId();
         this.code = "";
     }
 

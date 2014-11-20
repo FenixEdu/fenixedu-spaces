@@ -59,6 +59,7 @@ public class SpacesController {
     public String home(@PathVariable Space space, Model model) {
         model.addAttribute("spaces", space == null ? Space.getTopLevelSpaces() : getChildrenOrderedByName(space));
         model.addAttribute("currentUser", Authenticate.getUser());
+        model.addAttribute("isSpaceSuperUser", DynamicGroup.get("spaceSuperUsers").isMember(Authenticate.getUser()));
         return "spaces/home";
     }
 

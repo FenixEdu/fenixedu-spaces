@@ -12,7 +12,10 @@ import org.fenixedu.bennu.FenixEduSpaceConfiguration;
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
 import org.fenixedu.commons.i18n.LocalizedString;
 import org.fenixedu.spaces.domain.SpaceClassification;
+import org.fenixedu.spaces.ui.InformationBean;
 import org.fenixedu.spaces.ui.SpaceClassificationBean;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import pt.ist.fenixframework.Atomic;
@@ -59,6 +62,13 @@ public class SpaceClassificationService {
             JsonObject jo = jsonElement.getAsJsonObject();
             String name = jo.get("name").getAsString();
             String type = jo.get("type").getAsString();
+
+            Class<?> typeClass;
+            try {
+                typeClass = Class.forName(type);
+            } catch (ClassNotFoundException e1) {
+                throw new SpaceClassificationException("error", "label.spaceClassification.noSuchClass", name);
+            }
             String defaultValue = jo.get("defaultValue").getAsString();
             if (hasName.containsKey(name) == true) {
                 throw new SpaceClassificationException("error", "label.spaceClassification.duplicatedKey", name);
@@ -66,19 +76,32 @@ public class SpaceClassificationService {
                 hasName.put(name, true);
             }
             try {
-                if (type.equals("java.lang.Integer") && !defaultValue.isEmpty()) {
+                if (Integer.class.isAssignableFrom(typeClass) && !defaultValue.isEmpty()) {
                     Integer.parseInt(defaultValue);
+                    continue;
                 }
             } catch (Exception e) {
                 throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", name + " ( "
                         + defaultValue + " --> Number )");
             }
-            if (type.equals("java.lang.Boolean") && !defaultValue.isEmpty()) {
+            if (Boolean.class.isAssignableFrom(typeClass) && !defaultValue.isEmpty()) {
                 if (Boolean.parseBoolean(defaultValue.trim()) != true && !defaultValue.trim().equalsIgnoreCase("false")) {
                     throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", name + " ( "
                             + defaultValue + " --> Boolean )");
                 }
+                continue;
             }
+            if (DateTime.class.isAssignableFrom(typeClass) && !defaultValue.isEmpty()) {
+                try {
+
+                    DateTime.parse(defaultValue.trim(), DateTimeFormat.forPattern(InformationBean.DATE_FORMAT));
+                } catch (Exception e) {
+                    throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", name + " ( "
+                            + defaultValue + " --> Date )");
+                }
+                continue;
+            }
+            throw new SpaceClassificationException("error", "label.spaceClassification.noSuchClass", name);
         }
     }
 

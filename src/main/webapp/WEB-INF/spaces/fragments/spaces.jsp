@@ -118,7 +118,7 @@
 
 <spring:url var="createUrl" value="/spaces/create/${space.externalId}"/>
 
-<c:if test='${space == null || space.isSpaceManagementMember(currentUser)}'>
+<c:if test='${isSpaceSuperUser || (space != null && space.isSpaceManagementMember(currentUser))}'>
 	<div>
 		<a href="${createUrl}" class="btn btn-success"><spring:message code="link.space.create"></spring:message></a>
 	</div>

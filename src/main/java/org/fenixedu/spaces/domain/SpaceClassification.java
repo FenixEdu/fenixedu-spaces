@@ -302,4 +302,8 @@ public class SpaceClassification extends SpaceClassification_Base {
         return findByName(needle, Bennu.getInstance().getRootClassificationSet());
     }
 
+    public static SpaceClassification getRootClassification() {
+        return Bennu.getInstance().getRootClassificationSet().iterator().next();
+    }
+
 }

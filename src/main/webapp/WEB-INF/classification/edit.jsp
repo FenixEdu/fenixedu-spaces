@@ -84,7 +84,7 @@ ${portal.angularToolkit()}
 						<b><spring:message code="label.spaces.name" /></b>
 					</div>
 					<div class="col-md-10" id="theNameInput">
-						<input ng-localized-string='informationName' type="text" />
+						<input required-any ng-localized-string='informationName' type="text" />
 					</div>
 				</div>
 				<c:choose>
@@ -100,8 +100,7 @@ ${portal.angularToolkit()}
 							</div>
 							<div class="col-md-10">
 								<c:set var="ParentClassId" value="${information.parent}" />
-								<select class="form-control" id="classificationParentInput"
-									ng-model="parent">
+								<select class="form-control" id="classificationParentInput" ng-model="parent">
 									<c:forEach var="classItem" items="${classifications}">
 										<c:set var="classificationName"
 											value="${classItem.absoluteCode} - ${classItem.name.content}" />
@@ -116,7 +115,7 @@ ${portal.angularToolkit()}
 											</c:otherwise>
 										</c:choose>
 										<c:set var="classificationId" value="${classItem.externalId}" />
-										<c:choose>
+										<c:choose>										
 											<c:when test="${classificationId == ParentClassId}">
 												<option value="${classificationId}" selected="selected">${classificationName}</option>
 											</c:when>
@@ -177,7 +176,7 @@ ${portal.angularToolkit()}
 				  <input type="checkbox" ng-disabled='{{fieldDef.inherited}}' ng-model="fieldDef.required"/>
 				  </div>
 				  <div class="col-md-2">
-				  <input ng-model="fieldDef.defaultValue" ng-readonly='{{fieldDef.inherited}}'/>
+				  <input class="form-control" ng-model="fieldDef.defaultValue" ng-readonly='{{fieldDef.inherited}}'/>
 				  </div>
 				  <div class="col-md-1" ng-hide="fieldDef.inherited === true">
 				  	<button class="btn btn-default" ng-click="removeField(fieldDef)"><spring:message code="label.spaces.classification.remove"/></button>

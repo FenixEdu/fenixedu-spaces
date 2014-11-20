@@ -188,6 +188,7 @@ public class InformationBean {
         if (value == null) {
             return null;
         }
+
         if (String.class.isAssignableFrom(type)) {
             return new JsonPrimitive(value);
         }
@@ -201,7 +202,7 @@ public class InformationBean {
             return new JsonPrimitive(new BigDecimal(value));
         }
 
-        throw new UnsupportedOperationException(String.format("Can't convert value %s to type %s", value, type.getName()));
+        return new JsonPrimitive(value);
     }
 
     public JsonElement getRawMetadata() {

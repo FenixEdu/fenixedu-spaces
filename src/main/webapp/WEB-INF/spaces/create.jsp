@@ -26,12 +26,12 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <spring:url var="baseUrl" value="/static/fenix-spaces"/>
-
+ ${portal.bennuPortal()}
 <script type="text/javascript" src="${baseUrl}/js/sprintf.min.js">
 </script>
 <script type="text/javascript">
 var thisSpec = {};
- 
+
  <c:if test="${ null != information}">
  	thisSpec = ${information.rawMetadata};
  </c:if>
@@ -52,7 +52,22 @@ var thisSpec = {};
 		$("#classificationInput").change(function() {
 			loadClassification(this.value,true);
 		});
+		
+		function getLocalString(jsonString){
+			var myLocale = Bennu.locale.tag;
+			if(jsonString[myLocale]!=undefined){
+				return jsonString[myLocale];
+			}
+			for(var i = 0; i< Bennu.locales.length; i++){
+				if(jsonString[Bennu.locales[i].tag]!= undefined){
+					return jsonString[Bennu.locales[i].tag];
+				}
+			}
+			for(key in jsonString) if (Object.prototype.hasOwnProperty.call(jsonString,key)) return jsonString[key];
+		}
+		
 		function loadClassification(value, loaded){
+			
 			if (value != selectedClassification && loaded) {
 				$("input[name^=metadata]").parent().remove();
 				selectedClassification = value;
@@ -60,7 +75,7 @@ var thisSpec = {};
 			var spec = specs[value];
 			$(spec).each(function() {
 				var formGroup = $("<div class='form-group'>");
-				var label = $(sprintf("<label for='%s'>%s</label>", this.name, this.description["pt-PT"]));
+				var label = $(sprintf("<label for='%s'>%s</label>", this.name, getLocalString(this.description)));
 				var type = "text";
 				var required = this.required ? "required" : "";
 				if (this.type === "java.lang.Boolean") {
@@ -69,6 +84,9 @@ var thisSpec = {};
 				}
 				if (this.type === "java.lang.Integer") {
 					type = "number";
+				}
+				if (this.type === "org.joda.time.DateTime") {
+					type = "date";
 				}
 				var thisValue = thisSpec[this.name];
 				var theValue = this.defaultValue;
@@ -116,7 +134,7 @@ var thisSpec = {};
 <form:form modelAttribute="information" role="form" method="post" action="${formActionUrl}" enctype="multipart/form-data">
   <div class="form-group">
     <form:label for="validFromInput" path="validFrom"><spring:message code="label.spaces.validFrom"/></form:label>
-    <form:input type="date" class="formtitle.create.space-control" id="validFromInput" path="validFrom" placeholder="Valid From" required="required"/>
+    <form:input type="date" class="form-control" id="validFromInput" path="validFrom" placeholder="Valid From" required="required"/>
   </div>
   <div class="form-group">
     <form:label for="validUntilInput" path="validUntil"><spring:message code="label.spaces.validUntil"/></form:label>
@@ -135,6 +153,9 @@ var thisSpec = {};
     <form:select class="form-control" id="classificationInput" path="classification">
     	<c:forEach var="classification" items="${classifications}">
     	<c:set var="classificationName" value="${classification.absoluteCode} - ${classification.name.content}"/>
+    	<c:if test="${empty classification.absoluteCode}">
+    		<c:set var="classificationName" value="${classification.name.content}"/>
+    	</c:if>
     	<c:set var="classificationId" value="${classification.externalId}"/>
     		<c:choose>
     			<c:when test="${classificationId == information.classification.externalId}">
