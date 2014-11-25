@@ -73,6 +73,7 @@ public class Information extends Information_Base {
             this.validUntil = informationBean.getValidUntil();
             this.classification = informationBean.getClassification();
             this.blueprintContent = informationBean.getBlueprintContent();
+            this.blueprint = informationBean.getBlueprint();
             this.user = informationBean.getUser();
         }
 
@@ -147,6 +148,10 @@ public class Information extends Information_Base {
 
         @Atomic(mode = TxMode.WRITE)
         public Information build() {
+            if (blueprintContent == null) {
+                return new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
+                        metadata, classification, blueprint, user);
+            }
             return new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
                     metadata, classification, blueprintContent, user);
         }
@@ -179,9 +184,9 @@ public class Information extends Information_Base {
         setPrevious(previous);
     }
 
-    protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
+    private Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
             BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
-            byte[] blueprint, User user) {
+            byte[] blueprint, BlueprintFile blueprintFile, User user) {
         setValidFrom(validFrom);
         setValidUntil(validUntil);
         setAllocatableCapacity(allocatableCapacity);
@@ -191,10 +196,27 @@ public class Information extends Information_Base {
         setIdentification(identification);
         setClassification(classification);
         setMetadata(metadata);
+        if (blueprintFile != null) {
+            setBlueprint(blueprintFile);
+        }
         if (blueprint != null) {
             setBlueprint(new BlueprintFile(name, blueprint));
         }
         setUser(user);
+    }
+
+    protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
+            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
+            byte[] blueprint, User user) {
+        this(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification,
+                blueprint, null, user);
+    }
+
+    protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
+            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
+            BlueprintFile blueprintFile, User user) {
+        this(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification,
+                null, blueprintFile, user);
     }
 
     @SuppressWarnings("unchecked")

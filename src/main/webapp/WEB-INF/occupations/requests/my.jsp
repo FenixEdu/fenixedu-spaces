@@ -29,14 +29,14 @@
 
 
 <div class="page-header">
-  	<h1><spring:message code="title.view.my.occupations" text="Os meus pedidos de ocupação de espaços"/></h1>
+  	<h1><spring:message code="title.view.my.occupations"/></h1>
 	
-	<p><a class="btn btn-primary" href="${createUrl}"><spring:message code="link.occupations.create.request" text="Fazer Pedido de Ocupação de Espaços"></spring:message></a></p>
+	<p><a class="btn btn-primary" href="${createUrl}"><spring:message code="link.occupations.create.request"></spring:message></a></p>
 	
 	
   	<c:if test="${not empty requests.pageList}">
   	   	<c:set var="searchPageUrl" value="${searchUrl}${searchId}"/>
-  	   	<h3><spring:message code="title.view.my.occupations.list" text="Lista de pedidos"/></h3>
+  	   	<h3><spring:message code="title.view.my.occupations.list"/></h3>
   		<ul class="pagination">
 	  		<li><a href="${searchPageUrl}?p=f">&laquo;</a></li>
   			<c:forEach var="page" begin="${requests.firstLinkedPage}" end="${requests.lastLinkedPage}">
@@ -52,11 +52,11 @@
 		</ul>
 	  	<table class="table">
 	  		<thead>
-	  			<th><spring:message code="label.occupation.request.instant" text="instant" /></th>
-	  			<th><spring:message code="label.occupation.request.subject" text="subject" /></th>
-	  			<th><spring:message code="label.occupation.request.state" text="state" /></th>
-	  			<th><spring:message code="label.occupation.request.occupations" text="occupations" /></th>
-	  			<th><spring:message code="label.occupation.request.new.comments" text="New Comments" /></th>
+	  			<th><spring:message code="label.occupation.request.instant" /></th>
+	  			<th><spring:message code="label.occupation.request.subject" /></th>
+	  			<th><spring:message code="label.occupation.request.state" /></th>
+	  			<th><spring:message code="label.occupation.request.occupations" /></th>
+	  			<th><spring:message code="label.occupation.request.new.comments" /></th>
 	  		</thead>
 	  		<tbody>
 	  			<c:forEach var="occupationRequest" items="${requests.pageList}">
@@ -77,10 +77,10 @@
 						<td><spring:message code="OccupationRequestState.${state}"/></td>
 						<td>
 							<c:if test="${empty occupations}">
-								<spring:message code="label.no" text="Não"/>
+								<spring:message code="label.no"/>
 							</c:if>
 							<c:if test="${not empty occupations}">
-								<spring:message code="label.yes" text="Sim"/>
+								<spring:message code="label.yes"/>
 							</c:if>
 						</td>
 	 					<td>${numberOfUnreadComments}</td>
@@ -91,7 +91,7 @@
   	</c:if>
   	
   	<c:if test="${empty requests.pageList}">
-  		<em><spring:message code="space.occupations.no.requests" text="No requests available."></spring:message></em>
+  		<em><spring:message code="space.occupations.no.requests"></spring:message></em>
   	</c:if>
 </div>
 

@@ -27,14 +27,14 @@
 
 <div class="page-header">
 	<h1>
-		<spring:message code="title.space.classification.management" text="Space Classification Management" />
+		<spring:message code="title.space.classification.management" />
 		<small>${information.name}</small>
 	</h1>
 </div>
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title"><spring:message code="title.space.classification" text="Classifications" /></h3>
+		<h3 class="panel-title"><spring:message code="title.space.classification" /></h3>
 	</div>
 	<div class="panel-body">
 	<c:choose>
@@ -42,8 +42,8 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th><spring:message code="label.spaces.name" text="Name"/></th>
-					<th><spring:message code="label.spaces.operations" text="Operations"/></th>
+					<th><spring:message code="label.spaces.name"/></th>
+					<th><spring:message code="label.spaces.operations"/></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -51,10 +51,19 @@
 					<spring:url value="/classification/edit/${classification.externalId}" var="editUrl" />
 					<spring:url value="/classification/remove/${classification.externalId}" var="removeUrl" />
 					<tr>
-						<td>${classification.name.content}</td>
+						<c:choose>
+						<c:when test="${empty classification.absoluteCode}">
+							<td>${classification.name.content}</td>
+						</c:when>
+						<c:otherwise>
+							<td>${classification.absoluteCode} - ${classification.name.content}</td>
+						</c:otherwise>
+						</c:choose>
 						<td>
 							<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
-							<button data-classification-id="${classification.externalId}" data-classification-name="${classification.name.content}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
+							<c:if test="${!classification.isRootClassification()}">
+								<button data-classification-id="${classification.externalId}" data-classification-name="${classification.name.content}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
+							</c:if>
 						</td>
 					</tr>
 				</c:forEach>
@@ -62,13 +71,13 @@
 		</table>
 	</c:when>
 	<c:otherwise>
-		<spring:message code="label.empty.spaces" text="No available spaces." />
+		<spring:message code="label.empty.spaces" />
 	</c:otherwise>
 </c:choose>
 	</div>
 </div>
 <spring:url value="/classification/edit/" var="createUrl" />
-<a href="${createUrl}" class="btn btn-success">Create Classification</a>
+<a href="${createUrl}" class="btn btn-success"><spring:message code='label.spaces.classifications.create' text='Create Classification'/></a>
 <spring:url value="/classification/remove/" var="removeUrlBase" />
 <script type="text/javascript">
 <!--
@@ -78,9 +87,9 @@ $(document).ready(function() {
 	var deleteUrl = "${removeUrlBase}";
 	$('#confirmDelete').on('show.bs.modal', function (e) {
 		      var $spaceName = $(e.relatedTarget).attr('data-classification-name');
-		      var $message = "Are you sure you want to delete '" + $spaceName + "' ?";
+		      var $message = "<spring:message code='label.spaces.classifications.deleteSure' text='Are you sure you want to delete'/> '" + $spaceName + "' ?";
 		      $(this).find('.modal-body p').text($message);
-		      var $title = "Delete '" + $spaceName + "'";
+		      var $title = "<spring:message code='label.spaces.classifications.delete' text='Delete'/> '" + $spaceName + "' ?";
 		      var $spaceId = $(e.relatedTarget).attr('data-classification-id');
 		      $(this).find('.modal-title').text($title);
 		      $('#confirmDelete').find('.modal-footer #confirm').show(0);
@@ -122,15 +131,15 @@ $(document).ready(function() {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Delete Permanently</h4>
+        <h4 class="modal-title"></h4>
       </div>
       <div class="modal-body bg-danger">
-        <p style="text-align:center">Are you sure you want to delete <b> this </b>?</p>
+        <p style="text-align:center"></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirm">Delete</button>
-        <button type="button" class="btn btn-default" id="hide">Ok</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel"><spring:message code='label.cancel' text='Cancel'/></button>
+        <button type="button" class="btn btn-danger" id="confirm"><spring:message code='label.delete' text='Delete'/></button>
+        <button type="button" class="btn btn-default" id="hide"><spring:message code='label.ok' text='Ok'/></button>
       </div>
     </div>
   </div>

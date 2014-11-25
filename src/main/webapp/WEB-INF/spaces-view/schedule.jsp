@@ -95,7 +95,7 @@
 </script>
 
 <div class="page-header">
-  <h1><spring:message code="title.space.management" text="Space Management"/><small><spring:message code="title.space.schedule" text="Horário do Espaço"/></small></h1>
+  <h1><spring:message code="title.space.management"/><small><spring:message code="title.space.schedule"/></small></h1>
 </div>
 
 <h3>${space.presentationName}</h3>

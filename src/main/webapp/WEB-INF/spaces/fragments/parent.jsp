@@ -20,7 +20,7 @@
 --%>
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title"><spring:message code="title.parent.spaces" text="Parent Spaces" /></h3>
+		<h3 class="panel-title"><spring:message code="title.parent.spaces" /></h3>
 	</div>
 	<div class="panel-body">
 		<c:if test="${not empty parentSpace }">
@@ -30,7 +30,7 @@
 		  	</c:forEach>
 		</c:if>
 		<c:if test="${empty parentSpace }">
-			<spring:message code="label.empty.parent.spaces" text="No parent spaces."/>
+			<spring:message code="label.empty.parent.spaces"/>
 		</c:if>
 	</div>
 </div>

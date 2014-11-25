@@ -105,12 +105,12 @@
 	function nthDayOfTheWeekLabel(when) {
 		var nth = nthdayOfTheWeek(when)
 		if (nth > 3) {
-			return "<spring:message code="calendar.dayofweek.last" text="Último"/>";
+			return "<spring:message code="calendar.dayofweek.last"/>";
 		}
-		var first = "<spring:message code="calendar.dayofweek.first" text="primeira"/>";
-		var second = "<spring:message code="calendar.dayofweek.second" text="segunda"/>";
-		var third = "<spring:message code="calendar.dayofweek.third" text="terceira"/>";
-		var fourth = "<spring:message code="calendar.dayofweek.fourth" text="quarta"/>";
+		var first = "<spring:message code="calendar.dayofweek.first"/>";
+		var second = "<spring:message code="calendar.dayofweek.second"/>";
+		var third = "<spring:message code="calendar.dayofweek.third"/>";
+		var fourth = "<spring:message code="calendar.dayofweek.fourth"/>";
 		
 		var labels = [first, second, third, fourth];
 		return labels[nth];
@@ -147,8 +147,8 @@
 				$("#weekly-clear").click(selectDays());
 			},
 			html: "#weeklyrepeatson",
-			label: "<spring:message code="calendar.repeatson.weekly" text="Semanas"/>",
-			summary: "<spring:message code="calendar.repeats.weekly" text="Semanalmente"/>",
+			label: "<spring:message code="calendar.repeatson.weekly"/>",
+			summary: "<spring:message code="calendar.repeats.weekly"/>",
 			updateSummary: function() {
 				var selectedDays = []
 				$("#weekdays input").each(function() {
@@ -158,7 +158,7 @@
 				});
 				var label = this['summary'];
 				if (selectedDays.length > 0) {
-					label += " <spring:message code="calendar.on" text="às"/> " + selectedDays.join(", ")
+					label += " <spring:message code="calendar.on"/> " + selectedDays.join(", ")
 				}
 				$("#summary").html(label)
 			},
@@ -236,8 +236,8 @@
 				$(".repeats").show();
 			},
 			html: undefined,
-			label: "<spring:message code="calendar.repeatson.days" text="Dias"/>",
-			summary: "<spring:message code="calendar.repeats.daily" text="Diariamente"/>",
+			label: "<spring:message code="calendar.repeatson.daily"/>",
+			summary: "<spring:message code="calendar.repeats.daily"/>",
 			processIntervals: function() {
 				var occupation = this.getOccupation();
 				var start = occupation.start
@@ -282,16 +282,16 @@
 				})
 			},
 			html: "#monthlyrepeatson",
-			label: "<spring:message code="calendar.repeatson.monthly" text="Meses"/>",
-			summary: "<spring:message code="calendar.repeats.monthly" text="Mensalmente"/>",
+			label: "<spring:message code="calendar.repeatson.monthly"/>",
+			summary: "<spring:message code="calendar.repeats.monthly"/>",
 			updateSummary: function() {
 				var startdate = moment($("#startdate").val(), "DD/MM/YYYY")
 				var value = $("input:radio[name=monthly]:checked").val();
 				if (value == "dayofmonth") {
-					$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofmonth" text=" ao dia "/>" + startdate.date());
+					$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofmonth"/>" + startdate.date());
 				}
 				if (value == "dayofweek") {
-					$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofweek" text=" à "/>" + nthDayOfTheWeekLabel(startdate) + " " + dayOfWeekLabel(startdate));
+					$("#summary").html(this["summary"] + "<spring:message code="calendar.repeatson.summary.dayofweek"/>" + nthDayOfTheWeekLabel(startdate) + " " + dayOfWeekLabel(startdate));
 				}
 			},
 			getOccupation: function() {
@@ -369,7 +369,7 @@
 			},
 			html: undefined,
 			label: undefined,
-			summary: "<spring:message code="calendar.repeats.never" text="Nunca"/>",
+			summary: "<spring:message code="calendar.repeats.never"/>",
 			getOccupation: function() {
 				return {
 					start: getStartMoment(),
@@ -398,8 +398,8 @@
 				$(".repeats").show();
 			},
 			html: undefined,
-			label: "<spring:message code="calendar.repeatson.yearly" text="Anos"/>",
-			summary: "<spring:message code="calendar.repeats.yearly" text="Anualmente"/>",
+			label: "<spring:message code="calendar.repeatson.yearly"/>",
+			summary: "<spring:message code="calendar.repeats.yearly"/>",
 			getOccupation: function() {
 				return {
 					start: getStartMoment(),
@@ -536,18 +536,18 @@
 		$("#starttime")[0].style.border = "";
 		if(allday == true) return false;
 		if(starttime == "__:__" && endtime == "__:__"){
-			addHint("endtime","<spring:message code="calendar.error.time.badstartend" text="Por favor selecione horas de início e fim válidas"/>","endtimehint");
+			addHint("endtime","<spring:message code="calendar.error.time.badstartend"/>","endtimehint");
 			$("#starttime")[0].style.border = "1px solid #ff0000";
 			$("#endtime")[0].style.border = "1px solid #ff0000";
 			return true;
 		}
 		if(starttime == "__:__"){ 
-			addHint("endtime","<spring:message code="calendar.error.time.badstart" text="Por favor selecione hora de início válida"/>","endtimehint"); 
+			addHint("endtime","<spring:message code="calendar.error.time.badstart"/>","endtimehint"); 
 			$("#starttime")[0].style.border = "1px solid #ff0000";
 			return true;
 		}
 		if(endtime == "__:__"){
-			addHint("endtime","<spring:message code="calendar.error.time.badsend" text="Por favor selecione hora de terminar válida"/>","endtimehint");
+			addHint("endtime","<spring:message code="calendar.error.time.badsend"/>","endtimehint");
 			$("#endtime")[0].style.border = "1px solid #ff0000";
 			return true;
 		}
@@ -560,7 +560,7 @@
 		stime = getStartMoment();
 		etime = getEndMoment();
 		if(stime >= etime){
-			addHint("endtime","<spring:message code="calendar.error.time.badorder" text="A hora de iniciar deve ser anterior à hora de terminar"/>","endtimehint");
+			addHint("endtime","<spring:message code="calendar.error.time.badorder"/>","endtimehint");
 			$("#starttime")[0].style.border = "1px solid #ff0000";
 			$("#endtime")[0].style.border = "1px solid #ff0000";
 			return true;
@@ -595,25 +595,25 @@
 		$("#startdate")[0].style.border = "";
 		<!-- verify date parameters -->
 		if(startdate == "__/__/____" && enddate == "__/__/____"){
-			addHint("enddate","<spring:message code="calendar.error.date.badstartend" text="Por favor selecione datas de início e fim válidas"/>","enddatehint");
+			addHint("enddate","<spring:message code="calendar.error.date.badstartend"/>","enddatehint");
 			$("#startdate")[0].style.border = "1px solid #ff0000";
 			$("#enddate")[0].style.border = "1px solid #ff0000";
 			return true;
 		}
 		if(startdate == "__/__/____"){ 
-			addHint("enddate","<spring:message code="calendar.error.date.badstart" text="Por favor selecione data de início válida"/>","enddatehint");
+			addHint("enddate","<spring:message code="calendar.error.date.badstart"/>","enddatehint");
 			$("#startdate")[0].style.border = "1px solid #ff0000";
 			return true;
 		}
 		if(enddate == "__/__/____"){
-			addHint("enddate","<spring:message code="calendar.error.date.badend" text="Por favor selecione data de terminar válida"/>","enddatehint");
+			addHint("enddate","<spring:message code="calendar.error.date.badend"/>","enddatehint");
 			$("#enddate")[0].style.border = "1px solid #ff0000";
 			return true;
 		}
 		sdate = getStartDate();
 		edate = getEndDate();
 		if(sdate > edate){
-			addHint("enddate","<spring:message code="calendar.error.date.order" text="A data de iniciar deve ser igual ou anterior à data de terminar"/>","enddatehint");
+			addHint("enddate","<spring:message code="calendar.error.date.order"/>","enddatehint");
 			$("#enddate")[0].style.border = "1px solid #ff0000";
 			$("#startdate")[0].style.border = "1px solid #ff0000";
 			return true;
@@ -755,29 +755,29 @@
 </script>
 	
 <script type="text/html" id="weeklyrepeatson">
-<th class="col-lg-3"><spring:message code="calendar.repeatson" text="Repete em"/></th>
+<th class="col-lg-3"><spring:message code="calendar.repeatson"/></th>
 <td class="col-lg-9">
 	<span id="weekdays">
-		<input id="mo" type="checkbox" title="<spring:message code="calendar.daysofweek.mo" text="Segunda-Feira"/>">
-		<span title="<spring:message code="calendar.daysofweek.mo" text="Segunda-Feira"/>"><spring:message code="calendar.daysofweek.short.mo" text="S"/></span>
-		<input id="tu" type="checkbox" title="<spring:message code="calendar.daysofweek.tu" text="Terça-Feira"/>">
-		<span title="<spring:message code="calendar.daysofweek.tu" text="Terça-Feira"/>"><spring:message code="calendar.daysofweek.short.tu" text="T"/></span>
-		<input id="we" type="checkbox" title="<spring:message code="calendar.daysofweek.we" text="Quarta-Feira"/>">
-		<span title="<spring:message code="calendar.daysofweek.we" text="Quarta-Feira"/>"><spring:message code="calendar.daysofweek.short.we" text="Q"/></span>
-		<input id="th" type="checkbox" title="<spring:message code="calendar.daysofweek.th" text="Quinta-Feira"/>">
-		<span title="<spring:message code="calendar.daysofweek.th" text="Quinta-Feira"/>"><spring:message code="calendar.daysofweek.short.th" text="Q"/></span>
-		<input id="fr" type="checkbox" title="<spring:message code="calendar.daysofweek.fr" text="Sexta-Feira"/>">
-		<span title="<spring:message code="calendar.daysofweek.fr" text="Sexta-Feira"/>"><spring:message code="calendar.daysofweek.short.fr" text="S"/></span>
-		<input id="sa" type="checkbox" title="<spring:message code="calendar.daysofweek.sa" text="Sábado"/>">
-		<span title="<spring:message code="calendar.daysofweek.sa" text="Sábado"/>"><spring:message code="calendar.daysofweek.short.sa" text="S"/></span>
-		<input id="su" type="checkbox" title="<spring:message code="calendar.daysofweek.su" text="Domingo"/>">
-		<span title="<spring:message code="calendar.daysofweek.su" text="Domingo"/>"><spring:message code="calendar.daysofweek.short.su" text="D"/></span>
+		<input id="mo" type="checkbox" title="<spring:message code="calendar.daysofweek.mo"/>">
+		<span title="<spring:message code="calendar.daysofweek.mo"/>"><spring:message code="calendar.daysofweek.short.mo"/></span>
+		<input id="tu" type="checkbox" title="<spring:message code="calendar.daysofweek.tu"/>">
+		<span title="<spring:message code="calendar.daysofweek.tu"/>"><spring:message code="calendar.daysofweek.short.tu"/></span>
+		<input id="we" type="checkbox" title="<spring:message code="calendar.daysofweek.we"/>">
+		<span title="<spring:message code="calendar.daysofweek.we"/>"><spring:message code="calendar.daysofweek.short.we"/></span>
+		<input id="th" type="checkbox" title="<spring:message code="calendar.daysofweek.th"/>">
+		<span title="<spring:message code="calendar.daysofweek.th"/>"><spring:message code="calendar.daysofweek.short.th"/></span>
+		<input id="fr" type="checkbox" title="<spring:message code="calendar.daysofweek.fr"/>">
+		<span title="<spring:message code="calendar.daysofweek.fr"/>"><spring:message code="calendar.daysofweek.short.fr"/></span>
+		<input id="sa" type="checkbox" title="<spring:message code="calendar.daysofweek.sa"/>">
+		<span title="<spring:message code="calendar.daysofweek.sa"/>"><spring:message code="calendar.daysofweek.short.sa"/></span>
+		<input id="su" type="checkbox" title="<spring:message code="calendar.daysofweek.su"/>">
+		<span title="<spring:message code="calendar.daysofweek.su"/>"><spring:message code="calendar.daysofweek.short.su"/></span>
 	</span>
 	<span style="display: block;">
-		<button class="btn btn-xs btn-success" id="weekly-all"><spring:message code="calendar.all" text="Todos"/></button>
+		<button class="btn btn-xs btn-success" id="weekly-all"><spring:message code="calendar.all"/></button>
 		<button class="btn btn-xs btn-success" id="weekly-tue-thu">3 e 5</button>
 		<button class="btn btn-xs btn-success" id="weekly-mon-wed-fri">2,4 e 6</button>
-		<button class="btn btn-xs btn-success" id="weekly-clear"><spring:message code="calendar.clear" text="Limpar"/></button>
+		<button class="btn btn-xs btn-success" id="weekly-clear"><spring:message code="calendar.clear"/></button>
 	</span>
 </td>			
 </script>
@@ -787,9 +787,9 @@
 <td class="col-lg-9">
 	<span id="options">
 		<input type="radio" name="monthly" value="dayofmonth" checked/>
-		<span><spring:message code="calendar.repeatson.montly.dayofmonth" text="Dia do Mês"/></span>
+		<span><spring:message code="calendar.repeatson.montly.dayofmonth"/></span>
 		<input type="radio" name="monthly" value="dayofweek"/>
-		<span><spring:message code="calendar.repeatson.montly.dayofweek" text="Dia da Semana"/></span>
+		<span><spring:message code="calendar.repeatson.montly.dayofweek"/></span>
 	</span>
 </td>			
 </script>
@@ -809,7 +809,7 @@
 	<span>
 		<!-- Button trigger modal -->
 		<button class="btn btn-primary" id="add-event">
-			<spring:message code="calendar.add.event" text="Seleccionar Período"/>
+			<spring:message code="calendar.add.event"/>
 		</button>
 	</span>
 	<div id="calendar"></div>
@@ -820,12 +820,12 @@
 			<div class="modal-content">
 				<div class="modal-header">
 		        	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        	<h4 class="modal-title" id="myModalLabel"><spring:message code="calendar.add.event" text="Seleccionar Período"/></h4>
+		        	<h4 class="modal-title" id="myModalLabel"><spring:message code="calendar.add.event"/></h4>
 		      	</div>
 				<div class="modal-body">
 		        	<table class="table" id="create-event">
 						<tr class="row">
-							<th class="col-lg-3"><spring:message code="calendar.start" text="Início"/></th>
+							<th class="col-lg-3"><spring:message code="calendar.start"/></th>
 							<td>
 								<span style="display:block;">
 									<input type="text" id="startdate" oninput="checkBadInput()"/>
@@ -833,7 +833,7 @@
 							</td>
 						</tr>
 						<tr class="row">
-							<th class="col-lg-3"><spring:message code="calendar.end" text="Fim"/></th>
+							<th class="col-lg-3"><spring:message code="calendar.end"/></th>
 							<td class="col-lg-9">
 								
 								<span style="display:block;">
@@ -843,7 +843,7 @@
 							</td>
 						</tr>
 						<tr class="row">
-							<th class="col-lg-3"><spring:message code="calendar.repeatsevery" text="Todo o dia"/></th>
+							<th class="col-lg-3"><spring:message code="calendar.allday"/></th>
 							<td class="col-lg-9">
 
 								<input type="checkbox" id="allday" onchange="checkBadInput()"/>
@@ -856,37 +856,37 @@
 								</td>
 							</tr>
 							<tr class="row">
-								<th class="col-lg-3"><spring:message code="calendar.repeats" text="Repete"/></th>
+								<th class="col-lg-3"><spring:message code="calendar.repeats"/></th>
 								<td class="col-lg-9">
 									<select id="frequency">
-										<option value="n"><spring:message code="calendar.repeats.never" text="Nunca"/></option>
-										<option value="d"><spring:message code="calendar.repeats.daily" text="Diariamente"/></option>
-										<option value="w"><spring:message code="calendar.repeats.weekly" text="Semanalmente"/></option>
-										<option value="m"><spring:message code="calendar.repeats.monthly" text="Mensalmente"/></option>
-										<option value="y"><spring:message code="calendar.repeats.yearly" text="Anualmente"/></option>
+										<option value="n"><spring:message code="calendar.repeats.never"/></option>
+										<option value="d"><spring:message code="calendar.repeats.daily"/></option>
+										<option value="w"><spring:message code="calendar.repeats.weekly"/></option>
+										<option value="m"><spring:message code="calendar.repeats.monthly"/></option>
+										<option value="y"><spring:message code="calendar.repeats.yearly"/></option>
 									</select>
 								</td>
 							</tr>
 							<tr class="repeats row">
-								<th class="col-lg-3"><spring:message code="calendar.repeatsevery" text="Repete a cada"/></th>
+								<th class="col-lg-3"><spring:message code="calendar.repeatsevery"/></th>
 								<td class="col-lg-9">
 									<select name="" id="repeatsevery">
 									</select>
-									<label id="repeatsevery-label"><spring:message code="calendar.repeatsevery.days" text="Dias"/></label>
+									<label id="repeatsevery-label"><spring:message code="calendar.repeatsevery.days"/></label>
 								</td>
 							</tr>
 							<tr id="repeatsconfig" class="repeats row">
 							</tr>
 							<tr class="row">
-								<th class="col-lg-2"><spring:message code="calendar.summary" text="Resumo"/></th>
+								<th class="col-lg-2"><spring:message code="calendar.summary"/></th>
 								<td class="col-lg-9" id="summary"></td>
 							</tr>
 					</table>
 				</div>
 			    <div class="modal-footer">
-			      <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="calendar.close" text="Fechar"/></button>
-			      <button type="button" id="delete" class="btn btn-danger"><spring:message code="calendar.delete" text="Apagar"/></button>
-			      <button type="button" class="btn btn-primary" id="save"><spring:message code="calendar.save" text="Guardar alterações"/></button>
+			      <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="calendar.close"/></button>
+			      <button type="button" id="delete" class="btn btn-danger"><spring:message code="calendar.delete"/></button>
+			      <button type="button" class="btn btn-primary" id="save"><spring:message code="calendar.save"/></button>
 			    </div>
     		</div>
 	  	</div>

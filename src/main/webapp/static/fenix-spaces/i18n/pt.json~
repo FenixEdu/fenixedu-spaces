@@ -1,0 +1,16 @@
+{
+	        DIALOGS_ERROR: "Erro",
+	        DIALOGS_ERROR_MSG: "Occorreu um erro com o seu pedido.",
+	        DIALOGS_CLOSE: "Fechar",
+	        DIALOGS_PLEASE_WAIT: "Espere por favor",
+	        DIALOGS_PLEASE_WAIT_ELIPS: "Espere por favor...",
+	        DIALOGS_PLEASE_WAIT_MSG: "À espera que a operação termine.",
+	        DIALOGS_PERCENT_COMPLETE: "% Completo",
+	        DIALOGS_NOTIFICATION: "Notificação",
+	        DIALOGS_NOTIFICATION_MSG: "Notificação Desconhecida.",
+	        DIALOGS_CONFIRMATION: "Confirmação",
+	        DIALOGS_CONFIRMATION_MSG: "Confirmação necessária.",
+	        DIALOGS_OK: "OK",
+	        DIALOGS_YES: "Sim",
+	        DIALOGS_NO: "Não"
+        }

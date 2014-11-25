@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,7 +32,6 @@ import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.bennu.spring.portal.SpringApplication;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.BlueprintFile;
 import org.fenixedu.spaces.domain.BlueprintFile.BlueprintTextRectangles;
@@ -53,7 +53,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.base.Strings;
 
-@SpringApplication(group = "anyone", path = "spaces-view", title = "title.space.management.view", hint = "spaces-manager")
 @SpringFunctionality(app = SpacesController.class, title = "title.spaces.search")
 @RequestMapping("/spaces-view")
 public class SpaceSearchController {
@@ -69,6 +68,7 @@ public class SpaceSearchController {
     @RequestMapping(value = "/search")
     public String search(@RequestParam(required = false) String name, Model model) {
         model.addAttribute("name", name);
+        model.addAttribute("currentUser", Authenticate.getUser());
         if (!Strings.isNullOrEmpty(name)) {
             model.addAttribute("foundSpaces", findSpace(name));
         }
@@ -76,7 +76,23 @@ public class SpaceSearchController {
     }
 
     private Set<Space> findSpace(String text) {
-        return Space.getSpaces().filter(s -> s.getName().toLowerCase().contains(text.toLowerCase())).collect(Collectors.toSet());
+        return Space.getSpaces().filter(s -> {
+            List<String> toksToFind = Arrays.asList(text.split(" "));
+            List<String> toks = Arrays.asList(s.getFullName().toLowerCase().split(" "));
+            for (String token : toksToFind) {
+                boolean contains = false;
+                for (String ss : toks) {
+                    if (ss.contains(token)) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (contains == false) {
+                    return false;
+                }
+            }
+            return true;
+        }).collect(Collectors.toSet());
     }
 
     @RequestMapping(value = "/schedule/{space}")
@@ -125,7 +141,6 @@ public class SpaceSearchController {
                 }
             }
         }
-
         return null;
     }
 
@@ -178,6 +193,7 @@ public class SpaceSearchController {
         Boolean isToViewIdentifications = viewIdentifications;
         Boolean isToViewDoorNumbers = viewDoorNumbers;
         BigDecimal scalePercentage = scale;
+        response.setContentType("image/jpeg");
         try (OutputStream outputStream = response.getOutputStream()) {
             SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isToViewOriginalSpaceBlueprint, isToViewBlueprintNumbers,
                     isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
