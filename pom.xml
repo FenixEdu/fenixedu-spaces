@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.fenixedu</groupId>
 		<artifactId>fenix-framework-project</artifactId>
-		<version>2.0.1</version>
+		<version>2.2.0</version>
 	</parent>
 
 	<artifactId>fenixedu-spaces</artifactId>
@@ -35,8 +35,8 @@
 	</ciManagement>
 
 	<properties>
-		<version.bennu>3.0.1</version.bennu>
-		<version.org.fenixedu.bennu-spring>1.0.1</version.org.fenixedu.bennu-spring>
+		<version.bennu>3.4.0</version.bennu>
+		<version.org.fenixedu.bennu-spring>1.1.0</version.org.fenixedu.bennu-spring>
 		<version.org.fenixedu.fenixedu.commons>1.0.1</version.org.fenixedu.fenixedu.commons>
 		<version.com.google.guava.guava>17.0</version.com.google.guava.guava>
 		<version.com.google.code.gson.gson>2.2.4</version.com.google.code.gson.gson>
@@ -90,6 +90,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.fenixedu</groupId>
+			<artifactId>bennu-portal</artifactId>
+			<version>${version.bennu}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.fenixedu</groupId>
 			<artifactId>bennu-io</artifactId>
 			<version>${version.bennu}</version>
 		</dependency>
@@ -136,10 +141,11 @@
 		</dependency>
 	</dependencies>
 
-	<repositories>
-		<repository>
-			<id>fenix-ashes-maven-repository</id>
-			<url>https://fenix-ashes.ist.utl.pt/nexus/content/groups/fenix-ashes-maven-repository</url>
-		</repository>
-	</repositories>
+	 <repositories>
+        <repository>
+            <id>fenixedu-maven-repository</id>
+            <url>https://repo.fenixedu.org/fenixedu-maven-repository</url>
+        </repository>
+    </repositories>
+
 </project>
