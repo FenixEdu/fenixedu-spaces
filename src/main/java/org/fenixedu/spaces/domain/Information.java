@@ -148,12 +148,20 @@ public class Information extends Information_Base {
 
         @Atomic(mode = TxMode.WRITE)
         public Information build() {
-            if (blueprintContent == null) {
-                return new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
-                        metadata, classification, blueprint, user);
+            Information info = null;
+            if (validUntil != null && validFrom.isAfter(validUntil)) {
+                throw new SpaceDomainException("label.start.date.is.after.end.date");
             }
-            return new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
-                    metadata, classification, blueprintContent, user);
+            if (blueprintContent == null) {
+                info =
+                        new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
+                                metadata, classification, blueprint, user);
+            } else {
+                info =
+                        new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
+                                metadata, classification, blueprintContent, user);
+            }
+            return info;
         }
 
         public InformationBean bean() {
