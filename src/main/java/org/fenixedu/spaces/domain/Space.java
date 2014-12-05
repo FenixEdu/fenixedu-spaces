@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.Group;
+import org.fenixedu.bennu.core.groups.NobodyGroup;
 import org.fenixedu.spaces.domain.occupation.Occupation;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
@@ -356,15 +357,15 @@ public final class Space extends Space_Base {
     }
 
     public Group getManagementGroupWithChainOfResponsability() {
-        final Group accessGroup = getManagementGroup();
-        if (accessGroup != null) {
-            return accessGroup;
+        Group accessGroup = getManagementGroup();
+        if (accessGroup == null) {
+            accessGroup = NobodyGroup.get();
         }
         final Space surroundingSpace = getParent();
         if (surroundingSpace != null) {
-            return surroundingSpace.getManagementGroupWithChainOfResponsability();
+            return accessGroup.or(surroundingSpace.getManagementGroupWithChainOfResponsability());
         }
-        return null;
+        return accessGroup;
     }
 
     public Group getOccupationsGroup() {
@@ -372,15 +373,15 @@ public final class Space extends Space_Base {
     }
 
     public Group getOccupationsGroupWithChainOfResponsability() {
-        final Group accessGroup = getOccupationsGroup();
-        if (accessGroup != null) {
-            return accessGroup;
+        Group accessGroup = getOccupationsGroup();
+        if (accessGroup == null) {
+            accessGroup = NobodyGroup.get();
         }
         final Space surroundingSpace = getParent();
         if (surroundingSpace != null) {
-            return surroundingSpace.getOccupationsGroupWithChainOfResponsability();
+            return accessGroup.or(surroundingSpace.getOccupationsGroupWithChainOfResponsability());
         }
-        return null;
+        return accessGroup;
     }
 
     public void setManagementAccessGroup(Group managementAccessGroup) {
