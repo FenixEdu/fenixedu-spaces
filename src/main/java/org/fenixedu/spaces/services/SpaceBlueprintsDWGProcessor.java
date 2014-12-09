@@ -227,7 +227,6 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
 
     private static String getTextToInsert(String textToInsert, Space space, Boolean isToViewBlueprintNumbers,
             Boolean isToViewSpaceIdentifications, Boolean isToViewDoorNumbers) {
-
         if (space != null) {
             if (isToViewSpaceIdentifications != null && isToViewSpaceIdentifications) {
 
@@ -245,7 +244,7 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
 //                    textToInsert = ((BuildingInformation) spaceInformation).getName();
 //                }
 
-                return space.getName();
+                return space.getName().trim();
 
             } else if (isToViewDoorNumbers != null && isToViewDoorNumbers) {
                 String name = (String) space.getMetadata("doorNumber").orElse("-");
@@ -254,9 +253,9 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
 //                    textToInsert = ((RoomInformation) spaceInformation).getDoorNumber();
 //                }
 
-                return name;
+                return name.trim();
             } else if (isToViewBlueprintNumbers != null && isToViewBlueprintNumbers) {
-                return textToInsert;
+                return textToInsert.trim();
             }
         }
         return null;
