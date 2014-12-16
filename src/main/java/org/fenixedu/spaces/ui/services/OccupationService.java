@@ -396,7 +396,7 @@ public class OccupationService {
                     event.addProperty("end", end);
                     event.addProperty("title", occupation.getSubject());
                     String url = occupation.getUrl();
-                    if (!url.isEmpty()) {
+                    if (url != null && !url.isEmpty()) {
                         event.addProperty("url", url);
                     }
                     event.addProperty("allDay", false);

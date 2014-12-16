@@ -77,7 +77,7 @@ public class SpaceSearchController {
 
     private Set<Space> findSpace(String text) {
         return Space.getSpaces().filter(s -> {
-            List<String> toksToFind = Arrays.asList(text.split(" "));
+            List<String> toksToFind = Arrays.asList(text.toLowerCase().split(" "));
             List<String> toks = Arrays.asList(s.getFullName().toLowerCase().split(" "));
             for (String token : toksToFind) {
                 boolean contains = false;

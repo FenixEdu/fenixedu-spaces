@@ -231,7 +231,7 @@ function getSelectedPeriod(unixFormat){
 <div class="page-header">
 	<h1>
 		<spring:message code="title.space.management" />
-		<small><spring:message code="title.space.access.management" /></small>
+		<small><spring:message code="title.space.occupants.management" /></small>
 	</h1>
 </div>
 
