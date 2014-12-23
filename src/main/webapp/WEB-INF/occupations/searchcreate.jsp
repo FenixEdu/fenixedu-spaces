@@ -317,7 +317,7 @@
     	<spring:message code="label.create.occupation.reason.emails"></spring:message>
     </label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" name="emails" id="occupation-emails">
+      <input type="email" multiple="multiple" class="form-control" name="emails" id="occupation-emails">
     </div>
   </div>
   <div class="form-group">
