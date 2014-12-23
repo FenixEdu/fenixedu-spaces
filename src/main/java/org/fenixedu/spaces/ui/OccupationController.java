@@ -20,6 +20,9 @@ package org.fenixedu.spaces.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.mail.internet.InternetAddress;
 
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.BennuSpringController;
@@ -67,21 +70,42 @@ public class OccupationController {
         return "occupations/create";
     }
 
-    @RequestMapping(value = "search-create", method = RequestMethod.POST)
     public String searchSpaces(Model model, @RequestParam String events, @RequestParam String config, @RequestParam(
-            required = false) OccupationRequest request) {
+            required = false) OccupationRequest request, @RequestParam(required = false) String mails) {
         final List<Interval> intervals = parseIntervals(events);
         model.addAttribute("events", events);
         model.addAttribute("config", config);
         model.addAttribute("request", request);
+        if (mails != null) {
+            model.addAttribute("emails", mails);
+        }
         model.addAttribute("freeSpaces", occupationService.searchFreeSpaces(intervals, Authenticate.getUser()));
         return "occupations/searchcreate";
+    }
+
+    @RequestMapping(value = "search-create", method = RequestMethod.POST)
+    public String searchSpaces(Model model, @RequestParam String events, @RequestParam String config, @RequestParam(
+            required = false) OccupationRequest request) {
+        return searchSpaces(model, events, config, request, null);
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public String create(Model model, @RequestParam String emails, @RequestParam String subject,
             @RequestParam String description, @RequestParam String selectedSpaces, @RequestParam String config,
             @RequestParam String events, @RequestParam(required = false) OccupationRequest request) {
+        List<String> parsedMails = new ArrayList<String>();
+        for (String m : emails.split(",")) {
+            InternetAddress[] internetAddresses;
+            try {
+                m.trim();
+                internetAddresses = InternetAddress.parse(m);
+                internetAddresses[0].validate();
+            } catch (Exception e) {
+                continue;
+            }
+            parsedMails.add(internetAddresses[0].getAddress());
+        }
+        emails = parsedMails.stream().collect(Collectors.joining(", "));
         try {
             occupationService.createOccupation(emails, subject, description, selectedSpaces, config, events, request,
                     Authenticate.getUser());
@@ -91,7 +115,7 @@ public class OccupationController {
             return "redirect:/spaces/occupations/list";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return searchSpaces(model, events, config, request);
+            return searchSpaces(model, events, config, request, emails);
         }
     }
 
