@@ -306,7 +306,8 @@ public final class Space extends Space_Base {
     }
 
     public String getFullName() {
-        String toRet = getInformation().map(info -> info.getName()).orElse("");
+        String toRet = "";
+        String name = getInformation().map(info -> info.getName()).orElse("");
         String description = (String) getMetadata("description").orElse("");
         if (!description.isEmpty()) {
             if (!toRet.isEmpty()) {
@@ -427,6 +428,7 @@ public final class Space extends Space_Base {
     }
 
     public static Stream<Space> getAllSpaces() {
-        return Bennu.getInstance().getSpaceSet().stream();
+        return Bennu.getInstance().getSpaceSet().stream()
+                .sorted((o1, o2) -> o1.getFullName().toLowerCase().compareTo(o2.getFullName().toLowerCase()));
     }
 }
