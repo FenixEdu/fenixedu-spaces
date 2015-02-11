@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.UnavailableException;
 
+import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.fenixedu.bennu.core.groups.NobodyGroup;
@@ -184,6 +185,7 @@ public class SpacesController {
         model.addAttribute("spacebean", accessBean);
         model.addAttribute("space", space);
         model.addAttribute("action", "/spaces/access/" + space.getExternalId());
+        model.addAttribute("managementGroups", Bennu.getInstance().getGroupForSpacesSet());
         return "spaces/access";
     }
 
