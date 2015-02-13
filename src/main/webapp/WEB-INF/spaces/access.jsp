@@ -64,9 +64,9 @@ ${portal.angularToolkit()}
     </button>
 	
 	<p class="help-block"> </p>
-		<button type="submit" class="btn btn-default">
-			<spring:message code="label.submit" />
-		</button>
+	<button type="submit" class="btn btn-default">
+		<spring:message code="label.submit" />
+	</button>
 </form:form>
 
 <script>
@@ -76,7 +76,6 @@ ${portal.angularToolkit()}
          icon: "glyphicon glyphicon-globe"
      };
 </script>
-
 
 
 <script type="text/ng-template" id="myModalContent.html">
@@ -100,10 +99,12 @@ ${portal.angularToolkit()}
         <h4 class="modal-title"><spring:message code="label.groups.manage"/></h4>
       </div>
 	  <div class="modal-body" ng-show="groups === undefined">
-	  	error
+	  	<div class="alert alert-danger" role="alert">
+			<strong><spring:message code="label.error"/>:</strong> 
+			<spring:message code="label.groups.complex"/>
+	    </div>
 	  </div>
       <div class="modal-body" ng-show="groups !== undefined">
-
 				<ul id="myTab" class="nav nav-tabs nav-justified" role="tablist">
 					<li role="presentation" class="active"><a href="#home"
 						id="home-tab" role="tab" data-toggle="tab" aria-controls="home"
@@ -157,25 +158,12 @@ ${portal.angularToolkit()}
 					</table>
 				</div>
 			</div>
+		</div>
 		<div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()"><spring:message code="label.ok"/></button>
+            <button class="btn btn-primary" ng-click="ok()" ng-show="groups !== undefined"><spring:message code="label.ok"/></button>
             <button class="btn btn-default" ng-click="cancel()"><spring:message code="label.cancel"/></button>
         </div>
-    </div>
+    
 </script>
 </div>
-
-<script type="text/javascript">
-// 	$(document).ready(function() {
-// 		var deleteUrl = "${deleteBaseUrl}";
-// 		$('#manageGroup').on('show.bs.modal', function (e) {
-// 			      var $target = $(e.relatedTarget).attr('data-input-target');
-// 			      var $groupList = $($target).val();
-// 			      $(this).find('#groupListAngular').val($groupList);
-// 			      $('#manageGroup').find('.modal-footer #save').on('click', function(){
-// 			    	  $(target).val($(this).find('#groupListAngular').val());
-// 				  });
-// 			 });
-// 		});
-</script>
 
