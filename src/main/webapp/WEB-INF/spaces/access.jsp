@@ -166,4 +166,3 @@ ${portal.angularToolkit()}
     
 </script>
 </div>
-

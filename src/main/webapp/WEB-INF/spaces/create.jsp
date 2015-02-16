@@ -54,13 +54,13 @@ var thisSpec = {};
 		});
 		
 		function getLocalString(jsonString){
-			var myLocale = Bennu.locale.tag;
+			var myLocale = BennuPortal.locale.tag;
 			if(jsonString[myLocale]!=undefined){
 				return jsonString[myLocale];
 			}
-			for(var i = 0; i< Bennu.locales.length; i++){
-				if(jsonString[Bennu.locales[i].tag]!= undefined){
-					return jsonString[Bennu.locales[i].tag];
+			for(var i = 0; i< BennuPortal.locales.length; i++){
+				if(jsonString[BennuPortal.locales[i].tag]!= undefined){
+					return jsonString[BennuPortal.locales[i].tag];
 				}
 			}
 			for(key in jsonString) if (Object.prototype.hasOwnProperty.call(jsonString,key)) return jsonString[key];

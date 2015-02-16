@@ -67,7 +67,7 @@ public class SpaceClassificationService {
             try {
                 typeClass = Class.forName(type);
             } catch (ClassNotFoundException e1) {
-                throw new SpaceClassificationException("error", "label.spaceClassification.noSuchClass", name);
+                throw new SpaceClassificationException("error", "label.spaceClassification.noSuchClass", type);
             }
             String defaultValue = jo.get("defaultValue").getAsString();
             if (hasName.containsKey(name) == true) {
@@ -81,12 +81,12 @@ public class SpaceClassificationService {
                     continue;
                 }
             } catch (Exception e) {
-                throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", name + " ( "
+                throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", type + " ( "
                         + defaultValue + " --> Number )");
             }
             if (Boolean.class.isAssignableFrom(typeClass) && !defaultValue.isEmpty()) {
                 if (Boolean.parseBoolean(defaultValue.trim()) != true && !defaultValue.trim().equalsIgnoreCase("false")) {
-                    throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", name + " ( "
+                    throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", type + " ( "
                             + defaultValue + " --> Boolean )");
                 }
                 continue;
@@ -96,12 +96,15 @@ public class SpaceClassificationService {
 
                     DateTime.parse(defaultValue.trim(), DateTimeFormat.forPattern(InformationBean.DATE_FORMAT));
                 } catch (Exception e) {
-                    throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", name + " ( "
+                    throw new SpaceClassificationException("error", "label.spaceClassification.typeMismatch", type + " ( "
                             + defaultValue + " --> Date )");
                 }
                 continue;
             }
-            throw new SpaceClassificationException("error", "label.spaceClassification.noSuchClass", name);
+            if (String.class.isAssignableFrom(typeClass)) {
+                continue;
+            }
+            throw new SpaceClassificationException("error", "label.spaceClassification.noSuchClass", type);
         }
     }
 
