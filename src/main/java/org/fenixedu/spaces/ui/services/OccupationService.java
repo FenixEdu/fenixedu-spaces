@@ -163,7 +163,8 @@ public class OccupationService {
 
     public List<Space> searchFreeSpaces(List<Interval> intervals, User user) {
         return Space.getSpaces().filter(space -> space.isFree(intervals) && space.isOccupationMember(user))
-                .sorted((o1, o2) -> o1.getPresentationName().compareTo(o2.getPresentationName())).collect(Collectors.toList());
+                .sorted((o1, o2) -> o1.getPresentationName().toLowerCase().compareTo(o2.getPresentationName().toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     @Atomic

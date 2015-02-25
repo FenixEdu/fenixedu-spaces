@@ -26,18 +26,19 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-<spring:url var="toolkit" value="/bennu-toolkit/js/toolkit.js"/>
-<script type="text/javascript" src="${toolkit}">
 </script>
-<spring:url var="toolkitCSS" value="/bennu-toolkit/css/toolkit.css"/>
-<link rel="stylesheet" type="text/css" media="screen" href="${toolkitCSS}">
 	<spring:url var="staticUrl" value="/static/fenix-spaces"/>
 <script src="${staticUrl}/js/sprintf.min.js"></script>
-	<script src="${staticUrl}/js/dateutils.js"></script>
-
+<script src="${staticUrl}/js/dateutils.js"></script>
+<script src="${staticUrl}/js/groupParse.js"></script>
+${portal.angularToolkit()}
+<script src="${staticUrl}/js/ui-bootstrap-tpls-0.12.0.min.js"></script>
+<script src="${staticUrl}/js/groupEdit.js"></script>
 <div class="page-header">
   <h1><spring:message code="title.space.management"/><small><spring:message code="title.space.access.management"/></small></h1>
 </div>
+
+<div ng-app="groupEdit" ng-controller="editGroupController">
 <spring:url var="formActionUrl" value="${action}"/>
 <form:form modelAttribute="spacebean" role="form" method="post"  action="${formActionUrl}" enctype="multipart/form-data">
 	<div class="form-group">
@@ -46,18 +47,26 @@
 		</h4>
 		${spacebean.occupationGroup.presentationName}
 	</div>
-	<input bennu-group allow="public,users,spaceSuperUsers,custom" id="occupationExpression" name="occupationExpression" value="${spacebean.occupationExpression}"/>
+	
+	<input type="hidden" id="occupationExpression" name="occupationExpression" value="${spacebean.occupationExpression}"/>
+	<button type="button" class="btn btn-default" ng-click="open('#occupationExpression')">
+    	<spring:message code="label.manage"/>
+    </button>
 	<div class="form-group">
 		<h4>
 			<spring:message code="label.space.access.management.group" />
 		</h4>
 		${spacebean.managementGroup.presentationName}
 	</div>
-	<input bennu-group allow="public,users,spaceSuperUsers,custom" id="managementExpression" name="managementExpression" value="${spacebean.managementExpression}"/>
+	<input type="hidden" id="managementExpression" name="managementExpression" value="${spacebean.managementExpression}"/>
+	<button type="button" class="btn btn-default" ng-click="open('#managementExpression')">
+        <spring:message code="label.manage"/>
+    </button>
+	
 	<p class="help-block"> </p>
-		<button type="submit" class="btn btn-default">
-			<spring:message code="label.submit" />
-		</button>
+	<button type="submit" class="btn btn-default">
+		<spring:message code="label.submit" />
+	</button>
 </form:form>
 
 <script>
@@ -68,3 +77,92 @@
      };
 </script>
 
+
+<script type="text/ng-template" id="myModalContent.html">
+	  <style>
+		span.step {
+          background: #cccccc;
+          border-radius: 1.5em;
+          -moz-border-radius: 1.5em;
+          -webkit-border-radius: 1.5em;
+          color: #ffffff;
+          display: inline-block;
+          font-weight: bold;
+          line-height: 2.5em;
+          margin-right: 1px;
+          text-align: center;
+          width: 2.5em; 
+        }
+	  </style>
+      <div class="modal-header">
+        <button type="button" class="close" aria-hidden="true" ng-click="cancel()">&times;</button>
+        <h4 class="modal-title"><spring:message code="label.groups.manage"/></h4>
+      </div>
+	  <div class="modal-body" ng-show="groups === undefined">
+	  	<div class="alert alert-danger" role="alert">
+			<strong><spring:message code="label.error"/>:</strong> 
+			<spring:message code="label.groups.complex"/>
+	    </div>
+	  </div>
+      <div class="modal-body" ng-show="groups !== undefined">
+				<ul id="myTab" class="nav nav-tabs nav-justified" role="tablist">
+					<li role="presentation" class="active"><a href="#home"
+						id="home-tab" role="tab" data-toggle="tab" aria-controls="home"
+						aria-expanded="true"><spring:message code="label.add.users"/></a></li>
+					<li role="presentation" class=""><a href="#profile" role="tab"
+						id="profile-tab" data-toggle="tab" aria-controls="profile"
+						aria-expanded="false"><spring:message code="label.add.groups"/></a></li>
+				</ul>
+				<div id="myTabContent" class="tab-content">
+				  
+			      <div role="tabpanel" class="tab-pane fade active in" id="home" aria-labelledby="home-tab">
+					<p>
+					 <div class="input-group">
+				      	<input ng-user-autocomplete="selectedUser" class="form-control" placeholder="utilizador">
+						<span class="input-group-btn">
+							<button class="btn btn-default" ng-click="addUser()"><spring:message code="label.add"/></button>  
+						</span>
+					</div>
+					</p>
+				</div>
+			      
+				  <div role="tabpanel" class="tab-pane fade" id="profile" aria-labelledby="profile-tab">
+                  <p>
+				  <div class="input-group">
+				  <select class="form-control" ng-model="selectedGroup">
+				  <c:forEach var="mngmntGroup" items="${managementGroups}">
+				  	<option value="${mngmntGroup.expression()}">${mngmntGroup.presentationName}</option>
+				  </c:forEach>
+				  </select>
+				  <span class="input-group-btn">
+				  <button class="btn btn btn-default" ng-click="addGroup()"><spring:message code="label.add"/></button> 
+					</span>
+			      </div>
+			    </p>
+				</div>
+				
+				<p></p>
+				<p>
+					<small><b><spring:message code="label.groups.elements"/></b></small> 
+				</p>			
+				<div class="bennu-group-list"
+					style="height: 149px; overflow: auto; border: 1px solid #ddd; margin-top: 20px;">
+					<table class="table table-striped" >
+						<tr ng-repeat="group in groups">
+							<td class="col-md-2"><span class="step">{{group.type | uppercase | limitTo : 1}}</span></td>
+							<td class="col-md-8 text-center">{{group.name}}</td>
+							<td class="col-md-2">
+								<button class="btn btn-danger" ng-click="remove($index)"><spring:message code="label.spaces.classification.remove"/></button>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()" ng-show="groups !== undefined"><spring:message code="label.ok"/></button>
+            <button class="btn btn-default" ng-click="cancel()"><spring:message code="label.cancel"/></button>
+        </div>
+    
+</script>
+</div>
