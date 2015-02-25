@@ -302,16 +302,12 @@ public final class Space extends Space_Base {
     }
 
     public String getName() {
-        return getInformation().map(info -> info.getName()).get();
+        return getInformation().map(info -> info.getName()).orElse("");
     }
 
     public String getFullName() {
-        String toRet = "";
-        String name = getInformation().map(info -> info.getName()).get();
+        String toRet = getInformation().map(info -> info.getName()).orElse("");
         String description = (String) getMetadata("description").orElse("");
-        if (!name.isEmpty()) {
-            toRet += name;
-        }
         if (!description.isEmpty()) {
             if (!toRet.isEmpty()) {
                 toRet += " - ";
