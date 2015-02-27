@@ -229,9 +229,10 @@ public class Information extends Information_Base {
 
     @SuppressWarnings("unchecked")
     public <T extends Object> Optional<T> getMetadata(String field) {
-        Optional<MetadataSpec> spec = getClassification().getMetadataSpec(field);
+        Optional<JsonElement> spec = getClassification().getMetadataSpecJson(field);
         if (spec.isPresent()) {
-            final Class<?> type = spec.get().getType();
+            JsonObject jsObj = spec.get().getAsJsonObject();
+            final String type = jsObj.get("type").getAsString();
             final JsonObject metadata = getMetadata().getAsJsonObject();
 
             JsonElement fieldValue = metadata.get(field);
@@ -240,13 +241,13 @@ public class Information extends Information_Base {
                 return Optional.empty();
             }
 
-            if (Boolean.class.isAssignableFrom(type)) {
+            if (Boolean.class.getName().equalsIgnoreCase(type)) {
                 return (Optional<T>) Optional.of(new Boolean(fieldValue.getAsBoolean()));
             }
-            if (Integer.class.isAssignableFrom(type)) {
+            if (Integer.class.getName().equalsIgnoreCase(type)) {
                 return (Optional<T>) Optional.of(new Integer(fieldValue.getAsInt()));
             }
-            if (BigDecimal.class.isAssignableFrom(type)) {
+            if (BigDecimal.class.getName().equalsIgnoreCase(type)) {
                 return (Optional<T>) Optional.of(fieldValue.getAsBigDecimal());
             }
 

@@ -423,11 +423,11 @@ public final class Space extends Space_Base {
     }
 
     public static Stream<Space> getSpaces() {
-        return getAllSpaces().filter(space -> space.isActive());
+        return getAllSpaces().filter(space -> space.isActive()).sorted(
+                (o1, o2) -> o1.getFullName().toLowerCase().compareTo(o2.getFullName().toLowerCase()));
     }
 
     public static Stream<Space> getAllSpaces() {
-        return Bennu.getInstance().getSpaceSet().stream()
-                .sorted((o1, o2) -> o1.getFullName().toLowerCase().compareTo(o2.getFullName().toLowerCase()));
+        return Bennu.getInstance().getSpaceSet().stream();
     }
 }
