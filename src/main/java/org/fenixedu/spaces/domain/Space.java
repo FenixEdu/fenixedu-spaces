@@ -306,16 +306,15 @@ public final class Space extends Space_Base {
     }
 
     public String getFullName() {
-        String toRet = "";
-        String name = getInformation().map(info -> info.getName()).orElse("");
+        String name = getName();
         String description = (String) getMetadata("description").orElse("");
         if (!description.isEmpty()) {
-            if (!toRet.isEmpty()) {
-                toRet += " - ";
+            if (!name.isEmpty()) {
+                name += " - ";
             }
-            toRet += description;
+            name += description;
         }
-        return toRet;
+        return name;
     }
 
     public Optional<Integer> getAllocatableCapacity(DateTime when) {
