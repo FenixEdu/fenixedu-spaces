@@ -178,6 +178,17 @@ public class SpaceClassification extends SpaceClassification_Base {
         //domain exception
     }
 
+    public Optional<JsonElement> getMetadataSpecJson(String field) {
+        for (JsonElement je : getMetadataSpec().getAsJsonArray()) {
+            JsonObject job = je.getAsJsonObject();
+            if (job.get("name").getAsString().equals(field)) {
+                return Optional.of(je);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Deprecated
     public Optional<MetadataSpec> getMetadataSpec(String field) {
         for (MetadataSpec spec : getMetadataSpecs()) {
             if (spec.getName().equals(field)) {
