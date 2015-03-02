@@ -40,7 +40,7 @@ import pt.ist.fenixframework.Atomic.TxMode;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-public final class Space extends Space_Base {
+public final class Space extends Space_Base implements Comparable<Space> {
     public Space() {
         super();
     }
@@ -345,7 +345,7 @@ public final class Space extends Space_Base {
     }
 
     public static Set<Space> getTopLevelSpaces() {
-        return getSpaces().filter(s -> s.getParent() == null).collect(Collectors.toSet());
+        return getSpaces().filter(s -> s.getParent() == null).sorted().collect(Collectors.toSet());
     }
 
     public Group getManagementGroup() {
@@ -423,11 +423,16 @@ public final class Space extends Space_Base {
     }
 
     public static Stream<Space> getSpaces() {
-        return getAllSpaces().filter(space -> space.isActive()).sorted(
-                (o1, o2) -> o1.getFullName().toLowerCase().compareTo(o2.getFullName().toLowerCase()));
+        return getAllSpaces().filter(space -> space.isActive());
     }
 
     public static Stream<Space> getAllSpaces() {
         return Bennu.getInstance().getSpaceSet().stream();
     }
+
+    @Override
+    public int compareTo(Space o) {
+        return getFullName().toLowerCase().compareTo(o.getFullName().toLowerCase());
+    }
+
 }

@@ -92,7 +92,7 @@ public class SpaceSearchController {
                 }
             }
             return true;
-        }).collect(Collectors.toSet());
+        }).sorted().collect(Collectors.toSet());
     }
 
     @RequestMapping(value = "/schedule/{space}")
