@@ -31,26 +31,25 @@
 <link rel="stylesheet" type="text/css" media="screen"
 	href="/fenix/themes/ashes/css/general.css">
 <link href="/fenix/themes/ashes/css/style.css" rel="stylesheet">
-
-<spring:url var="toolkit" value="/bennu-toolkit/js/toolkit.js" />
-<script type="text/javascript" src="${toolkit}"></script>
-<spring:url var="toolkitCSS" value="/bennu-toolkit/css/toolkit.css" />
-<link rel="stylesheet" type="text/css" media="screen"
-	href="${toolkitCSS}">
+${portal.toolkit()}
+<%-- <spring:url var="toolkit" value="/bennu-toolkit/js/toolkit.js" /> --%>
+<%-- <script type="text/javascript" src="${toolkit}"></script> --%>
+<%-- <spring:url var="toolkitCSS" value="/bennu-toolkit/css/toolkit.css" /> --%>
+<!-- <link rel="stylesheet" type="text/css" media="screen" -->
+<%-- 	href="${toolkitCSS}"> --%>
 <spring:url var="staticUrl" value="/static/fenix-spaces" />
 <script src="${staticUrl}/js/sprintf.min.js"></script>
 <script src="${staticUrl}/js/dateutils.js"></script>
 <script src="${staticUrl}/js/moment.min.js"></script>
 
 <spring:url var="formActionUrl" value="${action}" />
-
 <script>
 $(document).ready(function() {
 	$('#confirmDelete').on('show.bs.modal', function (e) {
 	      var $spaceName = $(e.relatedTarget).attr('data-space-name');
 	      var $userGivenName = $(e.relatedTarget).attr('data-user-name');
 	      var $userName = $(e.relatedTarget).attr('data-user-username');
-	      var $message = "Are you sure you want to remove " + $userGivenName + " from "+ $spaceName+"?";
+	      var $message = "Are you sure you want to remove " + $userGivenName + " from this space?";
 	      $(this).find('.modal-body p').text($message);
 	      var $title = "Remove User From Space";
 	      $(this).find('.modal-title').text($title);
@@ -452,19 +451,19 @@ function getSelectedPeriod(unixFormat){
 				<div class="row" id="showUsername">
 						<div class="col-md-3">Utilizador:</div>
 						<div class="col-md-8">
-							<input type="text" id="username" name="user" value />
+							<input bennu-user-autocomplete id="username" class="form-control" name="user" value />
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-3">Data de Inicio:</div>
 						<div class="col-md-8">
-							<input required type="date" id="startTimeInput" placeholder="inicio">
+							<input required type="date" id="startTimeInput" class="form-control" placeholder="inicio">
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-3">Data de Fim:</div>
 						<div class="col-md-8">
-							<input type="date" id="endTimeInput" placeholder="fim">
+							<input type="date" id="endTimeInput" class="form-control" placeholder="fim">
 						</div>
 					</div>
 				</div>
