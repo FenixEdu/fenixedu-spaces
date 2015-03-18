@@ -198,34 +198,7 @@ public class SpaceClassification extends SpaceClassification_Base {
         return Optional.empty();
     }
 
-    @Override
-    public JsonElement getMetadataSpec() {
-        HashMap<String, JsonElement> theMetadata = new HashMap<String, JsonElement>();
-        JsonElement parentMetadata = this.getParent() == null ? new JsonArray() : this.getParent().getMetadataSpec();
-        JsonElement thisMeta = super.getMetadataSpec();
-        parentMetadata = new JsonParser().parse(parentMetadata.toString());
-        for (JsonElement jel : parentMetadata.getAsJsonArray()) {
-            String name = jel.getAsJsonObject().get("name").getAsString();
-            JsonObject job = jel.getAsJsonObject();
-            job.addProperty("inherited", true);
-            theMetadata.put(name, job);
-        }
-        for (JsonElement jel : thisMeta.getAsJsonArray()) {
-            String name = jel.getAsJsonObject().get("name").getAsString();
-            if (theMetadata.containsKey(name)) {
-                continue;
-            }
-            theMetadata.put(name, jel);
-        }
-
-        JsonArray returnArray = new JsonArray();
-
-        for (JsonElement je : theMetadata.values()) {
-            returnArray.add(je);
-        }
-        return returnArray;
-    }
-
+    @Deprecated
     public Collection<MetadataSpec> getMetadataSpecs() {
         List<MetadataSpec> specs = new ArrayList<>();
         for (JsonElement metadataSpec : getMetadataSpec().getAsJsonArray()) {
@@ -239,22 +212,60 @@ public class SpaceClassification extends SpaceClassification_Base {
         if (metadataSpec == null) {
             super.setMetadataSpec(new JsonArray());
         }
-        HashMap<String, JsonElement> theMetadata = new HashMap<String, JsonElement>();
-        JsonElement parentMetadata = this.getParent() == null ? new JsonArray() : this.getParent().getMetadataSpec();
+        JsonElement toUpdate = new JsonArray();
+        super.setMetadataSpec(metadataSpec);
+        toUpdate = computeUpdate(metadataSpec);
+        for (SpaceClassification classification : getChildrenSet()) {
+            classification.updateAndPropagate(toUpdate);
+        }
+    }
 
-        for (JsonElement jel : parentMetadata.getAsJsonArray()) {
-            String name = jel.getAsJsonObject().get("name").getAsString();
-            theMetadata.put(name, jel);
-        }
-        JsonArray returnArray = new JsonArray();
-        for (JsonElement jel : metadataSpec.getAsJsonArray()) {
-            String name = jel.getAsJsonObject().get("name").getAsString();
-            if (theMetadata.containsKey(name)) {
-                continue;
+    private JsonElement filterInherited(JsonElement currentMetadata) {
+        JsonArray current = currentMetadata.getAsJsonArray();
+        JsonArray newCurrent = new JsonArray();
+        for (JsonElement spec : current) {
+            JsonObject specObj = spec.getAsJsonObject();
+            if (specObj.get("inherited") == null || specObj.get("inherited").isJsonNull()
+                    || specObj.get("inherited").getAsBoolean() == false) {
+                newCurrent.add(spec);
             }
-            returnArray.add(jel);
         }
-        super.setMetadataSpec(returnArray);
+        return newCurrent;
+    }
+
+    private JsonElement computeUpdate(JsonElement metadataSpec) {
+        JsonElement toInherit = filterInherited(metadataSpec);
+        toInherit = new JsonParser().parse(toInherit.toString());
+        for (JsonElement ti : toInherit.getAsJsonArray()) {
+            JsonObject job = ti.getAsJsonObject();
+            job.addProperty("inherited", true);
+        }
+        return toInherit;
+    }
+
+    private void updateAndPropagate(JsonElement toUpdate) {
+        updateClassification(toUpdate);
+        for (SpaceClassification classification : getChildrenSet()) {
+            classification.updateAndPropagate(toUpdate);
+        }
+    }
+
+    private void updateClassification(JsonElement toUpdate) {
+        JsonElement metadataSpec = getMetadataSpec();
+        JsonArray newSpec = new JsonArray();
+        HashMap<String, JsonObject> fields = new HashMap<String, JsonObject>();
+        for (JsonElement spec : metadataSpec.getAsJsonArray()) {
+            JsonObject specObj = spec.getAsJsonObject();
+            fields.put(specObj.get("name").getAsString(), specObj);
+        }
+        for (JsonElement spec : toUpdate.getAsJsonArray()) {
+            JsonObject specObj = spec.getAsJsonObject();
+            fields.put(specObj.get("name").getAsString(), specObj);
+        }
+        for (JsonObject spec : fields.values()) {
+            newSpec.add(spec);
+        }
+        super.setMetadataSpec(newSpec);
     }
 
     public void setMetadataSpecs(Collection<MetadataSpec> specs) {
