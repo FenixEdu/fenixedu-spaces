@@ -29,6 +29,9 @@ import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.I18NBean;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
+import org.fenixedu.commons.spreadsheet.SheetData;
+import org.fenixedu.commons.spreadsheet.SpreadsheetBuilder;
+import org.fenixedu.commons.spreadsheet.WorkbookExportFormat;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceDomainException;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
@@ -42,10 +45,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
-
-import pt.utl.ist.fenix.tools.spreadsheet.SheetData;
-import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
-import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
 
 @SpringFunctionality(app = SpacesController.class, title = "title.space.occupations.requests")
 @RequestMapping("/spaces/occupations/requests")

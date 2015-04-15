@@ -11,11 +11,10 @@ import java.util.stream.Collectors;
 
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.commons.i18n.LocalizedString;
+import org.fenixedu.commons.spreadsheet.Spreadsheet;
+import org.fenixedu.commons.spreadsheet.Spreadsheet.Row;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
-
-import pt.utl.ist.fenix.tools.util.excel.Spreadsheet;
-import pt.utl.ist.fenix.tools.util.excel.Spreadsheet.Row;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

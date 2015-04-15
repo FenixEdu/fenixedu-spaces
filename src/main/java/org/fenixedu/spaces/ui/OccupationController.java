@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.mail.internet.InternetAddress;
-
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.BennuSpringController;
 import org.fenixedu.spaces.domain.occupation.Occupation;
@@ -95,15 +93,9 @@ public class OccupationController {
             @RequestParam String events, @RequestParam(required = false) OccupationRequest request) {
         List<String> parsedMails = new ArrayList<String>();
         for (String m : emails.split(",")) {
-            InternetAddress[] internetAddresses;
-            try {
-                m.trim();
-                internetAddresses = InternetAddress.parse(m);
-                internetAddresses[0].validate();
-            } catch (Exception e) {
-                continue;
+            if (isValidEmailAddress(m.trim())) {
+                parsedMails.add(m);
             }
-            parsedMails.add(internetAddresses[0].getAddress());
         }
         emails = parsedMails.stream().collect(Collectors.joining(", "));
         try {
@@ -117,6 +109,14 @@ public class OccupationController {
             model.addAttribute("errorMessage", e.getMessage());
             return searchSpaces(model, events, config, request, emails);
         }
+    }
+
+    public boolean isValidEmailAddress(String email) {
+        String ePattern =
+                "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
     }
 
     @RequestMapping("view/{occupation}")

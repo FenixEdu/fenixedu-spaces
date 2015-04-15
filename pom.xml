@@ -37,13 +37,14 @@
 	<properties>
 		<version.bennu>3.4.0</version.bennu>
 		<version.org.fenixedu.bennu-spring>1.1.0</version.org.fenixedu.bennu-spring>
-		<version.org.fenixedu.fenixedu.commons>1.0.1</version.org.fenixedu.fenixedu.commons>
+		<version.org.fenixedu.fenixedu.commons>1.1.0</version.org.fenixedu.fenixedu.commons>
 		<version.com.google.guava.guava>17.0</version.com.google.guava.guava>
 		<version.com.google.code.gson.gson>2.2.4</version.com.google.code.gson.gson>
 		<version.joda.time.joda.time>2.3</version.joda.time.joda.time>
 		<version.javax.ws.rs.javax.ws.rs.api>2.0</version.javax.ws.rs.javax.ws.rs.api>
 		<version.com.iver.cit.jdwglib>1.0.1</version.com.iver.cit.jdwglib>
 		<version.com.iver.cit.fmap>0.5</version.com.iver.cit.fmap>
+		<version.org.apache.poi.poi>3.11</version.org.apache.poi.poi>
 	</properties>
 
 	<scm>
@@ -73,11 +74,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>pt.ist</groupId>
-			<artifactId>fenix-legacy-tools</artifactId>
-			<version>2.0.0</version>
-		</dependency>
 		<dependency>
 			<groupId>org.fenixedu</groupId>
 			<artifactId>bennu-core</artifactId>
@@ -138,6 +134,13 @@
 			<groupId>com.iver.cit</groupId>
 			<artifactId>fmap</artifactId>
 			<version>${version.com.iver.cit.fmap}</version>
+		</dependency>
+
+		<!-- FenixEdu Commons requires its users to provide the POI dependency -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${version.org.apache.poi.poi}</version>
 		</dependency>
 	</dependencies>
 
