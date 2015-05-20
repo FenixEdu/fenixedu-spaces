@@ -74,7 +74,7 @@
 	
 	<c:forEach var="space" items="${freeSpaces}">
 		<c:if test="${not empty space.name}">
-			freeSpaces["${space.externalId}"] = {name : "${space.presentationName}", allocatableCapacity : "${space.allocatableCapacity}"};
+			freeSpaces["${space.externalId}"] = {name : "<c:out value='${space.presentationName}'/>", allocatableCapacity : "${space.allocatableCapacity}"};
 		</c:if>
 	</c:forEach>
 	
@@ -253,7 +253,7 @@
 </div>
 
 <c:if test="${not empty errorMessage}">
-	<h3 class="bg-danger">${errorMessage}</h3>
+	<h3 class="bg-danger"><c:out value="${errorMessage}"/></h3>
 </c:if>
 
 <h3><spring:message code="title.edit.occupation.request.details"/></h3>
@@ -272,15 +272,15 @@
 	<table class="table">
 		<tr class="row">
 			<th><spring:message code="label.occupation.request.identification"/></th>
-			<td><a href="${requestUrl}/${oid}">${id}</a></td>
+			<td><a href="${requestUrl}/${oid}"><c:out value="${id}"/></a></td>
 		</tr>
 		<tr class="row">
 			<th><spring:message code="label.occupation.request.requestor" /></th>
-			<td>${requestor.presentationName} (${requestor.username})</td>
+			<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
 		</tr>
 		<tr class="row">
 			<th><spring:message code="label.occupation.request.owner" /></th>
-			<td>${owner.presentationName} (${owner.username})</td>
+			<td><c:out value="${owner.presentationName} (${owner.username})"/></td>
 		</tr>
 	</table>
 </c:if>
@@ -342,7 +342,7 @@
 		<select id="choose-space">
 			<c:forEach var="space" items="${freeSpaces}">
 				<c:if test="${not empty space.name}">
-					<option value="${space.externalId}">${space.presentationName}</option>
+					<option value="${space.externalId}"><c:out value="${space.presentationName}"/></option>
 				</c:if>
 			</c:forEach>
 		</select>
@@ -387,7 +387,7 @@
     	<spring:message code="label.create.occupation.reason.subject"></spring:message>
     </label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" name="subject" id="occupation-subject" value="${occupation.subject}" required>
+      <input type="text" class="form-control" name="subject" id="occupation-subject" value="<c:out value='${occupation.subject}'/>" required>
     </div>
   </div>
   <div class="form-group">
@@ -395,7 +395,7 @@
     	<spring:message code="label.create.occupation.reason.description"></spring:message>
     </label>
     <div class="col-sm-10">
-      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description" required> ${occupation.description}</textarea>
+      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description" required> <c:out value="${occupation.description}"/></textarea>
     </div>
   </div>
   <div class="form-group">

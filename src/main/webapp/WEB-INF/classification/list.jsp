@@ -28,7 +28,7 @@
 <div class="page-header">
 	<h1>
 		<spring:message code="title.space.classification.management" />
-		<small>${information.name}</small>
+		<small><c:out value="${information.name}"/></small>
 	</h1>
 </div>
 
@@ -53,16 +53,16 @@
 					<tr>
 						<c:choose>
 						<c:when test="${empty classification.absoluteCode}">
-							<td>${classification.name.content}</td>
+							<td><c:out value="${classification.name.content}"/></td>
 						</c:when>
 						<c:otherwise>
-							<td>${classification.absoluteCode} - ${classification.name.content}</td>
+							<td><c:out value="${classification.absoluteCode} - ${classification.name.content}"/></td>
 						</c:otherwise>
 						</c:choose>
 						<td>
 							<a href="${editUrl}" class="btn btn-default" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
 							<c:if test="${!classification.isRootClassification()}">
-								<button data-classification-id="${classification.externalId}" data-classification-name="${classification.name.content}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
+								<button data-classification-id="${classification.externalId}" data-classification-name='<c:out value="${classification.name.content}"/>' data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="delete"><span class="glyphicon glyphicon-remove"></span></button>
 							</c:if>
 						</td>
 					</tr>

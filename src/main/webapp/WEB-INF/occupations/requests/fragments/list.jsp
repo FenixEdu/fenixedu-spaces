@@ -34,10 +34,10 @@
 			<c:set var="subject" value="${occupationRequest.subject}" />
 			<c:set var="requestor" value="${occupationRequest.requestor}" />
 			<tr>
-				<td><a href="${requestUrl}/${occupationRequest.externalId}"> ${id} </a></td>
-				<td>${instant}</td>
-				<td><a href="${requestUrl}/${occupationRequest.externalId}"> ${subject} </a></td>
-				<td>${requestor.presentationName}</td>
+				<td><a href="${requestUrl}/${occupationRequest.externalId}"> <c:out value="${id}"/> </a></td>
+				<td><c:out value="${instant}"/></td>
+				<td><a href="${requestUrl}/${occupationRequest.externalId}"> <c:out value="${subject}"/> </a></td>
+				<td><c:out value="${requestor.presentationName}"/></td>
 				<td><a href="${requestUrl}/${occupationRequest.externalId}"> <spring:message code="label.occupation.request.deal" />
 				</a></td>
 			</tr>

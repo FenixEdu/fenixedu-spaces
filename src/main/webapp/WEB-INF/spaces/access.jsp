@@ -45,7 +45,7 @@ ${portal.angularToolkit()}
 		<h4>
 			<spring:message code="label.space.access.occupations.group" />
 		</h4>
-		${spacebean.occupationGroup.presentationName}
+		<c:out value="${spacebean.occupationGroup.presentationName}"/>
 	</div>
 	
 	<input type="hidden" id="occupationExpression" name="occupationExpression" value="${spacebean.occupationExpression}"/>
@@ -56,7 +56,7 @@ ${portal.angularToolkit()}
 		<h4>
 			<spring:message code="label.space.access.management.group" />
 		</h4>
-		${spacebean.managementGroup.presentationName}
+		<c:out value="${spacebean.managementGroup.presentationName}"/>
 	</div>
 	<input type="hidden" id="managementExpression" name="managementExpression" value="${spacebean.managementExpression}"/>
 	<button type="button" class="btn btn-default" ng-click="open('#managementExpression')">
@@ -131,7 +131,7 @@ ${portal.angularToolkit()}
 				  <div class="input-group">
 				  <select class="form-control" ng-model="selectedGroup">
 				  <c:forEach var="mngmntGroup" items="${managementGroups}">
-				  	<option value="${mngmntGroup.expression()}">${mngmntGroup.presentationName}</option>
+				  	<option value="${mngmntGroup.expression()}"><c:out value="${mngmntGroup.presentationName}"/></option>
 				  </c:forEach>
 				  </select>
 				  <span class="input-group-btn">

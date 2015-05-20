@@ -98,5 +98,5 @@
   <h1><spring:message code="title.space.management"/><small><spring:message code="title.space.schedule"/></small></h1>
 </div>
 
-<h3>${space.presentationName}</h3>
+<h3><c:out value="${space.presentationName}"/></h3>
 <div id="calendar"></div>

@@ -159,10 +159,10 @@ var thisSpec = {};
     	<c:set var="classificationId" value="${classification.externalId}"/>
     		<c:choose>
     			<c:when test="${classificationId == information.classification.externalId}">
-    				<form:option value="${classificationId}" selected="selected">${classificationName}</form:option>
+    				<form:option value="${classificationId}" selected="selected"><c:out value="${classificationName}"/></form:option>
     			</c:when>
 				<c:otherwise>  
-					<form:option value="${classificationId}">${classificationName}</form:option>
+					<form:option value="${classificationId}"><c:out value="${classificationName}"/></form:option>
 				</c:otherwise>
 			</c:choose>
     	</c:forEach>

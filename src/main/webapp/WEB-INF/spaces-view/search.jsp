@@ -32,7 +32,7 @@
 <form id="searchForm" class="form-inline" role="form" action="${searchUrl}" method="GET">
   		<div class="form-group">
    		  <label class="sr-only" for="searchSpace"><spring:message code="label.search"/></label>
-    	  <input name="name" type="text" class="form-control" id="searchSpace" value="${name}" placeholder="<spring:message code="label.space.search.name"/>"></input>
+    	  <input name="name" type="text" class="form-control" id="searchSpace" value="<c:out value='${name}'/>" placeholder="<spring:message code="label.space.search.name"/>"></input>
   		</div>
   		 <button id="searchRequest" class="btn btn-default"><spring:message code="label.search"/></button>
   	</form>
@@ -59,8 +59,8 @@
 						<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
 						<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
 						<tr>
-							<td>${space.classification.name.content}</td>
-							<td>${space.fullName}</td>
+							<td><c:out value="${space.classification.name.content}"/></td>
+							<td><c:out value="${space.fullName}"/></td>
 							<td>${fn:length(space.children)}</td>
 							<td>
 								<a href="${viewUrl}" class="btn btn-default" title="<spring:message code="label.space.view"/>"><span class="glyphicon glyphicon-eye-open"></span></a>

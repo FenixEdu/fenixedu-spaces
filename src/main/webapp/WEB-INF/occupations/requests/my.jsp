@@ -67,11 +67,11 @@
 					<c:set var="numberOfUnreadComments" value="${occupationRequest.getNumberOfNewComments(requestor)}" />
 					<tr>
 						<td>
-							${instant}
+							<c:out value="${instant}"/>
 						</td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${subject}
+								<c:out value="${subject}"/>
 							</a>
 						</td>
 						<td><spring:message code="OccupationRequestState.${state}"/></td>
@@ -83,7 +83,7 @@
 								<spring:message code="label.yes"/>
 							</c:if>
 						</td>
-	 					<td>${numberOfUnreadComments}</td>
+	 					<td><c:out value="${numberOfUnreadComments}"/></td>
 					</tr>
 				</c:forEach>
 			</tbody>
