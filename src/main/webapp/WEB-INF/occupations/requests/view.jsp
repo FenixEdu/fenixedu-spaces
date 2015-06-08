@@ -80,7 +80,7 @@ $(document).ready(function() {
   	   <c:if test="${not empty userRequestSearchResult.pageList}">
   	   	
   	   	<c:set var="searchPageUrl" value="${searchUrl}${searchId}"/>
-  	   	<h3><spring:message code="label.occupation.request.search.result"/> ${searchId}</h3>
+  	   	<h3><spring:message code="label.occupation.request.search.result"/> <c:out value="${searchId}"/></h3>
   		<ul class="pagination">
 	  		<li><a href="${searchPageUrl}?p=f">&laquo;</a></li>
   			<c:forEach var="page" begin="${userRequestSearchResult.firstLinkedPage}" end="${userRequestSearchResult.lastLinkedPage}">
@@ -110,16 +110,16 @@ $(document).ready(function() {
 					<tr>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${id}
+								<c:out value="${id}"/>
 							</a>
 						</td>
-						<td>${instant}</td>
+						<td><c:out value="${instant}"/></td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${subject}
+								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td>${requestor.presentationName} (${requestor.username})</td>
+	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -132,7 +132,7 @@ $(document).ready(function() {
 	    <select class="form-control" id="filterByCampus">
 	    	<option value="">---</option>
 	    	<c:forEach var="campi" items="${campus}">
-				<option value="${campi.externalId}">${campi.name}</option>
+				<option value="${campi.externalId}"><c:out value="${campi.name}"/></option>
 	    	</c:forEach>
 	    <select>
   	</div>
@@ -175,16 +175,16 @@ $(document).ready(function() {
 					<tr>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${id}
+								<c:out value="${id}"/>
 							</a>
 						</td>
-						<td>${instant}</td>
+						<td><c:out value="${instant}"/></td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${subject}
+								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td>${requestor.presentationName} (${requestor.username})</td>
+	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
 								<spring:message code="label.occupation.request.deal"/>
@@ -232,16 +232,16 @@ $(document).ready(function() {
 					<tr>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${id}
+								<c:out value="${id}"/>
 							</a>
 						</td>
-						<td>${instant}</td>
+						<td><c:out value="${instant}"/></td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${subject}
+								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td>${requestor.presentationName} (${requestor.username})</td>
+	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
 	 					<td>
 	 						<a href="${requestUrl}/${occupationRequest.externalId}/OPEN">
 	 							<spring:message code="label.occupation.request.open"/>
@@ -289,16 +289,16 @@ $(document).ready(function() {
 					<tr>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${id}
+								<c:out value="${id}"/>
 							</a>
 						</td>
-						<td>${instant}</td>
+						<td><c:out value="${instant}"/></td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${subject}
+								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td>${requestor.presentationName} (${requestor.username})</td>
+	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
 	 					<td>
 	 						<a href="${requestUrl}/${occupationRequest.externalId}">
 	 							<spring:message code="label.occupation.request.open"/>
@@ -353,17 +353,17 @@ $(document).ready(function() {
 					<tr>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${id}
+								<c:out value="${id}"/>
 							</a>
 						</td>
-						<td>${instant}</td>
+						<td><c:out value="${instant}"/></td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
-								${subject}
+								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td>${requestor.presentationName} (${requestor.username})</td>
-	 					<td>${owner.presentationName} (${owner.username})</td>
+	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
+	 					<td><c:out value="${owner.presentationName} (${owner.username})"/></td>
 					</tr>
 				</c:forEach>
 			</tbody>

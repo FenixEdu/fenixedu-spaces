@@ -117,10 +117,10 @@ ${portal.angularToolkit()}
 										<c:set var="classificationId" value="${classItem.externalId}" />
 										<c:choose>										
 											<c:when test="${classificationId == ParentClassId}">
-												<option value="${classificationId}" selected="selected">${classificationName}</option>
+												<option value="${classificationId}" selected="selected"><c:out value="${classificationName}"/></option>
 											</c:when>
 											<c:otherwise>
-												<option value="${classificationId}">${classificationName}</option>
+												<option value="${classificationId}"><c:out value="${classificationName}"/></option>
 											</c:otherwise>
 										</c:choose>
 									</c:forEach>

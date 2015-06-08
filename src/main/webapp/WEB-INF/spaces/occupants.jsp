@@ -257,7 +257,7 @@ function getSelectedPeriod(unixFormat){
 				<c:forEach var="occupation" items="${activeOccupations}">
 					<c:forEach var="interval" items="${occupation.activeIntervals}">
 						<div class="row">
-							<div class="col-md-5" id="theNameInput">${occupation.user.name}</div>
+							<div class="col-md-5" id="theNameInput"><c:out value="${occupation.user.name}"/></div>
 							<div class="col-md-6">
 								<c:set var="endDate" value='${interval.end.toString("dd/MM/yyyy")}' />
 								<c:set var="startPlus150Years" value="${interval.start.plusYears(150)}" />
@@ -266,20 +266,20 @@ function getSelectedPeriod(unixFormat){
 									<c:set var="endDate" value="" />
 								</c:if>
 								
-								${interval.start.toString("dd/MM/yyyy")} --- ${endDate}
+								<c:out value="${interval.start.toString('dd/MM/yyyy')} --- ${endDate}"/>
 							</div>
 							<div class="col-md-1">
 								<button data-backdrop="static" data-user-id="${occupation.user.externalId}"
-									data-user-username="${occupation.user.username}"
-									data-user-name="${occupation.user.name}" data-toggle="modal"
+									data-user-username="<c:out value='${occupation.user.username}'/>"
+									data-user-name="<c:out value='${occupation.user.name}'/>" data-toggle="modal"
 									data-date-start="${interval.start.toString("yyyy-MM-dd")}" data-date-end="${interval.end.toString("yyyy-MM-dd")}"
 									data-target="#otherModal" class="btn btn-default" title="edit"
 									data-action="edit">
 									<span class="glyphicon glyphicon-edit"></span>
 								</button>
 								<button data-backdrop="static" data-user-id="${occupation.user.externalId}"
-									data-user-username="${occupation.user.username}"
-									data-user-name="${occupation.user.name}" data-toggle="modal"
+									data-user-username="<c:out value='${occupation.user.username}'/>"
+									data-user-name="<c:out value='${occupation.user.name}'/>" data-toggle="modal"
 									data-date-start="${interval.start.toString("yyyy-MM-dd")}" data-date-end="${interval.end.toString("yyyy-MM-dd")}"
 									data-toggle="modal" data-target="#confirmDelete"
 									class="btn btn-default" title="delete" data-action="remove">
@@ -315,27 +315,27 @@ function getSelectedPeriod(unixFormat){
 				<c:forEach var="occupation" items="${inactiveOccupations}">
 					<c:forEach var="interval" items="${occupation.inactiveIntervals}">
 						<div class="row">
-							<div class="col-md-5" id="theNameInput">${occupation.user.name}</div>
+							<div class="col-md-5" id="theNameInput"><c:out value="${occupation.user.name}"/></div>
 							<div class="col-md-6">
 								<c:set var="endDate" value='${interval.end.toString("dd/MM/yyyy")}' />
 								<c:set var="startPlus150Years" value="${interval.start.plusYears(150)}" />
 								<c:if test="${occupantsbean.isAfter(interval.end,startPlus150Years)}">
 									<c:set var="endDate" value="" />
 								</c:if>
-								${interval.start.toString("dd/MM/yyyy")} --- ${endDate}
+								<c:out value="${interval.start.toString('dd/MM/yyyy')} --- ${endDate}"/>
 							</div>
 							<div class="col-md-1">
 								<button data-backdrop="static" data-user-id="${occupation.user.externalId}"
-									data-user-username="${occupation.user.username}"
-									data-user-name="${occupation.user.name}" data-toggle="modal"
+									data-user-username="<c:out value='${occupation.user.username}'/>"
+									data-user-name="<c:out value='${occupation.user.name}'/>" data-toggle="modal"
 									data-date-start="${interval.start.toString("yyyy-MM-dd")}" data-date-end="${interval.end.toString("yyyy-MM-dd")}"
 									data-target="#otherModal" class="btn btn-default" title="edit"
 									data-action="edit">
 									<span class="glyphicon glyphicon-edit"></span>
 								</button>
 								<button data-backdrop="static" data-user-id="${occupation.user.externalId}"
-									data-user-username="${occupation.user.username}"
-									data-user-name="${occupation.user.name}" data-toggle="modal"
+									data-user-username="<c:out value='${occupation.user.username}'/>"
+									data-user-name="<c:out value='${occupation.user.name}'/>" data-toggle="modal"
 									data-date-start="${interval.start.toString("yyyy-MM-dd")}" data-date-end="${interval.end.toString("yyyy-MM-dd")}"
 									data-toggle="modal" data-target="#confirmDelete"
 									class="btn btn-default" title="delete" data-action="remove">

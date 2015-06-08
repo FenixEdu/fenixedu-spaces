@@ -66,9 +66,9 @@
 					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
 					<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
 					<tr>
-						<td>${space.classification.name.content}</td>
-						<td>${space.fullName}</td>
-						<td>${space.getBlueprintNumber().orElse("-")}</td>
+						<td><c:out value="${space.classification.name.content}"/></td>
+						<td><c:out value="${space.fullName}"/></td>
+						<td><c:out value="${space.getBlueprintNumber().orElse('-')}"/></td>
 						<td>${fn:length(space.children)}</td>
 						<td>
 							<a href="${viewUrl}"  class="btn btn-default" title="<spring:message code="label.space.view"/>"><span class="glyphicon glyphicon-eye-open"></span></a>
@@ -85,7 +85,7 @@
 								<a href="${manageOccupantsUrl}" class="btn btn-default" title="<spring:message code="label.space.occupants"/>"><span class="glyphicon glyphicon-user"></span></a>	
 							</c:if>
 							<c:if test="${space.isSpaceManagementMember(currentUser)}">
-								<button data-space-id="${space.externalId}" data-space-name="${space.name}" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="<spring:message code="label.delete"/>"><span class="glyphicon glyphicon-remove"></span></button>
+								<button data-space-id="${space.externalId}" data-space-name="<c:out value='${space.name}'/>" data-toggle="modal" data-target="#confirmDelete" class="btn btn-default" title="<spring:message code="label.delete"/>"><span class="glyphicon glyphicon-remove"></span></button>
 							</c:if>
 						</td>
 					</tr>

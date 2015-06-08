@@ -73,7 +73,7 @@
 	
 	<c:forEach var="space" items="${freeSpaces}">
 		<c:if test="${not empty space.name}">
-			freeSpaces["${space.externalId}"] = {name : "${space.presentationName}", allocatableCapacity : "${space.allocatableCapacity}", examCapacity : "${space.getMetadata('examCapacity').orElse(0)}"};
+			freeSpaces["${space.externalId}"] = {name : "<c:out value='${space.presentationName}'/>", allocatableCapacity : "${space.allocatableCapacity}", examCapacity : "${space.getMetadata('examCapacity').orElse(0)}"};
 		</c:if>
 	</c:forEach>
 	
@@ -229,7 +229,7 @@
 
 
 <c:if test="${not empty errorMessage}">
-	<h3 class="bg-danger">${errorMessage}</h3>
+	<h3 class="bg-danger"><c:out value="${errorMessage}"/></h3>
 </c:if>
 
 <div class="page-header">
@@ -286,7 +286,7 @@
 	<select id="choose-space">
 		<c:forEach var="space" items="${freeSpaces}">
 			<c:if test="${not empty space.name}">
-				<option value="${space.externalId}">${space.presentationName} [${space.allocatableCapacity},${space.getMetadata('examCapacity').orElse(0)}]</option>
+				<option value="${space.externalId}"><c:out value="${space.presentationName} [${space.allocatableCapacity},${space.getMetadata('examCapacity').orElse(0)}]"/></option>
 			</c:if>
 		</c:forEach>
 	</select>

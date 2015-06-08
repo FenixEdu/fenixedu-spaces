@@ -26,7 +26,7 @@
 		<c:if test="${not empty parentSpace }">
 			<c:forEach var="space" items="${parentSpace.path}">
 				<c:url var="viewUrl" value="/spaces-view/view/${space.externalId}" />
-				<a href="${viewUrl}">${space.name}</a>&nbsp;&raquo;
+				<a href="${viewUrl}"><c:out value="${space.name}"/></a>&nbsp;&raquo;
 		  	</c:forEach>
 		</c:if>
 		<c:if test="${empty parentSpace }">

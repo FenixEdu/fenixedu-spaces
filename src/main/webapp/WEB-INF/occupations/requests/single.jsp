@@ -40,7 +40,7 @@ $(document).ready(function() {
 	
 	<c:if test="${not empty errors}">	
 		<h4 class="bg-danger">
-			${errors}
+			<c:out value="${errors}"/>
 		</h4>
 	</c:if>
 	
@@ -62,37 +62,37 @@ $(document).ready(function() {
 				</c:if>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.identification" /></th>
-					<td>${id}</td>
+					<td><c:out value="${id}"/></td>
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.subject" /></th>
-					<td>${subject}</td>
+					<td><c:out value="${subject}"/></td>
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.requestor" /></th>
-					<td>${requestor.presentationName} (${requestor.username})</td>
+					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
 				</tr>
 				<c:if test="${not empty email}">
 					<tr>
 						<th class="row"><spring:message code="label.occupation.request.requestor.email" /></th>
-						<td>${email}</td>
+						<td><c:out value="${email}"/></td>
 					</tr>
 				</c:if>
 				<c:if test="${not empty contacts}">
 					<tr>
 						<th class="row"><spring:message code="label.occupation.request.requestor.contacts" /></th>
-						<td>${contacts}</td>
+						<td><c:out value="${contacts}"/></td>
 					</tr>
 				</c:if>
 				<c:if test="${not empty groups}">
 					<tr>
 						<th class="row"><spring:message code="label.occupation.request.requestor.groups" /></th>
-						<td>${groups}</td>
+						<td><c:out value="${groups}"/></td>
 					</tr>
 				</c:if>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.instant" /></th>
-					<td>${instant}</td>
+					<td><c:out value="${instant}"/></td>
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.state" /></th>
@@ -104,10 +104,10 @@ $(document).ready(function() {
 						<spring:url var="viewOccupationUrl" value="/spaces/occupations/view"/>
 						<c:forEach var="occupation" items="${occupationRequest.occupationSet}">
 							<p>
-								<a href="${viewOccupationUrl}/${occupation.externalId}" title="${occupation.extendedSummary}">
-									${occupation.summary}&nbsp;&mdash;&nbsp;
+								<a href="${viewOccupationUrl}/${occupation.externalId}" title="<c:out value='${occupation.extendedSummary}'/>">
+									<c:out value="${occupation.summary}"/>&nbsp;&mdash;&nbsp;
 									<c:forEach var="space" items="${occupation.spaces}">
-										${space.name}
+										<c:out value="${space.name}"/>
 									</c:forEach>
 								</a>
 							</p>
@@ -116,12 +116,12 @@ $(document).ready(function() {
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.campus" /></th>
-					<td>${campusName}</td>
+					<td><c:out value="${campusName}"/></td>
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupations.description" /></th>
 					<td>
-						<pre class="comment">${occupationRequest.description}</pre>
+						<pre class="comment"><c:out value="${occupationRequest.description}"/></pre>
 					</td>
 					
 				</tr>
@@ -144,9 +144,9 @@ $(document).ready(function() {
 	   			<c:set var="date" value="${comment.instant.toDate()}"/>
 	   			
 	   			<div class="panel panel-default">
-	  				<div class="panel-heading"><strong>${comment.owner.presentationName} (${comment.owner.username})</strong> (<fmt:formatDate value="${date}" pattern="dd-MM-yyyy HH:mm"/>) </div>
+	  				<div class="panel-heading"><strong><c:out value="${comment.owner.presentationName} (${comment.owner.username})"/></strong> (<fmt:formatDate value="${date}" pattern="dd-MM-yyyy HH:mm"/>) </div>
 	  				<div class="panel-body">
-	    				<pre class="comment">${comment.description}</pre>
+	    				<pre class="comment"><c:out value="${comment.description}"/></pre>
 	  				</div>
 				</div>
 	   		</c:forEach>

@@ -58,23 +58,23 @@
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.name"/></th>
-					<td>${information.name}</td>
+					<td><c:out value="${information.name}"/></td>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.identification"/></th>
-					<td>${information.identification}</td>
+					<td><c:out value="${information.identification}"/></td>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.classification"/></th>
-					<td>${information.classification.name.content}</td>
+					<td><c:out value="${information.classification.name.content}"/></td>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.allocatableCapacity"/></th>
-					<td>${information.allocatableCapacity}</td>
+					<td><c:out value="${information.allocatableCapacity}"/></td>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.blueprintNumber"/></th>
-					<td>${information.blueprintNumber}</td>
+					<td><c:out value="${information.blueprintNumber}"/></td>
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.blueprint"/></th>
@@ -83,14 +83,14 @@
 				</tr>
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.area"/></th>
-					<td>${information.area}</td>
+					<td><c:out value="${information.area}"/></td>
 				</tr>
 				<c:forEach var="metadata" items="${information.metadata}">
 					<c:set var="field" value="${metadata.key}"/>
 					<c:set var="metadataSpec" value="${information.classification.getMetadataSpec(field).get()}"/>
 					<c:set var="value" value="${metadata.value}"/>
 					<tr>
-						<th scope="row">${metadataSpec.description.content}</th>
+						<th scope="row"><c:out value="${metadataSpec.description.content}"/></th>
 						<td>
 							<c:choose>
 								<c:when test="${value == 'true' }">
@@ -100,7 +100,7 @@
 									<i class="glyphicon glyphicon-remove"></i>
 								</c:when>
 								<c:otherwise>
-									${value}
+									<c:out value="${value}"/>
 								</c:otherwise>
 							</c:choose>
 						</td>

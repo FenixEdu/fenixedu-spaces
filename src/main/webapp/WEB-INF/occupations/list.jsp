@@ -72,7 +72,7 @@
   </div>
   <div class="form-group">
     <label for="searchSpace"><spring:message code="label.space"/></label>
-    <input name="name" type="text" id="searchSpace" value="${name}" placeholder="<spring:message code="label.space.search.name"/>"></input>
+    <input name="name" type="text" id="searchSpace" value="<c:out value='${name}'/>" placeholder="<spring:message code="label.space.search.name"/>"></input>
   </div>
   <button type="submit" class="btn btn-default"><spring:message code="label.select"/></button>
 </form>
@@ -96,11 +96,11 @@
 				<c:set var="extendedSummary" value="${occupation.extendedSummary}" />
 				<c:set var="rooms" value="${occupation.spaces}" />
 				<tr>
-					<td class="col-md-5"><a href="${viewUrl}/${id}">${subject}</a></td>
-					<td class="col-md-3"><p title="${extendedSummary}">${summary}</p></td>
+					<td class="col-md-5"><a href="${viewUrl}/${id}"><c:out value="${subject}"/></a></td>
+					<td class="col-md-3"><p title="${extendedSummary}"><c:out value="${summary}"/></p></td>
 					<td class="col-md-4">
 						<c:forEach var="room" items="${rooms}">
-							${room.name}
+							<c:out value="${room.name}"/>
 						</c:forEach>
 					</td>
 				</tr>

@@ -39,7 +39,7 @@
 	    	<c:forEach var="campi" items="${campus}">
 		    	<c:set var="campusName" value="${campi.name}"/>
 		    	<c:set var="campusId" value="${campi.externalId}"/>
-				<form:option value="${campusId}">${campusName}</form:option>
+				<form:option value="${campusId}"><c:out value="${campusName}"/></form:option>
 	    	</c:forEach>
 	    </form:select>
   </div>
