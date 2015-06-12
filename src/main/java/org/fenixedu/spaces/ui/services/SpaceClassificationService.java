@@ -75,6 +75,9 @@ public class SpaceClassificationService {
             } else {
                 hasName.put(name, true);
             }
+            if (defaultValue.isEmpty()) {
+                continue;
+            }
             try {
                 if (Integer.class.isAssignableFrom(typeClass) && !defaultValue.isEmpty()) {
                     Integer.parseInt(defaultValue);
@@ -105,6 +108,7 @@ public class SpaceClassificationService {
                 continue;
             }
             throw new SpaceClassificationException("error", "label.spaceClassification.noSuchClass", type);
+
         }
     }
 
