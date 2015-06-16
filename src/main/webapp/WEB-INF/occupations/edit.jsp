@@ -276,11 +276,11 @@
 		</tr>
 		<tr class="row">
 			<th><spring:message code="label.occupation.request.requestor" /></th>
-			<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
+			<td><c:out value="${requestor.profile.displayName} (${requestor.username})"/></td>
 		</tr>
 		<tr class="row">
 			<th><spring:message code="label.occupation.request.owner" /></th>
-			<td><c:out value="${owner.presentationName} (${owner.username})"/></td>
+			<td><c:out value="${owner.profile.displayName} (${owner.username})"/></td>
 		</tr>
 	</table>
 </c:if>

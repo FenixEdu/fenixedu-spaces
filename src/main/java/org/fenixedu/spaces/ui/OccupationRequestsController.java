@@ -190,14 +190,14 @@ public class OccupationRequestsController {
                 addCell(bundle.message("label.occupation.request.subject"), request.getSubject());
                 final User requestor = request.getRequestor();
                 addCell(bundle.message("label.occupation.request.requestor"),
-                        String.format("%s (%s)", requestor.getPresentationName(), requestor.getUsername()));
+                        String.format("%s (%s)", requestor.getProfile().getDisplayName(), requestor.getUsername()));
                 if (userInformationService != null) {
                     addCell(bundle.message("label.occupation.request.email"), userInformationService.getEmail(requestor));
                     addCell(bundle.message("label.occupation.request.roles"), getUserGroups(requestor).toString());
                 }
                 final User owner = request.getOwner();
                 addCell(bundle.message("label.occupation.request.owner"),
-                        String.format("%s (%s)", owner.getPresentationName(), owner.getUsername()));
+                        String.format("%s (%s)", owner.getProfile().getDisplayName(), owner.getUsername()));
             }
 
         };
