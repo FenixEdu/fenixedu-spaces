@@ -49,7 +49,7 @@ public class MyOccupationRequestController {
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String showCreateForm(Model model) {
-        model.addAttribute("campus", occupationService.getAllCampus());
+        model.addAttribute("campus", occupationService.getTopLevelSpaces());
         model.addAttribute("occupation", new OccupationRequestBean());
         return "occupations/requests/create";
     }

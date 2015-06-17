@@ -114,7 +114,7 @@ public class OccupationRequestsController {
     @RequestMapping(value = "/filter/{campus}", method = RequestMethod.GET)
     public String filter(@PathVariable Space campus, Model model, @RequestParam(defaultValue = "1") String p, @RequestParam(
             required = false) OccupationRequestState state) {
-        model.addAttribute("campus", occupationService.getAllCampus());
+        model.addAttribute("campus", occupationService.getTopLevelSpaces());
         model.addAttribute("selectedCampi", campus);
         addRequests(model, campus, p, state);
         return "occupations/requests/view";
@@ -148,7 +148,7 @@ public class OccupationRequestsController {
     @RequestMapping(method = RequestMethod.GET)
     public String viewRequests(Model model, @RequestParam(defaultValue = "1") String p,
             @RequestParam(required = false) OccupationRequestState state) {
-        model.addAttribute("campus", occupationService.getAllCampus());
+        model.addAttribute("campus", occupationService.getTopLevelSpaces());
         addRequests(model, null, p, state);
         return "occupations/requests/view";
     }
