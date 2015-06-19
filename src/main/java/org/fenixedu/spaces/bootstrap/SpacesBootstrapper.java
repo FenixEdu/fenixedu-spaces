@@ -28,7 +28,7 @@ public class SpacesBootstrapper {
 
     @Bootstrap
     public static List<BootstrapError> boostrap() {
-        DynamicGroup.get("spaceSuperUsers").changeGroup(DynamicGroup.get("managers"));
+        DynamicGroup.get("spaceSuperUsers").mutator().changeGroup(DynamicGroup.get("managers"));
         setBaseClassification();
         return Lists.newArrayList();
     }
