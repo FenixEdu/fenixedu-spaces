@@ -18,6 +18,7 @@
     along with FenixEdu Spaces.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <table class="table">
 	<thead>
 		<th><spring:message code="label.occupation.request.identification" /></th>
