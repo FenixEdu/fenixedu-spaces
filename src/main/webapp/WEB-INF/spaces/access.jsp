@@ -37,7 +37,12 @@ ${portal.angularToolkit()}
 <div class="page-header">
   <h1><spring:message code="title.space.management"/><small><spring:message code="title.space.access.management"/></small></h1>
 </div>
-
+<div>
+	<h3>
+		<spring:message code="label.space"/>: <c:out value="${space.presentationName}"/>
+	</h3>
+</div>
+<p>
 <div ng-app="groupEdit" ng-controller="editGroupController">
 <spring:url var="formActionUrl" value="${action}"/>
 <form:form modelAttribute="spacebean" role="form" method="post"  action="${formActionUrl}" enctype="multipart/form-data">
@@ -166,3 +171,4 @@ ${portal.angularToolkit()}
     
 </script>
 </div>
+</p>
