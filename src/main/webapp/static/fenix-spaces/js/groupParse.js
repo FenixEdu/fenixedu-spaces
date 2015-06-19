@@ -10,7 +10,7 @@ function uniquify(groupArray){
 }
 
 function getInfoGroup(groupString){
-    var aux = $.ajax({ async : false, type : 'GET', url : "/fenix/api/bennu-core/users/username/"+encodeURIComponent(groupString)});
+    var aux = $.ajax({ async : false, type : 'GET', url : Bennu.contextPath + "/api/bennu-core/users/username/"+encodeURIComponent(groupString)});
     var respObj;
     if(aux.status == 200){
 	respObj = JSON.parse(aux.responseText);
@@ -20,7 +20,7 @@ function getInfoGroup(groupString){
 	    expression : groupString
 	};
     }
-    aux = $.ajax({ async : false, type : 'GET', url : "/fenix/api/bennu-core/groups?groupExpression="+encodeURIComponent(groupString)});
+    aux = $.ajax({ async : false, type : 'GET', url : Bennu.contextPath +"/api/bennu-core/groups?groupExpression="+encodeURIComponent(groupString)});
     if(aux.status == 200){
 	respObj = JSON.parse(aux.responseText);
 	return {
