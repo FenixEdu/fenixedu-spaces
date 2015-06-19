@@ -70,7 +70,7 @@ $(document).ready(function() {
 				</tr>
 				<tr>
 					<th class="row"><spring:message code="label.occupation.request.requestor" /></th>
-					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
+					<td><c:out value="${requestor.profile.displayName} (${requestor.username})"/></td>
 				</tr>
 				<c:if test="${not empty email}">
 					<tr>
@@ -144,7 +144,7 @@ $(document).ready(function() {
 	   			<c:set var="date" value="${comment.instant.toDate()}"/>
 	   			
 	   			<div class="panel panel-default">
-	  				<div class="panel-heading"><strong><c:out value="${comment.owner.presentationName} (${comment.owner.username})"/></strong> (<fmt:formatDate value="${date}" pattern="dd-MM-yyyy HH:mm"/>) </div>
+	  				<div class="panel-heading"><strong><c:out value="${comment.owner.profile.displayName} (${comment.owner.username})"/></strong> (<fmt:formatDate value="${date}" pattern="dd-MM-yyyy HH:mm"/>) </div>
 	  				<div class="panel-body">
 	    				<pre class="comment"><c:out value="${comment.description}"/></pre>
 	  				</div>

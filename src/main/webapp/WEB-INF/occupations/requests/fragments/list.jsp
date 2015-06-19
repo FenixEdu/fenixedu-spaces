@@ -37,7 +37,7 @@
 				<td><a href="${requestUrl}/${occupationRequest.externalId}"> <c:out value="${id}"/> </a></td>
 				<td><c:out value="${instant}"/></td>
 				<td><a href="${requestUrl}/${occupationRequest.externalId}"> <c:out value="${subject}"/> </a></td>
-				<td><c:out value="${requestor.presentationName}"/></td>
+				<td><c:out value="${requestor.profile.displayName}"/></td>
 				<td><a href="${requestUrl}/${occupationRequest.externalId}"> <spring:message code="label.occupation.request.deal" />
 				</a></td>
 			</tr>

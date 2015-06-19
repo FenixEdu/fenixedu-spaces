@@ -119,7 +119,7 @@ $(document).ready(function() {
 								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
+	 					<td><c:out value="${requestor.profile.displayName} (${requestor.username})"/></td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -184,7 +184,7 @@ $(document).ready(function() {
 								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
+	 					<td><c:out value="${requestor.profile.displayName} (${requestor.username})"/></td>
 						<td>
 							<a href="${requestUrl}/${occupationRequest.externalId}">
 								<spring:message code="label.occupation.request.deal"/>
@@ -241,7 +241,7 @@ $(document).ready(function() {
 								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
+	 					<td><c:out value="${requestor.profile.displayName} (${requestor.username})"/></td>
 	 					<td>
 	 						<a href="${requestUrl}/${occupationRequest.externalId}/OPEN">
 	 							<spring:message code="label.occupation.request.open"/>
@@ -298,7 +298,7 @@ $(document).ready(function() {
 								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
+	 					<td><c:out value="${requestor.profile.displayName} (${requestor.username})"/></td>
 	 					<td>
 	 						<a href="${requestUrl}/${occupationRequest.externalId}">
 	 							<spring:message code="label.occupation.request.open"/>
@@ -362,8 +362,8 @@ $(document).ready(function() {
 								<c:out value="${subject}"/>
 							</a>
 						</td>
-	 					<td><c:out value="${requestor.presentationName} (${requestor.username})"/></td>
-	 					<td><c:out value="${owner.presentationName} (${owner.username})"/></td>
+	 					<td><c:out value="${requestor.profile.displayName} (${requestor.username})"/></td>
+	 					<td><c:out value="${owner.profile.displayName} (${owner.username})"/></td>
 					</tr>
 				</c:forEach>
 			</tbody>
