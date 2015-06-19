@@ -96,8 +96,13 @@ public class OccupationService {
         }
     }
 
+    @Deprecated
     public Set<Space> getAllCampus() {
-        return Space.getAllCampus();
+        return Space.getTopLevelSpaces();
+    }
+
+    public Set<Space> getTopLevelSpaces() {
+        return Space.getTopLevelSpaces();
     }
 
     public List<OccupationRequest> all() {
