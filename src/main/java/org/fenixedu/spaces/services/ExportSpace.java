@@ -15,6 +15,7 @@ import org.fenixedu.commons.spreadsheet.Spreadsheet;
 import org.fenixedu.commons.spreadsheet.Spreadsheet.Row;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
+import org.fenixedu.spaces.domain.occupation.SharedOccupation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,6 +30,7 @@ public class ExportSpace {
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.blueprintNumber"));
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.classification"));
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.area"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.occupants"));
         HashMap<String, LocalizedString> showKeys = new HashMap<String, LocalizedString>();
         for (SpaceClassification spaceClassification : SpaceClassification.all()) {
             for (JsonElement je : spaceClassification.getMetadataSpec().getAsJsonArray()) {
@@ -69,10 +71,17 @@ public class ExportSpace {
         row.setCell(space.bean().getBlueprintNumber() != null ? space.bean().getBlueprintNumber() : "--");
         row.setCell(space.bean().getClassification() != null ? space.bean().getClassification().getName().getContent() : "--");
         row.setCell(space.bean().getArea() != null ? space.bean().getArea().toString() : "--");
-
+        row.setCell(getOccupantsString(space));
         for (String field : metaKeys) {
             row.setCell((space.getMetadata(field).orElse("--")).toString());
         }
+    }
+
+    private static String getOccupantsString(Space space) {
+        return space.getOccupationSet().stream().filter(occ -> SharedOccupation.class.isInstance(occ))
+                .map(occ -> (SharedOccupation) occ).filter(so -> so.isActive()).map(so -> {
+                    return so.getUser().getProfile().getDisplayName() + " (" + so.getUser().getUsername() + ")";
+                }).collect(Collectors.joining("; "));
     }
 
     private static void fillSpreadSheet(Space space, final Spreadsheet spreadsheet, List<String> metaKeys) {
