@@ -48,7 +48,7 @@ import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.Atomic.TxMode;
 
 @SpringApplication(group = "anyone", path = "spaces", title = "title.space.management", hint = "spaces-manager")
-@SpringFunctionality(app = SpacesController.class, title = "title.space.management")
+@SpringFunctionality(app = SpacesController.class, title = "title.space.management", accessGroup = "spaceManager")
 @RequestMapping("/spaces")
 public class SpacesController {
 
