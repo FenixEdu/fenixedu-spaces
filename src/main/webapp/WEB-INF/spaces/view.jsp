@@ -191,26 +191,28 @@
 				</tr>
 				<c:forEach var="metadata" items="${information.metadata}">
 					<c:set var="field" value="${metadata.key}" />
-					<c:set var="metadataSpec" value="${information.classification.getMetadataSpec(field).get()}" />
+					<c:set var="metadataSpec" value="${information.classification.getMetadataSpec(field).orElseGet(null)}" />
 					<c:set var="value" value="${metadata.value}" />
-					<tr>
-						<th scope="row"><c:out value="${metadataSpec.description.content}"/></th>
-						<td>
-							<c:if test='${metadataSpec.type.simpleName.equals("Boolean")}'>
-								<c:choose>
-									<c:when test="${value == true}">
-										<i class="glyphicon glyphicon-ok"></i>
-									</c:when>
-									<c:when test="${value == false }">
-										<i class="glyphicon glyphicon-remove"></i>
-									</c:when>
-								</c:choose>
-							</c:if>
-							<c:if test='${!metadataSpec.type.simpleName.equals("Boolean")}'>
-								<c:out value="${value}"/>
-							</c:if>
-						</td>
-					</tr>
+					<c:if test="${not empty metadataSpec}">
+						<tr>
+							<th scope="row"><c:out value="${metadataSpec.description.content}"/></th>
+							<td>
+								<c:if test='${metadataSpec.type.simpleName.equals("Boolean")}'>
+									<c:choose>
+										<c:when test="${value == true}">
+											<i class="glyphicon glyphicon-ok"></i>
+										</c:when>
+										<c:when test="${value == false }">
+											<i class="glyphicon glyphicon-remove"></i>
+										</c:when>
+									</c:choose>
+								</c:if>
+								<c:if test='${!metadataSpec.type.simpleName.equals("Boolean")}'>
+									<c:out value="${value}"/>
+								</c:if>
+							</td>
+						</tr>
+					</c:if>
 			</c:forEach>
 		</table>
 	</div>
