@@ -93,7 +93,7 @@ public class Occupation extends Occupation_Base {
     }
 
     public Boolean isActive() {
-        return !getIntervals().get(getIntervals().size() - 1).getEnd().isBeforeNow();
+        return getIntervals().stream().anyMatch(interval -> interval.contains(DateTime.now()));
     }
 
     public String getSummary() {

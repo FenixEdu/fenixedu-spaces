@@ -97,7 +97,7 @@ public class SharedOccupation extends SharedOccupation_Base {
 
     @Override
     public Boolean isActive() {
-        return !getIntervals().get(getIntervals().size() - 1).getEnd().isBeforeNow();
+        return getIntervals().stream().anyMatch(interval -> interval.contains(DateTime.now()));
     }
 
     @Override
