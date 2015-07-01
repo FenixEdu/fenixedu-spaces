@@ -10,15 +10,18 @@ function uniquify(groupArray){
 }
 
 function getInfoGroup(groupString){
-    var aux = $.ajax({ async : false, type : 'GET', url : Bennu.contextPath + "/api/bennu-core/users/username/"+encodeURIComponent(groupString)});
-    var respObj;
+    var aux = $.ajax({ async : false, type : 'POST', url : Bennu.contextPath + "/api/bennu-core/users/find?query="+encodeURIComponent(groupString)+"&maxHits=1"});
+    var respObjArray, respObj;
     if(aux.status == 200){
-	respObj = JSON.parse(aux.responseText);
-	return {
-	    type : "user",
-	    name : respObj.name,
-	    expression : groupString
-	};
+		respObjArray = JSON.parse(aux.responseText);
+		if(respObjArray.users.length > 0) { 
+			respObj = respObjArray.users[0]; // we only have one hit
+			return {
+				type : "user",
+				name : respObj.name,
+				expression : groupString
+			};
+		}
     }
     aux = $.ajax({ async : false, type : 'GET', url : Bennu.contextPath +"/api/bennu-core/groups?groupExpression="+encodeURIComponent(groupString)});
     if(aux.status == 200){
