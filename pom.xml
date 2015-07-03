@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>fenixedu-spaces</artifactId>
-	<version>1.7.0-SNAPSHOT</version>
+	<version>1.6.4</version>
 	<packaging>jar</packaging>
 
 	<name>FenixEdu Spaces</name>
@@ -51,7 +51,7 @@
 		<connection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</connection>
 		<developerConnection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</developerConnection>
 		<url>http://fenixedu.github.io/spaces</url>
-		<tag>HEAD</tag>
+		<tag>v1.6.4</tag>
 	</scm>
 	
 	<build>
