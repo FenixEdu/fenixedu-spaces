@@ -117,7 +117,7 @@ public class SpaceClassificationController {
             return de.asJson().toString();
         }
         if (classification == null) {
-            classification = create(information);
+            create(information);
         } else {
             try {
                 spaceClassificationService.updateClassification(classification, information);
