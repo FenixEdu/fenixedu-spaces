@@ -24,7 +24,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -543,31 +542,4 @@ public class DWGProcessor {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            final File inputDir = new File(args[0]);
-            final String outputDirname = args[1];
-            final DWGProcessor processor = new DWGProcessor();
-            for (final File file : inputDir.listFiles()) {
-                if (file.isFile()) {
-                    final String inputFilename = file.getAbsolutePath();
-                    if (inputFilename.endsWith(".dwg") || inputFilename.endsWith(".DWG")) {
-                        final String outputFilename = constructOutputFilename(file, outputDirname);
-                        final OutputStream outputStream = new FileOutputStream(outputFilename);
-                        try {
-                            processor.generateJPEGImage(inputFilename, outputStream);
-                        } catch (Error error) {
-                            error.printStackTrace();
-                        } finally {
-                            outputStream.close();
-                        }
-                    }
-                }
-            }
-        } catch (Throwable ex) {
-            ex.printStackTrace();
-        } finally {
-            System.exit(0);
-        }
-    }
 }
