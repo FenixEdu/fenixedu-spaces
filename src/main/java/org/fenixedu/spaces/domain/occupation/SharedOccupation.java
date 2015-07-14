@@ -121,6 +121,17 @@ public class SharedOccupation extends SharedOccupation_Base {
     }
 
     @Override
+    public String getSubject() {
+        if (super.getSubject() != null && !super.getSubject().isEmpty()) {
+            return super.getSubject();
+        }
+        if (getUser() != null) {
+            return getUser().getProfile().getDisplayName();
+        }
+        return super.getSubject();
+    }
+
+    @Override
     public void delete() {
         if (getRequest() != null) {
             setRequest(null);

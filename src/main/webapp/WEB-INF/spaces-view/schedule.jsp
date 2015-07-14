@@ -66,7 +66,7 @@
 			minTime : "08:00",
 			maxTime : "24:00",
 			axisFormat: 'H:mm',
-			allDaySlot : false,
+			allDaySlot : true,
 			defaultView: "agendaWeek",
 			firstDay: 1,
 			editable: false,
