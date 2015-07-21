@@ -34,6 +34,7 @@ import org.fenixedu.spaces.core.service.NotificationService;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceDomainException;
 import org.fenixedu.spaces.domain.occupation.Occupation;
+import org.fenixedu.spaces.domain.occupation.SharedOccupation;
 import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings;
 import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings.Frequency;
 import org.fenixedu.spaces.domain.occupation.config.ExplicitConfigWithSettings.MonthlyType;
@@ -405,7 +406,7 @@ public class OccupationService {
                     if (url != null && !url.isEmpty()) {
                         event.addProperty("url", url);
                     }
-                    event.addProperty("allDay", false);
+                    event.addProperty("allDay", occupation.getClass().equals(SharedOccupation.class));
                     event.addProperty("backgroundColor", colors[id % colors.length]);
                     event.addProperty("info", occupation.getInfo());
                     events.add(event);
