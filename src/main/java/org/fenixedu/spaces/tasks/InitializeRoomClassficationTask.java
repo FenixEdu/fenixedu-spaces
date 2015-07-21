@@ -114,8 +114,10 @@ public class InitializeRoomClassficationTask extends CustomTask {
             List<ClassificationBean> classificationJson;
             classificationJson = gson.fromJson(new JsonReader(new FileReader(file)), new TypeToken<List<ClassificationBean>>() {
             }.getType());
-            for (ClassificationBean bean : classificationJson) {
-                create(null, bean);
+            if (classificationJson != null) {
+                for (ClassificationBean bean : classificationJson) {
+                    create(null, bean);
+                }
             }
         } catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
             e.printStackTrace();
