@@ -123,8 +123,10 @@ public class SpacesController {
 
     private boolean accessControl(Space space) {
         User currentUser = Authenticate.getUser();
-        return (space == null && DynamicGroup.get("spaceSuperUsers").isMember(currentUser))
-                || space.isSpaceManagementMember(currentUser);
+        if (space == null) {
+            return DynamicGroup.get("spaceSuperUsers").isMember(currentUser);
+        }
+        return space.isSpaceManagementMember(currentUser);
     }
 
     private void canWrite(Space space) {
