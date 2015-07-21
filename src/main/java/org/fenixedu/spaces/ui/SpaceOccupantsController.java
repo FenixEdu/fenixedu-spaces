@@ -94,8 +94,10 @@ public class SpaceOccupantsController {
 
     private boolean accessControl(Space space) {
         User currentUser = Authenticate.getUser();
-        return (space == null && DynamicGroup.get("spaceSuperUsers").isMember(currentUser))
-                || space.isOccupationMember(currentUser);
+        if (space == null) {
+            return DynamicGroup.get("spaceSuperUsers").isMember(currentUser);
+        }
+        return space.isOccupationMember(currentUser);
     }
 
     private void canWrite(Space space) {
