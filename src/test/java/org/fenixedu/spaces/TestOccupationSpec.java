@@ -200,6 +200,6 @@ public class TestOccupationSpec {
 
         JsonElement externalize = config.externalize();
 
-        OccupationConfig internalize = config.internalize(externalize);
+        OccupationConfig.internalize(externalize);
     }
 }
