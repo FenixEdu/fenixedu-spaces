@@ -212,9 +212,8 @@ public class SpaceClassification extends SpaceClassification_Base {
         if (metadataSpec == null) {
             super.setMetadataSpec(new JsonArray());
         }
-        JsonElement toUpdate = new JsonArray();
         super.setMetadataSpec(metadataSpec);
-        toUpdate = computeUpdate(metadataSpec);
+        JsonElement toUpdate = computeUpdate(metadataSpec);
         for (SpaceClassification classification : getChildrenSet()) {
             classification.updateAndPropagate(toUpdate);
         }
