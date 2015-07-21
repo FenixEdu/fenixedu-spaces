@@ -177,6 +177,7 @@ public class TestOccupationSpec {
         final String jsonAsString = dailyConfig.externalize().toString();
         final List<Interval> extIntervals = dailyConfig.getIntervals();
         final OccupationConfig internalize = OccupationConfig.internalize(new JsonParser().parse(jsonAsString));
+        assert internalize != null;
         final List<Interval> intIntervals = internalize.getIntervals();
         assert HashMultiset.create(extIntervals).equals(HashMultiset.create(intIntervals)) == true;
     }
