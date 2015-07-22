@@ -7,7 +7,7 @@ import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
-import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.BennuSpringController;
 import org.fenixedu.spaces.domain.Space;
@@ -95,7 +95,7 @@ public class SpaceOccupantsController {
     private boolean accessControl(Space space) {
         User currentUser = Authenticate.getUser();
         if (space == null) {
-            return DynamicGroup.get("spaceSuperUsers").isMember(currentUser);
+            return Group.dynamic("spaceSuperUsers").isMember(currentUser);
         }
         return space.isOccupationMember(currentUser);
     }

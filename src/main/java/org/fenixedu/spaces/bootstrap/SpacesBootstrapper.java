@@ -6,7 +6,7 @@ import org.fenixedu.bennu.core.bootstrap.BootstrapError;
 import org.fenixedu.bennu.core.bootstrap.annotations.Bootstrap;
 import org.fenixedu.bennu.core.bootstrap.annotations.Bootstrapper;
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.portal.domain.PortalBootstrapper;
 import org.fenixedu.commons.i18n.I18N;
 import org.fenixedu.commons.i18n.LocalizedString;
@@ -28,7 +28,7 @@ public class SpacesBootstrapper {
 
     @Bootstrap
     public static List<BootstrapError> boostrap() {
-        DynamicGroup.get("spaceSuperUsers").mutator().changeGroup(DynamicGroup.get("managers"));
+        Group.dynamic("spaceSuperUsers").mutator().changeGroup(Group.managers());
         setBaseClassification();
         return Lists.newArrayList();
     }

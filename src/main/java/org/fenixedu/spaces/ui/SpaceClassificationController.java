@@ -21,7 +21,7 @@ package org.fenixedu.spaces.ui;
 import javax.servlet.UnavailableException;
 
 import org.fenixedu.bennu.core.domain.exceptions.DomainException;
-import org.fenixedu.bennu.core.groups.DynamicGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.SpaceClassification;
@@ -143,7 +143,7 @@ public class SpaceClassificationController {
     }
 
     private boolean accessControl() {
-        return DynamicGroup.get("spaceSuperUsers").isMember(Authenticate.getUser());
+        return Group.dynamic("spaceSuperUsers").isMember(Authenticate.getUser());
     }
 
     private void canWrite() {

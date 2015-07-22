@@ -20,15 +20,14 @@
 package org.fenixedu.spaces.ui;
 
 import org.fenixedu.bennu.core.groups.Group;
-import org.fenixedu.bennu.core.groups.NobodyGroup;
 
 public class SpaceAccessBean {
     private Group occupationGroup;
     private Group managementGroup;
 
     public SpaceAccessBean() {
-        occupationGroup = NobodyGroup.get();
-        managementGroup = NobodyGroup.get();
+        occupationGroup = Group.nobody();
+        managementGroup = Group.nobody();
     }
 
     public String getOccupationExpression() {

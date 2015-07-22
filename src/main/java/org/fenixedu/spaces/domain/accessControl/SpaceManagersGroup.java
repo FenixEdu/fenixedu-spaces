@@ -20,8 +20,7 @@ package org.fenixedu.spaces.domain.accessControl;
 
 import static org.fenixedu.bennu.FenixEduSpaceConfiguration.BUNDLE;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fenixedu.bennu.core.annotation.GroupOperator;
 import org.fenixedu.bennu.core.domain.User;
@@ -36,9 +35,9 @@ public class SpaceManagersGroup extends GroupStrategy {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Set<User> getMembers() {
+    public Stream<User> getMembers() {
         return Space.getSpaces().filter(Space::isActive).map(s -> s.getManagementGroup()).filter(g -> g != null)
-                .flatMap(g -> g.getMembers().stream()).collect(Collectors.toSet());
+                .flatMap(g -> g.getMembers());
     }
 
     @Override
@@ -47,7 +46,7 @@ public class SpaceManagersGroup extends GroupStrategy {
     }
 
     @Override
-    public Set<User> getMembers(DateTime when) {
+    public Stream<User> getMembers(DateTime when) {
         return getMembers();
     }
 
