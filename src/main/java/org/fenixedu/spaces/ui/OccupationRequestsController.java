@@ -196,8 +196,13 @@ public class OccupationRequestsController {
                     addCell(bundle.message("label.occupation.request.roles"), getUserGroups(requestor).toString());
                 }
                 final User owner = request.getOwner();
-                addCell(bundle.message("label.occupation.request.owner"),
-                        String.format("%s (%s)", owner.getProfile().getDisplayName(), owner.getUsername()));
+                String ownerCellValue = "-";
+
+                if (owner != null && owner.getProfile() != null) {
+                    ownerCellValue = String.format("%s (%s)", owner.getProfile().getDisplayName(), owner.getUsername());
+                }
+
+                addCell(bundle.message("label.occupation.request.owner"), ownerCellValue);
             }
 
         };
