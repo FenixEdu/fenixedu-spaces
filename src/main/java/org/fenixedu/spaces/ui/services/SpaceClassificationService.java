@@ -117,11 +117,17 @@ public class SpaceClassificationService {
         setName(classification, bean.getLocalizedName());
         setCode(classification, bean.getCode());
         setParentClassification(classification, bean.getParent());
+        setIsAllocatable(classification, bean.getIsAllocatable());
     }
 
     @Atomic
     public void setMetadataSpec(SpaceClassification classification, JsonElement metadata) {
         classification.setMetadataSpec(metadata);
+    }
+
+    @Atomic
+    public void setIsAllocatable(SpaceClassification classification, boolean isAllocatable) {
+        classification.setIsAllocatable(isAllocatable);
     }
 
     @Atomic

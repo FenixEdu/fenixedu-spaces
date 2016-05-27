@@ -33,7 +33,7 @@ public class SpaceClassificationBean {
 
     private String parent;
     private String code;
-
+    private boolean isAllocatable;
     private String warningMessage;
 
     public SpaceClassificationBean(SpaceClassification classification) {
@@ -41,6 +41,7 @@ public class SpaceClassificationBean {
         this.code = classification.getCode();
         this.localizedName = classification.getName();
         this.metadataSpec = classification.getMetadataSpec();
+        this.isAllocatable = classification.isAllocatable();
     }
 
     public SpaceClassificationBean(String json) {
@@ -49,6 +50,7 @@ public class SpaceClassificationBean {
         this.metadataSpec = classificationJson.get("metadata");
         this.parent = classificationJson.get("parent").getAsString();
         this.code = classificationJson.get("code").getAsString();
+        this.isAllocatable = classificationJson.get("isAllocatable").getAsBoolean();
     }
 
     public SpaceClassificationBean() {
@@ -57,6 +59,7 @@ public class SpaceClassificationBean {
         this.metadataSpec = new JsonArray();
         this.parent = SpaceClassification.getRootClassification().getExternalId();
         this.code = "";
+        this.isAllocatable = false;
     }
 
     public String getParent() {
@@ -91,4 +94,11 @@ public class SpaceClassificationBean {
         return localizedName;
     }
 
+    public boolean getIsAllocatable() {
+        return isAllocatable;
+    }
+
+    public void setIsAllocatable(boolean isAllocatable) {
+        this.isAllocatable = isAllocatable;
+    }
 }

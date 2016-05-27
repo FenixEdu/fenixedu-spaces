@@ -54,6 +54,7 @@ class BlueprintFile extends .org.fenixedu.bennu.io.domain.GenericFile;
 
 class SpaceClassification {
 	String code;
+	boolean isAllocatable;
 	LocalizedString name;
 	JsonElement metadataSpec;
 }

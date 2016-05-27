@@ -49,6 +49,7 @@ ${portal.angularToolkit()}
 	window.informationName = ${information.localizedName.json()};
 	window.specs = ${information.metadataSpec.toString()};
 	window.code = "${information.code}";
+	window.isAllocatable = ${information.isAllocatable};
 	window.parent = "${information.parent}";
 	window.locale = Bennu.locale.lang;
 </script>
@@ -140,6 +141,14 @@ ${portal.angularToolkit()}
 						</div>
 					</c:otherwise>
 				</c:choose>
+				<div class="row">
+					<div class="col-md-2">
+						<b><spring:message code="label.spaces.classification.allocatable" /></b>
+					</div>
+					<div class="col-md-10" id="theIsAllocatableInput">
+						<input type="checkbox" ng-model="isAllocatable" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

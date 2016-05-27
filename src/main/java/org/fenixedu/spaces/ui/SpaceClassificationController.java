@@ -78,7 +78,7 @@ public class SpaceClassificationController {
         if (infoBean.getParent().length() > 0) {
             sc = FenixFramework.getDomainObject(infoBean.getParent());
         }
-        return new SpaceClassification(infoBean.getCode(), infoBean.getLocalizedName(), sc, infoBean.getMetadataSpec());
+        return new SpaceClassification(infoBean.getCode(), infoBean.getLocalizedName(), sc, infoBean.getMetadataSpec(), infoBean.getIsAllocatable());
     }
 
     @RequestMapping(value = "/edit/{classification}", method = RequestMethod.GET)
