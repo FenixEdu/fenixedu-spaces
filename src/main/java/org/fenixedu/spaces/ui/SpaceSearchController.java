@@ -36,9 +36,11 @@ import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.BlueprintFile;
 import org.fenixedu.spaces.domain.BlueprintFile.BlueprintTextRectangles;
 import org.fenixedu.spaces.domain.Space;
+import org.fenixedu.spaces.domain.submission.SpacePhoto;
 import org.fenixedu.spaces.services.ExportSpace;
 import org.fenixedu.spaces.services.SpaceBlueprintsDWGProcessor;
 import org.fenixedu.spaces.ui.services.OccupationService;
+import org.fenixedu.spaces.ui.services.SpacePhotoService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
@@ -59,6 +61,9 @@ public class SpaceSearchController {
 
     @Autowired
     private OccupationService occupationService;
+
+    @Autowired
+    private SpacePhotoService photoService;
 
     @RequestMapping
     public String home(@RequestParam(required = false) String name, Model model) {
@@ -102,8 +107,8 @@ public class SpaceSearchController {
     }
 
     @RequestMapping(value = "/schedule/{space}/events", produces = "application/json; charset=utf-8")
-    public @ResponseBody String schedule(@PathVariable Space space, @RequestParam(required = false) String start, @RequestParam(
-            required = false) String end, Model model) {
+    public @ResponseBody String schedule(@PathVariable Space space, @RequestParam(required = false) String start,
+            @RequestParam(required = false) String end, Model model) {
         DateTime beginDate;
         DateTime endDate;
 
@@ -150,8 +155,8 @@ public class SpaceSearchController {
     public String view(@PathVariable Space space, Model model, @RequestParam(defaultValue = "50") BigDecimal scale,
             @RequestParam(defaultValue = "") Boolean viewOriginalSpaceBlueprint,
             @RequestParam(defaultValue = "") Boolean viewBlueprintNumbers,
-            @RequestParam(defaultValue = "") Boolean viewIdentifications, @RequestParam(defaultValue = "") Boolean viewDoorNumbers)
-            throws UnavailableException {
+            @RequestParam(defaultValue = "") Boolean viewIdentifications,
+            @RequestParam(defaultValue = "") Boolean viewDoorNumbers) throws UnavailableException {
         model.addAttribute("scale", scale);
         model.addAttribute("viewOriginalSpaceBlueprint", viewOriginalSpaceBlueprint);
         model.addAttribute("viewBlueprintNumbers", viewBlueprintNumbers);
@@ -162,13 +167,16 @@ public class SpaceSearchController {
         model.addAttribute("spaces", getChildrenOrderedByName(space));
         model.addAttribute("parentSpace", space.getParent());
         model.addAttribute("currentUser", Authenticate.getUser());
+        model.addAttribute("spacePhotos", photoService.getVisiblePhotos(space));
+
         return "spaces/view";
     }
 
     @RequestMapping(value = "/export/{space}", method = RequestMethod.GET)
-    public void exportCSV(@PathVariable Space space, @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
-            defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, HttpServletResponse response) throws IOException,
-            UnavailableException {
+    public void exportCSV(@PathVariable Space space,
+            @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
+                    defaultValue = "#{new org.joda.time.DateTime()}") DateTime when,
+            HttpServletResponse response) throws IOException, UnavailableException {
         String filename = space.getName() + "_info";
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xls");
@@ -178,13 +186,15 @@ public class SpaceSearchController {
     }
 
     @RequestMapping(value = "/blueprint/{space}", method = RequestMethod.GET)
-    public void blueprint(@PathVariable Space space, @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
-            defaultValue = "#{new org.joda.time.DateTime()}") DateTime when, @RequestParam(defaultValue = "50") BigDecimal scale,
+    public void blueprint(@PathVariable Space space,
+            @DateTimeFormat(pattern = InformationBean.DATE_FORMAT) @RequestParam(
+                    defaultValue = "#{new org.joda.time.DateTime()}") DateTime when,
+            @RequestParam(defaultValue = "50") BigDecimal scale,
             @RequestParam(defaultValue = "false") Boolean viewOriginalSpaceBlueprint,
             @RequestParam(defaultValue = "true") Boolean viewBlueprintNumbers,
             @RequestParam(defaultValue = "true") Boolean viewIdentifications,
-            @RequestParam(defaultValue = "false") Boolean viewDoorNumbers, HttpServletResponse response) throws IOException,
-            UnavailableException {
+            @RequestParam(defaultValue = "false") Boolean viewDoorNumbers, HttpServletResponse response)
+            throws IOException, UnavailableException {
 
         Boolean isToViewOriginalSpaceBlueprint = viewOriginalSpaceBlueprint;
         Boolean isToViewBlueprintNumbers = viewBlueprintNumbers;
@@ -195,6 +205,16 @@ public class SpaceSearchController {
         try (OutputStream outputStream = response.getOutputStream()) {
             SpaceBlueprintsDWGProcessor.writeBlueprint(space, when, isToViewOriginalSpaceBlueprint, isToViewBlueprintNumbers,
                     isToViewIdentifications, isToViewDoorNumbers, scalePercentage, outputStream);
+        }
+    }
+
+    @RequestMapping(value = "/photo/{spacePhoto}", method = RequestMethod.GET)
+    public void spacePhotoRender(@PathVariable SpacePhoto spacePhoto, HttpServletResponse response)
+            throws IOException, UnavailableException {
+
+        response.setContentType("image/jpeg");
+        try (OutputStream outputStream = response.getOutputStream()) {
+            outputStream.write(spacePhoto.getContent());
         }
     }
 

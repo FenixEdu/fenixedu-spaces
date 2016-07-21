@@ -66,6 +66,7 @@
 					<spring:url value="/spaces/create/${space.externalId}" var="createSubSpaceUrl" />
 					<spring:url value="/spaces/access/${space.externalId}" var="manageAccessUrl" />
 					<spring:url value="/spaces/occupants/${space.externalId}" var="manageOccupantsUrl" />
+					<spring:url value="/spaces/photos/review/${space.externalId}" var="managePhotosUrl" />
 					<tr>
 						<td><c:out value="${space.classification.name.content}"/></td>
 						<td><c:out value="${space.fullName}"/></td>
@@ -81,6 +82,7 @@
 								<a href="${editUrl}" class="btn btn-default" title="<spring:message code="label.space.edit"/>"><span class="glyphicon glyphicon-pencil"></span></a>
 								<a href="${createSubSpaceUrl}" class="btn btn-default" title="<spring:message code="label.space.create"/>"><span class="glyphicon glyphicon-plus-sign"></span></a>
 								<a href="${manageAccessUrl}" class="btn btn-default" title="<spring:message code="label.space.access"/>"><span class="glyphicon glyphicon-lock"></span></a>	
+								<a href="${managePhotosUrl}" class="btn btn-default" title="<spring:message code="label.space.review.photo"/>"><span class="glyphicon glyphicon-picture"></span></a>
 							</c:if>
 							<c:if test="${space.isOccupationMember(currentUser)}">
 								<a href="${manageOccupantsUrl}" class="btn btn-default" title="<spring:message code="label.space.occupants"/>"><span class="glyphicon glyphicon-user"></span></a>	

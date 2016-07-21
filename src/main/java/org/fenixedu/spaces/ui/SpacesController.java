@@ -18,6 +18,7 @@
  */
 package org.fenixedu.spaces.ui;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.spaces.domain.Information;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
+import org.fenixedu.spaces.domain.submission.SpacePhoto;
 import org.joda.time.DateTime;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -164,6 +166,7 @@ public class SpacesController {
         if (space.getBlueprintFile().isPresent() && informationBean.getBlueprintContent() == null) {
             informationBean.setBlueprint(space.getBlueprintFile().get());
         }
+        informationBean.setSpacePhotoSet(space.getSpacePhotoSet().orElse(Collections.<SpacePhoto> emptySet()));
         space.bean(informationBean);
         return "redirect:/spaces-view/view/" + space.getExternalId();
     }

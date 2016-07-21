@@ -186,6 +186,57 @@
 					</td>
 				</tr>
 				<tr>
+					<th scope="row"><spring:message code="label.spaces.photo" /></th>
+					<c:if test="${not empty currentUser}">
+						<td>
+							<spring:url var="submitPhoto" value="/spaces/photos/submissions/my/create/${space.externalId}" />
+							<a href="${submitPhoto}"><spring:message code="label.spaces.suggestPhoto"/></a>
+							<c:if test="${space.isSpaceManagementMember(currentUser)}">
+								<spring:url var="editSpacePhotos" value="/spaces/photos/edit/${space.externalId}" />
+								 | <a href="${editSpacePhotos}"><spring:message code="title.photo.edit.list"/></a>
+							</c:if>
+    					</td>
+					</c:if>
+				</tr>
+				<tr>
+				<td colspan="100%" >
+					<c:if test="${not empty spacePhotos}">
+					<div id="spacePhotoControls" class="carousel slide" data-ride="carousel">
+  						<div class="carousel-inner" role="listbox">
+  						<c:set var="i" value="1"/>
+  							<c:forEach var="spacePhoto" items="${spacePhotos}">
+  								<spring:url var="spacePhotoUrl" value="/spaces-view/photo/${spacePhoto.externalId}" />
+  								<c:choose>
+  									<c:when test="${i eq 1}">
+  										<div class="item active">
+  									</c:when>
+  									<c:when test="${i gt 1}">
+  										<div class="item">
+  									</c:when>
+  								</c:choose>	
+  											<img class="center-block img-fluid" style="max-height: 450px;" src="${spacePhotoUrl}">
+    									</div>
+    							<c:set var="i" value="${i+1}"/>
+							</c:forEach>
+  						</div>
+					    <a class="left carousel-control" href="#spacePhotoControls" role="button" data-slide="prev">
+					    	<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+					    	<span class="sr-only">Previous</span>
+					  	</a>
+  						<a class="right carousel-control" href="#spacePhotoControls" role="button" data-slide="next">
+    						<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    						<span class="sr-only">Next</span>
+  						</a>
+					</div>
+					</c:if>
+
+					<c:if test="${empty spacePhotos}">
+						<a href="${submitPhoto}"><img style="max-height: 200px;" class="center-block img-fluid" src="${pageContext.request.contextPath}/static/image_placeholder.jpg" alt="Submit Image" /></a>
+					</c:if>
+				</td>
+				</tr>
+
+				<tr>
 					<th scope="row"><spring:message code="label.spaces.area" /></th>
 					<td><c:out value="${information.area}"/></td>
 				</tr>
