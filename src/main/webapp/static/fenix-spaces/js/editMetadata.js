@@ -91,7 +91,7 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 		}
 		var urlToPost = location.href;
 		debugger;
-		$http({method : 'POST', url : urlToPost, data :
+		$http({method : 'POST', url : urlToPost, data : 
 					{name : $scope.informationName,
 			     metadata : $scope.fieldDefs,
 			     parent : $scope.parent,

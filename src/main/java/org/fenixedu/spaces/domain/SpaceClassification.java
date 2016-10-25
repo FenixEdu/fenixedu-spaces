@@ -71,7 +71,7 @@ public class SpaceClassification extends SpaceClassification_Base {
     };
 
     public SpaceClassification(String code, LocalizedString name, SpaceClassification parent, JsonElement metadataSpec) {
-        this(code, name, parent, metadataSpec, false);
+        this(code, name, parent, metadataSpec, true);
     }
 
     public SpaceClassification(String code, LocalizedString name, SpaceClassification parent, JsonElement metadataSpec, boolean isAllocatable) {

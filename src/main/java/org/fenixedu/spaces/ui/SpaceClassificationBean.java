@@ -59,7 +59,7 @@ public class SpaceClassificationBean {
         this.metadataSpec = new JsonArray();
         this.parent = SpaceClassification.getRootClassification().getExternalId();
         this.code = "";
-        this.isAllocatable = false;
+        this.isAllocatable = true;
     }
 
     public String getParent() {
