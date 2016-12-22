@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.fenixedu</groupId>
-		<artifactId>fenix-framework-project</artifactId>
-		<version>2.2.0</version>
-	</parent>
+    <parent>
+        <groupId>org.fenixedu</groupId>
+        <artifactId>fenix-framework-project</artifactId>
+        <version>2.3.0</version>
+    </parent>
 
-	<artifactId>fenixedu-spaces</artifactId>
-	<version>1.7.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <artifactId>fenixedu-spaces</artifactId>
+    <version>1.7.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<name>FenixEdu Spaces</name>
-	<url>http://fenixedu.org/spaces</url>
-	<inceptionYear>2014</inceptionYear>
+    <name>FenixEdu Spaces</name>
+    <url>http://fenixedu.org</url>
+    <inceptionYear>2014</inceptionYear>
 
-	<issueManagement>
-		<system>GitHub</system>
-		<url>https://github.com/FenixEdu/fenixedu-spaces/issues/</url>
-	</issueManagement>
+    <properties>
+        <version.org.fenixedu.bennu>3.4.0</version.org.fenixedu.bennu>
+        <version.org.fenixedu.bennu-spring>1.1.0</version.org.fenixedu.bennu-spring>
+        <version.org.fenixedu.fenixedu-commons>1.1.0</version.org.fenixedu.fenixedu-commons>
+        <version.com.google.guava.guava>17.0</version.com.google.guava.guava>
+        <version.com.google.code.gson.gson>2.2.4</version.com.google.code.gson.gson>
+        <version.joda.time.joda.time>2.3</version.joda.time.joda.time>
+        <version.javax.ws.rs.javax.ws.rs.api>2.0</version.javax.ws.rs.javax.ws.rs.api>
+        <version.com.iver.cit.jdwglib>1.0.1</version.com.iver.cit.jdwglib>
+        <version.com.iver.cit.fmap>0.5</version.com.iver.cit.fmap>
+        <version.org.apache.poi.poi>3.11</version.org.apache.poi.poi>
+    </properties>
 
-	<licenses>
-		<license>
-			<name>GNU Lesser General Public License v3.0</name>
-			<url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://jira.fenixedu.org/browse/SPC</url>
+    </issueManagement>
 
-	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/FenixEdu/fenixedu-spaces</url>
-	</ciManagement>
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-	<properties>
-		<version.bennu>3.4.0</version.bennu>
-		<version.org.fenixedu.bennu-spring>1.1.0</version.org.fenixedu.bennu-spring>
-		<version.org.fenixedu.fenixedu.commons>1.1.0</version.org.fenixedu.fenixedu.commons>
-		<version.com.google.guava.guava>17.0</version.com.google.guava.guava>
-		<version.com.google.code.gson.gson>2.2.4</version.com.google.code.gson.gson>
-		<version.joda.time.joda.time>2.3</version.joda.time.joda.time>
-		<version.javax.ws.rs.javax.ws.rs.api>2.0</version.javax.ws.rs.javax.ws.rs.api>
-		<version.com.iver.cit.jdwglib>1.0.1</version.com.iver.cit.jdwglib>
-		<version.com.iver.cit.fmap>0.5</version.com.iver.cit.fmap>
-		<version.org.apache.poi.poi>3.11</version.org.apache.poi.poi>
-	</properties>
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/FenixEdu/fenixedu-spaces</url>
+    </ciManagement>
 
-	<scm>
-		<connection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</connection>
-		<developerConnection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</developerConnection>
-		<url>http://fenixedu.github.io/spaces</url>
-		<tag>HEAD</tag>
-	</scm>
-	
-	<build>
-		<plugins>
-			 <plugin>
+    <scm>
+        <connection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</connection>
+        <developerConnection>scm:git:git@github.com:fenixedu/fenixedu-spaces.git</developerConnection>
+        <url>http://fenixedu.org</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
@@ -70,81 +70,81 @@
                     </excludes>
                 </configuration>
             </plugin>
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-core</artifactId>
-			<version>${version.bennu}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-scheduler</artifactId>
-			<version>${version.bennu}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-portal</artifactId>
-			<version>${version.bennu}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-io</artifactId>
-			<version>${version.bennu}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>bennu-spring</artifactId>
-			<version>${version.org.fenixedu.bennu-spring}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.fenixedu</groupId>
-			<artifactId>fenixedu-commons</artifactId>
-			<version>${version.org.fenixedu.fenixedu.commons}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${version.com.google.guava.guava}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${version.com.google.code.gson.gson}</version>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>${version.joda.time.joda.time}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>${version.javax.ws.rs.javax.ws.rs.api}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.iver.cit</groupId>
-			<artifactId>jdwglib</artifactId>
-			<version>${version.com.iver.cit.jdwglib}</version>
-		</dependency>
-		<!-- This dependency is needed by jdwglib -->
-		<dependency>
-			<groupId>com.iver.cit</groupId>
-			<artifactId>fmap</artifactId>
-			<version>${version.com.iver.cit.fmap}</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>bennu-core</artifactId>
+            <version>${version.org.fenixedu.bennu}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>bennu-scheduler</artifactId>
+            <version>${version.org.fenixedu.bennu}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>bennu-portal</artifactId>
+            <version>${version.org.fenixedu.bennu}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>bennu-io</artifactId>
+            <version>${version.org.fenixedu.bennu}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>bennu-spring</artifactId>
+            <version>${version.org.fenixedu.bennu-spring}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>fenixedu-commons</artifactId>
+            <version>${version.org.fenixedu.fenixedu-commons}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${version.com.google.guava.guava}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${version.com.google.code.gson.gson}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${version.joda.time.joda.time}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>${version.javax.ws.rs.javax.ws.rs.api}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.iver.cit</groupId>
+            <artifactId>jdwglib</artifactId>
+            <version>${version.com.iver.cit.jdwglib}</version>
+        </dependency>
+        <!-- This dependency is needed by jdwglib -->
+        <dependency>
+            <groupId>com.iver.cit</groupId>
+            <artifactId>fmap</artifactId>
+            <version>${version.com.iver.cit.fmap}</version>
+        </dependency>
 
-		<!-- FenixEdu Commons requires its users to provide the POI dependency -->
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>${version.org.apache.poi.poi}</version>
-		</dependency>
-	</dependencies>
+        <!-- FenixEdu Commons requires its users to provide the POI dependency -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${version.org.apache.poi.poi}</version>
+        </dependency>
+    </dependencies>
 
-	 <repositories>
+    <repositories>
         <repository>
             <id>fenixedu-maven-repository</id>
             <url>https://repo.fenixedu.org/fenixedu-maven-repository</url>
