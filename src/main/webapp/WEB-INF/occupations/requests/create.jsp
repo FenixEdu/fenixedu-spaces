@@ -32,6 +32,7 @@
 <spring:url var="createUrl" value="/spaces/occupations/requests/my/create"/>
 
 <form:form modelAttribute="occupation" role="form" method="post" action="${createUrl}">
+	${csrf.field()}
 	<div class="form-group">
 	    <form:label for="campusInput" path="campus"><spring:message code="label.occupations.campus"/></form:label>
 	    <form:select class="form-control" id="campusInput" path="campus">

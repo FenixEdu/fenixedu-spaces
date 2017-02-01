@@ -87,7 +87,7 @@
 				<td><c:out value="${date.toString('dd/MM/yyyy hh:mm')}"/></td>
 				<td>
 					<form id="form${photoSubmission.externalId}" role="form" class="accept" action="${formUrl}/accept" method="POST">
-  
+							${csrf.field()}
 						<input type="hidden" name="space" value="${space.externalId}">
 						<input type="hidden" name="page" value="${page}">
 						<div class="container-fluid">

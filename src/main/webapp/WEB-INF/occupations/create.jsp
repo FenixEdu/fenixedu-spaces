@@ -88,6 +88,7 @@
 
 
 <form action="${searchUrl}" id="form-search-spaces" method="post">
+	${csrf.field()}
 	<input type="hidden" name="events" id="events"/>
 	<input type="hidden" name="config" id="config"/>
 	<c:if test="${not empty request}">

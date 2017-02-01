@@ -55,7 +55,7 @@
     <c:when test="${empty submitted}">
         <spring:url var="formActionUrl" value="${action}"/>
         <form:form modelAttribute="photoSubmission" role="form" method="post" action="${formActionUrl}" enctype="multipart/form-data">
-          
+            ${csrf.field()} 
           <img id="myimage" style="max-height: 300px;" class="img-thumbnail" src="${pageContext.request.contextPath}/static/image_placeholder.jpg" alt="Your Image" />
             <script type="text/javascript">
               function readURL(input) {

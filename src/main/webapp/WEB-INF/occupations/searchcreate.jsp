@@ -312,6 +312,7 @@
 <spring:url var="createUrl" value="/spaces/occupations/create" />
 
 <form class="form-horizontal" role="form" id="create-occupation-form" method="POST" action ="${createUrl}">
+  ${csrf.field()}
   <div class="form-group">
     <label for="occupation-emails" class="col-sm-2 control-label">
     	<spring:message code="label.create.occupation.reason.emails"></spring:message>

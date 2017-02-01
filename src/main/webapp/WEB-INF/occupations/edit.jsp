@@ -229,7 +229,9 @@
 			$("#delete-occupation").click(function() {
 				bootbox.confirm("Tem a certeza que pretende apagar a ocupação?", function(result) {
 					if (result) {
-  						$.ajax( { url : "${deleteUrl}", type: "DELETE", success: function() {
+  						$.ajax( {
+                            headers: { '${csrf.headerName}': '${csrf.token}' },
+                            url : "${deleteUrl}", type: "DELETE", success: function() {
 							location.href = "${redirectUrl}";
 						}});
 					}	
@@ -374,6 +376,7 @@
 <spring:url var="editUrl" value="/spaces/occupations/edit" />
 
 <form class="form-horizontal" role="form" id="create-occupation-form" method="POST" action ="${editUrl}">
+  ${csrf.field()}
   <div class="form-group">
     <label for="occupation-emails" class="col-sm-2 control-label">
     	<spring:message code="label.create.occupation.reason.emails"></spring:message>

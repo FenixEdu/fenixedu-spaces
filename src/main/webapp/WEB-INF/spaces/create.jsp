@@ -132,6 +132,7 @@ var thisSpec = {};
 
 <spring:url var="formActionUrl" value="${action}"/>
 <form:form modelAttribute="information" role="form" method="post" action="${formActionUrl}" enctype="multipart/form-data">
+    ${csrf.field()}
   <div class="form-group">
     <form:label for="validFromInput" path="validFrom"><spring:message code="label.spaces.validFrom"/></form:label>
     <form:input type="date" class="form-control" id="validFromInput" path="validFrom" placeholder="Valid From" required="required"/>

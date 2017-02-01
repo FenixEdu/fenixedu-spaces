@@ -32,6 +32,12 @@
 <script src="${staticUrl}/js/dateutils.js"></script>
 <script src="${staticUrl}/js/groupParse.js"></script>
 ${portal.angularToolkit()}
+<script>
+    angular.module("bennuToolkit").config(['$httpProvider',function($httpProvider) {
+        $httpProvider.defaults.headers.common = $httpProvider.defaults.headers.common || {};
+        $httpProvider.defaults.headers.common['${csrf.headerName}'] = '${csrf.token}';
+    }]);
+</script>
 <script src="${staticUrl}/js/ui-bootstrap-tpls-0.12.0.min.js"></script>
 <script src="${staticUrl}/js/groupEdit.js"></script>
 <div class="page-header">
@@ -46,6 +52,7 @@ ${portal.angularToolkit()}
 <div ng-app="groupEdit" ng-controller="editGroupController">
 <spring:url var="formActionUrl" value="${action}"/>
 <form:form modelAttribute="spacebean" role="form" method="post"  action="${formActionUrl}" enctype="multipart/form-data">
+	${csrf.field()}
 	<div class="form-group">
 		<h4>
 			<spring:message code="label.space.access.occupations.group" />

@@ -123,6 +123,7 @@ $(document).ready(function() {
 	   	<spring:url var="commentUrl" value="/spaces/occupations/requests/my/${occupationRequest.externalId}/comments"/>
 	   	<h3><spring:message code="occupation.request.comments.add"/></h3>
 	   	<form class="form" role="form" action="${commentUrl}" method="post">
+			${csrf.field()}
 	  		<div class="form-group">
 	   		  <label class="sr-only" for="descriptionInput"><spring:message code="occupation.request.comments.add"/></label>
 	    	  <textarea rows="10" cols="60" class="form-control" id="descriptionInput" name="description" required="required"></textarea>

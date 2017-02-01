@@ -371,8 +371,9 @@ function getSelectedPeriod(unixFormat){
 	aria-labelledby="confirmDeleteLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
-					<form:form modelAttribute="occupantsbean" role="form" method="post"
+			<form:form modelAttribute="occupantsbean" role="form" method="post"
 				action="${formActionUrl}">
+			${csrf.field()}
 			<div class="modal-header">
 
 				<input type="hidden" id="oldInterval" name="oldInterval" value />
@@ -432,7 +433,7 @@ function getSelectedPeriod(unixFormat){
 		<div class="modal-content">
 			<form:form modelAttribute="occupantsbean" role="form" method="post"
 				action="${formActionUrl}">
-
+				${csrf.field()}
 				<input type="hidden" id="oldInterval" name="oldInterval" value />
 				<input type="hidden" id="newInterval" name="newInterval" value />
 				<input type="hidden" id="action" name="action" value />

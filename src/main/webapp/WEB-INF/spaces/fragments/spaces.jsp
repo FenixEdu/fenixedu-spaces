@@ -34,9 +34,10 @@
 
 			      $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
 			    	  $.ajax({
-						    url: deleteUrl + $spaceId,
-						    type: 'DELETE',
-						    success: function(result) {
+                          headers: { '${csrf.headerName}': '${csrf.token}' },
+                          url: deleteUrl + $spaceId,
+                          type: 'DELETE',
+                          success: function(result) {
 						    	location.reload();
 						    }
 						});

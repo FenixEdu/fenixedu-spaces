@@ -32,6 +32,12 @@
 <link type="text/css" rel="stylesheet" href="${baseUrl}/css/dialogs.min.css"></link>
 
 ${portal.angularToolkit()}
+<script>
+    angular.module("bennuToolkit").config(['$httpProvider',function($httpProvider) {
+        $httpProvider.defaults.headers.common = $httpProvider.defaults.headers.common || {};
+        $httpProvider.defaults.headers.common['${csrf.headerName}'] = '${csrf.token}';
+    }]);
+</script>
 <script type="text/javascript" src="${baseUrl}/js/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="${baseUrl}/js/angular-translate.min.js"></script>
 <script type="text/javascript" src="${baseUrl}/js/angular-translate-loader-static-files.min.js"></script>

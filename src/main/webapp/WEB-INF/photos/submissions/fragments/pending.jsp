@@ -65,6 +65,7 @@
                     <td><c:out value="${date.toString('dd/MM/yyyy hh:mm')}"/></td>
                     <td>
                         <form id="form" role="form" class="cancel" action="${formUrl}/cancel" method="POST">
+                                ${csrf.field()}
                             <input type="hidden" name="space" value="${space.externalId}">
                             <input type="hidden" name="page" value="${page}">
                             <button type="submit" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-remove"></i>  <spring:message code="label.photo.submission.cancel" /></button>

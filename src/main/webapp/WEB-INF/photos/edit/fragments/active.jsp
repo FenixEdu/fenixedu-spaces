@@ -78,6 +78,7 @@
                                 <c:choose>
                                     <c:when test="${photo.visible}">
                                         <form id="form" role="form" action="${formUrl}/hide" method="POST">
+                                            ${csrf.field()}
                                         <input type="hidden" name="space" value="${space.externalId}">
                                         <input type="hidden" name="page" value="${page}">
                                         <button type="submit" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-eye-close"></i>  <spring:message code="label.photo.hide" /></button>
@@ -85,6 +86,7 @@
                                     </c:when>
                                     <c:when test="${not photo.visible}">
                                         <form id="form" role="form" action="${formUrl}/show" method="POST">
+                                                ${csrf.field()}
                                         <input type="hidden" name="space" value="${space.externalId}">
                                         <input type="hidden" name="page" value="${page}">
                                         <button type="submit" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-eye-open"></i>  <spring:message code="label.photo.show" /></button>

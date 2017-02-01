@@ -101,6 +101,7 @@ $(document).ready(function() {
 
 		      $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
 		    	  $.ajax({
+					    headers: { '${csrf.headerName}': '${csrf.token}' },
 					    url: deleteUrl + $spaceId,
 					    type: 'DELETE',
 					    success: function(result) {
