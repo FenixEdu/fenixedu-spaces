@@ -23,6 +23,8 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 	
 	$scope.informationName = window.informationName;
 
+	$scope.isAllocatable = window.isAllocatable;
+
 	$scope.newKey = "";
 	$scope.setFieldDefs = function(e) {
 		$scope.fieldDefs = e;
@@ -93,7 +95,8 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 					{name : $scope.informationName,
 			     metadata : $scope.fieldDefs,
 			     parent : $scope.parent,
-			     code : $scope.code},
+				 isAllocatable: $scope.isAllocatable,
+				 code : $scope.code},
 			     headers: {'Content-Type': 'application/json'}}
 		).
 		  success(function(data, status, headers, config) {

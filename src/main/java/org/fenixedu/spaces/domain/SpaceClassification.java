@@ -71,10 +71,15 @@ public class SpaceClassification extends SpaceClassification_Base {
     };
 
     public SpaceClassification(String code, LocalizedString name, SpaceClassification parent, JsonElement metadataSpec) {
+        this(code, name, parent, metadataSpec, true);
+    }
+
+    public SpaceClassification(String code, LocalizedString name, SpaceClassification parent, JsonElement metadataSpec, boolean isAllocatable) {
         super();
         setCode(code);
         setName(name);
         setParent(parent);
+        setIsAllocatable(isAllocatable);
         if (parent == null) {
             setBennu(Bennu.getInstance());
         }
@@ -83,6 +88,10 @@ public class SpaceClassification extends SpaceClassification_Base {
 
     public SpaceClassification(String code, LocalizedString name, SpaceClassification parent) {
         this(code, name, parent, new JsonArray());
+    }
+
+    public boolean isAllocatable() {
+        return this.getIsAllocatable();
     }
 
     public SpaceClassification(String code, LocalizedString name) {
