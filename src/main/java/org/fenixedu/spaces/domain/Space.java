@@ -30,15 +30,16 @@ import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.groups.NobodyGroup;
 import org.fenixedu.spaces.domain.occupation.Occupation;
+import org.fenixedu.spaces.domain.submission.SpacePhoto;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
-import pt.ist.fenixframework.Atomic;
-import pt.ist.fenixframework.Atomic.TxMode;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+
+import pt.ist.fenixframework.Atomic;
+import pt.ist.fenixframework.Atomic.TxMode;
 
 public final class Space extends Space_Base implements Comparable<Space> {
     public Space() {
@@ -287,6 +288,18 @@ public final class Space extends Space_Base implements Comparable<Space> {
         return getInformation(when).map(info -> info.getBlueprint());
     }
 
+    public Optional<Set<SpacePhoto>> getSpacePhotoSet() {
+        return getSpacePhotoSet(new DateTime());
+    }
+
+    public Optional<Set<SpacePhoto>> getSpacePhotoSet(DateTime when) {
+        return getInformation(when).map(info -> info.getSpacePhotoSet());
+    }
+
+    public void addSpacePhoto(SpacePhoto photo) {
+        getInformation(new DateTime()).get().addSpacePhoto(photo);
+    }
+
     public List<Space> getPath() {
         List<Space> path = new ArrayList<>();
         Space parent = this;
@@ -329,6 +342,16 @@ public final class Space extends Space_Base implements Comparable<Space> {
         return getChildrenSet().stream().filter(space -> space.isActive()).collect(Collectors.toSet());
     }
 
+    /***
+     * Get tree of spaces who have as root parent the current space.
+     * 
+     * @return set of spaces
+     */
+    public Set<Space> getChildTree() {
+        return Stream.concat(Stream.of(this), getChildrenSet().stream().flatMap(space -> space.getChildTree().stream()))
+                .collect(Collectors.toSet());
+    }
+
     public static Set<Space> getSpaces(final SpaceClassification classification) {
         return getSpaces().filter(space -> classification.equals(space.getClassification())).collect(Collectors.toSet());
     }
@@ -338,6 +361,7 @@ public final class Space extends Space_Base implements Comparable<Space> {
      * To be removed in next major.
      * 
      * Use getTopLevelSpaces()
+     * 
      * @see
      */
     public static Set<Space> getAllCampus() {

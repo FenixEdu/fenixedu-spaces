@@ -22,18 +22,20 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.fenixedu.bennu.core.domain.User;
+import org.fenixedu.spaces.domain.submission.SpacePhoto;
 import org.fenixedu.spaces.ui.InformationBean;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
-import pt.ist.fenixframework.Atomic;
-import pt.ist.fenixframework.Atomic.TxMode;
-
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import pt.ist.fenixframework.Atomic;
+import pt.ist.fenixframework.Atomic.TxMode;
 
 public class Information extends Information_Base {
 
@@ -59,6 +61,8 @@ public class Information extends Information_Base {
         private String externalId;
         private BlueprintFile blueprint;
         private byte[] blueprintContent;
+        private Set<SpacePhoto> spacePhotoSet;
+        private byte[] spacePhotoContent;
         private User user;
 
         //create information from the info in the bean
@@ -74,6 +78,8 @@ public class Information extends Information_Base {
             this.classification = informationBean.getClassification();
             this.blueprintContent = informationBean.getBlueprintContent();
             this.blueprint = informationBean.getBlueprint();
+            this.spacePhotoSet = informationBean.getSpacePhotoSet();
+            this.spacePhotoContent = informationBean.getSpacePhotoContent();
             this.user = informationBean.getUser();
         }
 
@@ -90,6 +96,7 @@ public class Information extends Information_Base {
             this.classification = information.getClassification();
             this.externalId = information.getExternalId();
             this.blueprint = information.getBlueprint();
+            this.spacePhotoSet = information.getSpacePhotoSet();
             this.user = information.getUser();
         }
 
@@ -152,21 +159,25 @@ public class Information extends Information_Base {
             if (validUntil != null && validFrom.isAfter(validUntil)) {
                 throw new SpaceDomainException("label.start.date.is.after.end.date");
             }
-            if (blueprintContent == null) {
-                info =
-                        new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
-                                metadata, classification, blueprint, user);
+            if (blueprintContent == null && spacePhotoContent == null) {
+                info = new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
+                        metadata, classification, blueprint, spacePhotoSet, user);
+            } else if (blueprintContent == null && spacePhotoContent != null) {
+                info = new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
+                        metadata, classification, blueprint, spacePhotoContent, spacePhotoSet, user);
+            } else if (blueprintContent != null && spacePhotoContent == null) {
+                info = new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
+                        metadata, classification, blueprintContent, spacePhotoSet, user);
             } else {
-                info =
-                        new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
-                                metadata, classification, blueprintContent, user);
+                info = new Information(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification,
+                        metadata, classification, blueprintContent, spacePhotoContent, spacePhotoSet, user);
             }
             return info;
         }
 
         public InformationBean bean() {
             return new InformationBean(externalId, allocatableCapacity, blueprintNumber, area, name, identification, validFrom,
-                    validUntil, metadata, classification, blueprint, user);
+                    validUntil, metadata, classification, blueprint, spacePhotoSet, user);
         }
     }
 
@@ -194,7 +205,7 @@ public class Information extends Information_Base {
 
     private Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
             BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
-            byte[] blueprint, BlueprintFile blueprintFile, User user) {
+            byte[] blueprint, BlueprintFile blueprintFile, byte[] spacePhoto, Set<SpacePhoto> spacePhotoSet, User user) {
         setValidFrom(validFrom);
         setValidUntil(validUntil);
         setAllocatableCapacity(allocatableCapacity);
@@ -210,21 +221,54 @@ public class Information extends Information_Base {
         if (blueprint != null) {
             setBlueprint(new BlueprintFile(name, blueprint));
         }
+        if (spacePhotoSet != null) {
+            getSpacePhotoSet().addAll(spacePhotoSet);
+        }
         setUser(user);
     }
 
+    @Deprecated
     protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
             BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
             byte[] blueprint, User user) {
         this(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification,
-                blueprint, null, user);
+                blueprint, null, null, null, user);
     }
 
+    @Deprecated
     protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
             BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
             BlueprintFile blueprintFile, User user) {
         this(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification,
-                null, blueprintFile, user);
+                null, blueprintFile, null, null, user);
+    }
+
+    protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
+            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
+            byte[] blueprint, byte[] spacePhoto, Set<SpacePhoto> spacePhotoSet, User user) {
+        this(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification,
+                blueprint, null, spacePhoto, spacePhotoSet, user);
+    }
+
+    protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
+            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
+            byte[] blueprint, Set<SpacePhoto> spacePhotoSet, User user) {
+        this(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification,
+                blueprint, null, null, spacePhotoSet, user);
+    }
+
+    protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
+            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
+            BlueprintFile blueprintFile, byte[] spacePhoto, Set<SpacePhoto> spacePhotoSet, User user) {
+        this(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification,
+                null, blueprintFile, spacePhoto, spacePhotoSet, user);
+    }
+
+    protected Information(DateTime validFrom, DateTime validUntil, Integer allocatableCapacity, String blueprintNumber,
+            BigDecimal area, String name, String identification, JsonElement metadata, SpaceClassification classification,
+            BlueprintFile blueprintFile, Set<SpacePhoto> spacePhotoSet, User user) {
+        this(validFrom, validUntil, allocatableCapacity, blueprintNumber, area, name, identification, metadata, classification,
+                null, blueprintFile, null, spacePhotoSet, user);
     }
 
     @SuppressWarnings("unchecked")
@@ -269,6 +313,7 @@ public class Information extends Information_Base {
         clone.setClassification(getClassification());
         clone.setPrevious(null);
         clone.setBlueprint(getBlueprint());
+        clone.getSpacePhotoSet().addAll(getSpacePhotoSet());
         return clone;
     }
 

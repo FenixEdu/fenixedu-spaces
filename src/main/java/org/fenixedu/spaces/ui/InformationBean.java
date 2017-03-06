@@ -23,12 +23,14 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.spaces.domain.BlueprintFile;
 import org.fenixedu.spaces.domain.MetadataSpec;
 import org.fenixedu.spaces.domain.SpaceClassification;
+import org.fenixedu.spaces.domain.submission.SpacePhoto;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,6 +58,8 @@ public class InformationBean {
     private String externalId;
     private BlueprintFile blueprint;
     private MultipartFile blueprintMultipartFile;
+    private Set<SpacePhoto> spacePhotoSet;
+    private MultipartFile spacePhotoMultipartFile;
     private User user;
 
     private static Gson gson = new Gson();
@@ -67,9 +71,17 @@ public class InformationBean {
         this.user = Authenticate.getUser() != null ? Authenticate.getUser() : null;
     }
 
+    @Deprecated
     public InformationBean(String externalId, Integer allocatableCapacity, String blueprintNumber, BigDecimal area, String name,
             String identification, DateTime validFrom, DateTime validUntil, JsonElement metadata,
             SpaceClassification classification, BlueprintFile blueprint, User user) {
+        this(externalId, allocatableCapacity, blueprintNumber, area, name, identification, validFrom, validUntil, metadata,
+                classification, blueprint, null, user);
+    }
+
+    public InformationBean(String externalId, Integer allocatableCapacity, String blueprintNumber, BigDecimal area, String name,
+            String identification, DateTime validFrom, DateTime validUntil, JsonElement metadata,
+            SpaceClassification classification, BlueprintFile blueprint, Set<SpacePhoto> spacePhotoSet, User user) {
         super();
         this.externalId = externalId;
         this.allocatableCapacity = allocatableCapacity;
@@ -81,6 +93,7 @@ public class InformationBean {
         this.validUntil = validUntil;
         this.classification = classification;
         this.blueprint = blueprint;
+        this.spacePhotoSet = spacePhotoSet;
         this.user = user;
         setMetadata(metadata);
     }
@@ -247,6 +260,33 @@ public class InformationBean {
         try {
             if (getBlueprintMultipartFile() != null && !getBlueprintMultipartFile().isEmpty()) {
                 return getBlueprintMultipartFile().getBytes();
+            }
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public MultipartFile getSpacePhotoMultipartFile() {
+        return spacePhotoMultipartFile;
+    }
+
+    public void setSpacePhotoMultipartFile(MultipartFile spacePhotoMultipartFile) {
+        this.spacePhotoMultipartFile = spacePhotoMultipartFile;
+    }
+
+    public void setSpacePhotoSet(Set<SpacePhoto> files) {
+        this.spacePhotoSet = files;
+    }
+
+    public Set<SpacePhoto> getSpacePhotoSet() {
+        return this.spacePhotoSet;
+    }
+
+    public byte[] getSpacePhotoContent() {
+        try {
+            if (getSpacePhotoMultipartFile() != null && !getSpacePhotoMultipartFile().isEmpty()) {
+                return getSpacePhotoMultipartFile().getBytes();
             }
             return null;
         } catch (IOException e) {

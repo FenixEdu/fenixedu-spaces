@@ -81,6 +81,43 @@
 					<c:url value="/spaces-view/blueprint/${space.externalId}?when=${information.validFrom.toString('yyyy-MM-dd')}" var="blueprintUrl"/>
 					<td><img src="${blueprintUrl}"/>
 				</tr>
+
+				<tr>
+					<th scope="row"><spring:message code="label.spaces.photo"/></th>
+					<td>
+					<c:set var="spacePhotos" value="${information.spacePhotoSet}"/>
+					<c:if test="${not empty spacePhotos}">
+					<div id="spacePhotoControls" class="carousel slide" data-ride="carousel">
+  						<div class="carousel-inner" role="listbox">
+  						<c:set var="i" value="1"/>
+  							<c:forEach var="spacePhoto" items="${spacePhotos}">
+  								<spring:url var="spacePhotoUrl" value="/spaces-view/photo/${spacePhoto.externalId}" />
+  								<c:choose>
+  									<c:when test="${i eq 1}">
+  										<div class="item active">
+  									</c:when>
+  									<c:when test="${i gt 1}">
+  										<div class="item">
+  									</c:when>
+  								</c:choose>	
+  											<img class="center-block img-fluid" style="max-height: 450px;" src="${spacePhotoUrl}">
+    									</div>
+    							<c:set var="i" value="${i+1}"/>
+							</c:forEach>
+  						</div>
+					    <a class="left carousel-control" href="#spacePhotoControls" role="button" data-slide="prev">
+					    	<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+					    	<span class="sr-only">Previous</span>
+					  	</a>
+  						<a class="right carousel-control" href="#spacePhotoControls" role="button" data-slide="next">
+    						<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    						<span class="sr-only">Next</span>
+  						</a>
+					</div>
+					</c:if>
+					</td>
+				</tr>
+
 				<tr>
 					<th scope="row"><spring:message code="label.spaces.area"/></th>
 					<td><c:out value="${information.area}"/></td>
@@ -109,3 +146,4 @@
 			</table>
 		</div>
 	</c:forEach>
+</div>
