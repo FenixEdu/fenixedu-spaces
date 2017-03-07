@@ -130,7 +130,7 @@ public final class Space extends Space_Base implements Comparable<Space> {
      * get the space information valid at the specified when date, created on atWhatDate.
      *
      * @param when
-     * @param atWhatDate
+     * @param creationDate
      * @return
      */
 
