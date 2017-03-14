@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,8 +40,8 @@ import org.fenixedu.spaces.domain.BlueprintFile.BlueprintTextRectangles;
 import org.fenixedu.spaces.domain.Space;
 import org.joda.time.DateTime;
 
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 import com.iver.cit.jdwglib.dwg.DwgFile;
 import com.iver.cit.jdwglib.dwg.DwgObject;
 import com.iver.cit.jdwglib.dwg.objects.DwgMText;
@@ -134,15 +135,10 @@ public class SpaceBlueprintsDWGProcessor extends DWGProcessor {
         if (viewOriginalSpaceBlueprint != null && viewOriginalSpaceBlueprint) {
             return map;
         }
-
         final File file = File.createTempFile("blueprint", "dwg");
-        Files.copy(new InputSupplier<InputStream>() {
-
-            @Override
-            public InputStream getInput() throws IOException {
-                return inputStream;
-            }
-        }, file);
+        try(FileOutputStream fos = new FileOutputStream(file)) {
+            ByteStreams.copy(inputStream, fos);
+        }
         final SpaceBlueprintsDWGProcessor processor = new SpaceBlueprintsDWGProcessor(scalePercentage);
         final DwgFile dwgFile = processor.readDwgFile(file.getAbsolutePath());
         final Vector<DwgObject> dwgObjects = dwgFile.getDwgObjects();
