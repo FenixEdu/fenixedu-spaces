@@ -79,7 +79,7 @@ app.controller('MetadataController', [ '$scope','$timeout', '$modal', '$log','$t
 	};
 	
 	$scope.submitInfo = function(){
-		var val = $("[ng-localized-string]").map(function (i, xx) {
+		var val = $("[bennu-localized-string]").map(function (i, xx) {
 	           xx = $(xx);
 	           xx.data("input").removeClass("has-error");
 	           return Bennu.validation.validateInput(xx);
