@@ -91,7 +91,7 @@ ${portal.angularToolkit()}
 						<b><spring:message code="label.spaces.name" /></b>
 					</div>
 					<div class="col-md-10" id="theNameInput">
-						<input required-any ng-localized-string='informationName' type="text" />
+						<input required-any bennu-localized-string='informationName' type="text" />
 					</div>
 				</div>
 				<c:choose>
@@ -180,7 +180,7 @@ ${portal.angularToolkit()}
 				<div class="row"  ng-hide="fieldDef.inactive === true">
 				  <div class="col-md-3">{{fieldDef.name}}</div>
 				  <div class="col-md-4">
-				  	<input type="text" ng-localized-string="fieldDef.description" required-any class='form-control' ng-readonly='fieldDef.inherited'/>
+				  	<input type="text" bennu-localized-string="fieldDef.description" required-any class='form-control' ng-readonly='fieldDef.inherited'/>
 				  </div>
 					<div class="col-md-1">
 				  	<select ng-model="fieldDef.type" ng-disabled='{{fieldDef.inherited}}' ng-checked='{{fieldDef.inherited}}'>
