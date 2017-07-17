@@ -16,6 +16,7 @@ import org.fenixedu.commons.spreadsheet.Spreadsheet.Row;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.spaces.domain.SpaceClassification;
 import org.fenixedu.spaces.domain.occupation.SharedOccupation;
+import org.fenixedu.spaces.ui.InformationBean;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,10 +26,13 @@ public class ExportSpace {
     private static List<Object> getHeaders(List<String> metaKeys) {
         final List<Object> headers = new ArrayList<Object>();
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.path"));
-        headers.add(BundleUtil.getString(BUNDLE, "export.excel.space"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.name"));
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.id"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.valid.from"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.valid.until"));
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.blueprintNumber"));
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.classification"));
+        headers.add(BundleUtil.getString(BUNDLE, "export.excel.capacity"));
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.area"));
         headers.add(BundleUtil.getString(BUNDLE, "export.excel.occupants"));
         HashMap<String, LocalizedString> showKeys = new HashMap<String, LocalizedString>();
@@ -68,8 +72,13 @@ public class ExportSpace {
         row.setCell((space.getParent() != null) ? StringPath(space.getParent().getPath()) : "--");
         row.setCell(space.getName());
         row.setCell(space.bean().getIdentification() != null ? space.bean().getIdentification() : "--");
+        row.setCell(
+                space.bean().getValidFrom() != null ? space.bean().getValidFrom().toString(InformationBean.DATE_FORMAT) : "--");
+        row.setCell(
+                space.bean().getValidUntil() != null ? space.bean().getValidUntil().toString(InformationBean.DATE_FORMAT) : "--");
         row.setCell(space.bean().getBlueprintNumber() != null ? space.bean().getBlueprintNumber() : "--");
         row.setCell(space.bean().getClassification() != null ? space.bean().getClassification().getName().getContent() : "--");
+        row.setCell(space.bean().getAllocatableCapacity() != null ? space.bean().getAllocatableCapacity().toString() : "--");
         row.setCell(space.bean().getArea() != null ? space.bean().getArea().toString() : "--");
         row.setCell(getOccupantsString(space));
         for (String field : metaKeys) {
