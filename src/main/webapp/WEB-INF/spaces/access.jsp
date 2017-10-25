@@ -130,7 +130,7 @@ ${portal.angularToolkit()}
 			      <div role="tabpanel" class="tab-pane fade active in" id="home" aria-labelledby="home-tab">
 					<p>
 					 <div class="input-group">
-				      	<input ng-user-autocomplete="selectedUser" class="form-control" placeholder="utilizador">
+				      	<input bennu-user-autocomplete="selectedUser" class="form-control" placeholder="utilizador">
 						<span class="input-group-btn">
 							<button class="btn btn-default" ng-click="addUser()"><spring:message code="label.add"/></button>  
 						</span>
