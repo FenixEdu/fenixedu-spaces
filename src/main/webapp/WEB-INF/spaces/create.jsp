@@ -191,7 +191,7 @@ var thisSpec = {};
   </div>
   <div class="form-group">
     <form:label for="blueprintNumberInput" path="blueprintNumber"><spring:message code="label.spaces.blueprintNumber"/></form:label>
-    <form:input type="number" class="form-control" id="blueprintNumberInput" path="blueprintNumber" min="0" placeholder="Blueprint Number"/>
+    <form:input class="form-control" id="blueprintNumberInput" path="blueprintNumber" min="0" placeholder="Blueprint Number"/>
   </div>
   <div class="form-group">
     <form:label for="areaInput" path="area"><spring:message code="label.spaces.area"/></form:label>
