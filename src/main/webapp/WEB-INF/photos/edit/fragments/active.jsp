@@ -110,6 +110,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <form id="form" role="form"  action="${formUrl}/delete" method="POST">
+                                                        ${csrf.field()}
                                                     <input type="hidden" name="space" value="${space.externalId}">
                                                     <input type="hidden" name="page" value="${page}">
                                                     <button type="submit" class="btn btn-xs btn-danger"><spring:message code="label.yes" /></button>
