@@ -18,8 +18,10 @@
  */
 package org.fenixedu.spaces.ui;
 
+import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
+import org.fenixedu.spaces.domain.SpaceDomainException;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequest;
 import org.fenixedu.spaces.domain.occupation.requests.OccupationRequestState;
 import org.fenixedu.spaces.ui.services.OccupationService;
@@ -61,14 +63,20 @@ public class MyOccupationRequestController {
     }
 
     @RequestMapping(value = "/{occupationRequest}", method = RequestMethod.GET)
-    public String view(@PathVariable OccupationRequest occupationRequest, Model model) {
+    public String view(@PathVariable OccupationRequest occupationRequest, Model model, User user) {
+        if(occupationRequest.getRequestor() != user) {
+            throw new SpaceDomainException("unauthorized.edit.occupation");
+        }
         model.addAttribute("occupationRequest", occupationRequest);
         return "occupations/requests/mysingle";
     }
 
     @RequestMapping(value = "/{occupationRequest}/comments", method = RequestMethod.POST)
     public RedirectView addComment(@PathVariable OccupationRequest occupationRequest, @RequestParam String description,
-            Model model, @RequestParam OccupationRequestState state) {
+                                   Model model, @RequestParam OccupationRequestState state, User user) {
+        if(occupationRequest.getRequestor() != user) {
+            throw new SpaceDomainException("unauthorized.edit.occupation");
+        }
         occupationService.addComment(occupationRequest, description, state);
         return new RedirectView("/spaces/occupations/requests/my/" + occupationRequest.getExternalId(), true);
     }
