@@ -2,6 +2,8 @@ package org.fenixedu.spaces.ui;
 
 import java.io.IOException;
 
+import org.apache.tika.Tika;
+import org.apache.tika.metadata.Metadata;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.spaces.domain.Space;
@@ -61,7 +63,13 @@ public class PhotoSubmissionBean {
         if (submissionMultipartFile == null || submissionMultipartFile.isEmpty()) {
             return false;
         }
-        String contentType = submissionMultipartFile.getContentType();
+        Tika tika = new Tika();
+        String contentType;
+        try {
+            contentType = tika.detect(submissionMultipartFile.getInputStream(), Metadata.CONTENT_TYPE);
+        } catch (IOException e) {
+            return false;
+        }
         if (contentType.equals("image/pjpeg") || contentType.equals("image/jpeg") || contentType.equals("image/png")
                 || contentType.equals("image/x-png")) {
             return true;
