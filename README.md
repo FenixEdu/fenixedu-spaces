@@ -12,3 +12,5 @@ Issue Tracking for the FenixEdu Spaces project is done in the [FenixEdu JIRA](ht
 ## Contribute
 
 FenixEdu Spaces is open source LGPL 3. We welcome interest in the project and are open to your contributions
+
+Test
