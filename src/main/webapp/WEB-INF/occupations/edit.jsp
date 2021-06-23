@@ -398,7 +398,7 @@
     	<spring:message code="label.create.occupation.reason.description"></spring:message>
     </label>
     <div class="col-sm-10">
-      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description" required> <c:out value="${occupation.description}"/></textarea>
+      <textarea cols="50" rows="4" class="form-control" name="description" id="occupation-description" required><c:out value="${occupation.description}"/></textarea>
     </div>
   </div>
   <div class="form-group">
