@@ -19,6 +19,7 @@
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <spring:url value='/spaces/' var="deleteBaseUrl" />
 
 <script type="text/javascript">
